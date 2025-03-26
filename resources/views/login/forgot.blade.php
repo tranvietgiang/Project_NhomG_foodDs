@@ -1,13 +1,13 @@
 <!-- import library MDBootstrap_CSS -->
 <link rel="stylesheet" href="{{ asset('component/css/mdb.min.css') }}">
 <section class="">
-    {{-- <!-- check email have exists -->
-    @if (session('update-failed'))
-        <div class="alert alert-warning text-center">{{ session('update-failed') }}</div>
-    @endif --}}
 
-    <form class="container w-25 mt-5" action="" method="post">
-        {{-- <form class="container w-25 mt-5" action="{{ route('forgot') }}" method="post"> --}}
+    <!-- check email have exists -->
+    @if (session('email_not_exists_forgot'))
+        <div class="alert alert-warning text-center">{{ session('email_not_exists_forgot') }}</div>
+    @endif
+
+    <form class="container w-25 mt-5" action="{{ route('forgot') }}" method="post">
         @csrf
         <!-- Email forgot input  -->
         <div data-mdb-input-init class="form-outline mb-4">

@@ -100,6 +100,7 @@
                         <td>{{ $item->email }}</td>
                         <td>{{ $item->phone }}</td>
 
+                        <!-- check có đang online -->
                         <td>
                             @if ($item->last_activity == 'online')
                                 <span class="badge bg-success">Online</span>
@@ -118,8 +119,6 @@
                                 <button class="btn btn-sm btn-danger delete-btn">Xóa</button>
                             </td>
                         @endif
-                        <td>
-                        </td>
                     </tr>
                 @endforeach
             </tbody>

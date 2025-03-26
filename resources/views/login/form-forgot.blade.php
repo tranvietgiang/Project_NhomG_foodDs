@@ -5,17 +5,18 @@
     <div>
         <h1 class="display-6 text-center">Update Password</h1>
     </div>
-    <!-- check password do not match -->
-    @if (session('update-failed'))
-        <div class="alert alert-warning">{{ session('update-failed') }}</div>
+
+    @if (session('success-otp-email-forgo'))
+        <div class="alert alert-success">{{ session('success-otp-email-forgot') }}</div>
     @endif
+    <!-- check password do not match -->
     <div>
-        <form class="container w-25 mt-5" action="" method="post">
+        <form class="container w-25 mt-5" action="{{ route('update_pw') }}" method="post">
             @csrf
-            <!-- Email input -->
+            <!-- show email -->
             <div class="form-group mb-4 ">
                 <label class="form-label" for="login-email">Email address</label>
-                <input type="email" id="login-email" value="" name="email" readonly
+                <input type="text" id="login-email" value="{{ session('email_user') }}" name="email" readonly
                     class="form-control bg-primary text-white" />
             </div>
 
@@ -27,7 +28,7 @@
 
             <!-- Password Confirm input  -->
             <div data-mdb-input-init class="form-outline mb-4">
-                <input type="password" name="password_c" id="login-pwc" class="form-control" />
+                <input type="password" name="password_confirmed" id="login-pwc" class="form-control" />
                 <label class="form-label" for="login-pwc">Password</label>
             </div>
 

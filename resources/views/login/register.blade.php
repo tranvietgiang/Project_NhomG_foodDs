@@ -5,21 +5,24 @@
     <div>
         <h1 class="display-6">Register</h1>
     </div>
-    <!-- email-existed -->
-    @if (session('email-existed'))
-        <div class="alert alert-warning">{{ session('email-existed') }}</div>
+
+    <!-- show error -->
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
     @endif
 
-    <!-- password do not match -->
-    @if (session('pw-wrong'))
-        <div class="alert alert-warning">{{ session('pw-wrong') }}</div>
-    @endif
     <div>
-        <form class="container w-25 mt-5" action="" method="post">
+        <form class="container w-25 mt-5" action="{{ route('register') }}" method="post">
             @csrf
             <!-- username input -->
             <div data-mdb-input-init class="form-outline mb-4">
-                <input type="text" name="name" id="login-name" class="form-control" required />
+                <input type="text" name="username" id="login-name" class="form-control" required />
                 <label class="form-label" for="login-name">username</label>
             </div>
 
@@ -37,7 +40,7 @@
 
             <!-- Password Confirm input  -->
             <div data-mdb-input-init class="form-outline mb-4">
-                <input type="password" name="password_c" id="login-pwc" class="form-control" required />
+                <input type="password" name="password_confirmation" id="login-pwc" class="form-control" required />
                 <label class="form-label" for="login-pwc">Password_confirm</label>
             </div>
 

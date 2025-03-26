@@ -1,20 +1,33 @@
 <!-- import library MDBootstrap_CSS -->
 <link rel="stylesheet" href="{{ asset('component/css/mdb.min.css') }}">
-
+<!-- Link icon  -->
+<link rel="Website icon" type="png" href="{{ asset('logo-website/login.png') }}">
 <section class="text-center mt-5">
     <div>
         <h1 class="display-6">Welcome Login</h1>
     </div>
 
-    <!-- wrong pw-or-email -->
-    {{-- @if (session('L-failed'))
-        <div class="alert alert-warning text-center">{{ session('L-failed') }}</div>
+    @if (session('login-failed'))
+        <div class="alert alert-warning text-center">{{ session('login-failed') }}</div>
     @endif
 
     <!-- wrong pw-or-email -->
-    @if (session('waring-email'))
-        <div class="alert alert-warning text-center">{{ session('waring-email') }}</div>
+    @if (session('email-not-exists'))
+        <div class="alert alert-warning">
+            {{ session('email-not-exists') }}
+        </div>
     @endif
+
+    <!-- register success -->
+    @if (session('success_register'))
+        <div class="alert alert-success">
+            {{ session('success_register') }}
+        </div>
+    @endif
+
+    {{--
+    <!-- wrong pw-or-email -->
+
 
     <!-- logout alert -->
     @if (session('logout-success'))
