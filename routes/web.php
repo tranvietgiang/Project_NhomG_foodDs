@@ -36,14 +36,12 @@ Route::prefix('/login')->group(function () {
 });
 
 /**
- * role access form admin and employees  
+ * show data role access form admin and employees and client 
  */
-
-Route::prefix('/role/access')->group(function () {
-    Route::get('/admin', [LoginController::class, 'showAdmin'])->name('manager');
-    Route::get('/employees', [LoginController::class, 'showEmployees'])->name('employees');
-    /** show list employees */
-    Route::get('/list_employees', [AdminController::class, 'index'])->name('list_employees');
+Route::prefix('/role/admin')->group(function () {
+    Route::get('/client', [AdminController::class, 'listClient'])->name('manager');
+    Route::get('/search_client', [AdminController::class, 'search_client'])->name('search_client');
+    Route::get('/employees', [AdminController::class, 'showEmployees'])->name('employees');
 });
 
 

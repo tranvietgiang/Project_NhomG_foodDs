@@ -59,9 +59,33 @@
             <li class="d-flex justify-content-center m-4">
                 <h3>Dashboard</h3>
             </li>
-            <li><a href=""><i class="fas fa-users"></i> Quản Lý Nhân Viên</a></li>
-            <li class="active"><a href="product.html"><i class="fas fa-box"></i> Quản Lý Sản Phẩm</a></li>
+            <!-- nếu admin đổi thành quản lý -->
+            @if (Auth::check() && Auth::user()->role == 'admin')
+                <li class="active"><a href="{{ route('employees') }}"><i class="fas fa-users"></i> Quản Lý Nhân Viên</a>
+                </li>
+            @else
+                <li class="active"><a href="{{ route('employees') }}"><i class="fas fa-users"></i> DS Nhân Viên</a></li>
+            @endif
+
+
+            <!-- page product -->
+            @if (Auth::check() && Auth::user()->role == 'admin')
+                <li class=""><a href="#"><i class="fas fa-box"></i> Quản Lý Sản Phẩm</a></li>
+            @else
+                <li><a href="#"><i class="fas fa-box"></i> DS Sản Phẩm</a></li>
+            @endif
+
+            <!-- page client -->
+            @if (Auth::check() && Auth::user()->role == 'admin')
+                <li><a href="{{ route('manager') }}"><i class="fas fa-box"></i> Quản Lý khách hàng</a>
+                </li>
+            @else
+                <li><a href="{{ route('manager') }}"><i class="fas fa-box"></i> DS khách hàng</a></li>
+            @endif
+
             <li><a href="#"><i class="fas fa-envelope"></i> Tin Nhắn</a></li>
+
+            <!-- client need support -->
             <li><a href="#"><i class="fas fa-question-circle"></i> Hỗ Trợ</a></li>
             <li><a href="#"><i class="fas fa-cog"></i> Cài Đặt</a></li>
             <li><a href="#"><i class="fas fa-lock"></i> Mật Khẩu</a></li>
@@ -74,13 +98,11 @@
         @include('component.header.admin.keThua.navbar-logout')
 
 
-
-
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
                     <th>STT</th>
-                    <th>Tên Người Tiêu Dùng</th>
+                    <th>Tên NHân Viên</th>
                     <th>Email</th>
                     <th>Số Điện Thoại</th>
                     <th>Trạng Thái</th>

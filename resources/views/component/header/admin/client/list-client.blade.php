@@ -84,10 +84,28 @@
                 <li class="d-flex justify-content-center m-4">
                     <h3>Dashboard</h3>
                 </li>
-                <li><a href=""><i class="fas fa-users"></i> Quản Lý Nhân Viên</a></li>
-                <li class="active"><a href="product.html"><i class="fas fa-box"></i> Quản Lý Sản Phẩm</a></li>
+
+                <!-- nếu admin đổi thành quản lý -->
+                @if (Auth::check() && Auth::user()->role == 'admin')
+                    <li class="active"><a href="#"><i class="fas fa-box"></i> Quản Lý Khách hàng</a></li>
+                @else
+                    <li class="active"><a href="#"><i class="fas fa-box"></i> DS Khách hàng</a></li>
+                @endif
+
+                @if (Auth::check() && Auth::user()->role == 'admin')
+                    <li><a href="{{ route('employees') }}"><i class="fas fa-users"></i> Quản Lý Nhân Viên</a></li>
+                @else
+                    <li><a href="{{ route('employees') }}"><i class="fas fa-users"></i> DS Nhân Viên</a></li>
+                @endif
+
+                <!-- page product -->
+                @if (Auth::check() && Auth::user()->role == 'admin')
+                    <li class=""><a href="#"><i class="fas fa-box"></i> Quản Lý Sản Phẩm</a></li>
+                @else
+                    <li><a href="#"><i class="fas fa-box"></i> DS Sản Phẩm</a></li>
+                @endif
+
                 <li><a href="#"><i class="fas fa-envelope"></i> Tin Nhắn</a></li>
-                <li><a href="#"><i class="fas fa-question-circle"></i> Hỗ Trợ</a></li>
                 <li><a href="#"><i class="fas fa-cog"></i> Cài Đặt</a></li>
                 <li><a href="#"><i class="fas fa-lock"></i> Mật Khẩu</a></li>
                 <li><a href="#"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a></li>
@@ -103,31 +121,35 @@
                 <thead>
                     <tr>
                         <th>STT</th>
-                        <th>Tên Người Tiêu Dùng</th>
+                        <th>Tên Khách Hàng</th>
                         <th>Email</th>
                         <th>Số Điện Thoại</th>
                         <th>Trạng Thái</th>
-                        <th>Ngày tạo</th>
+                        <th>Created_at</th>
                     </tr>
                 </thead>
                 <tbody id="customer-table-body">
-                    <!-- Dữ liệu mẫu -->
-                    <tr>
-                        <td>1</td>
-                        <td>Nguyễn Văn A</td>
-                        <td>nguyenvana@gmail.com</td>
-                        <td>0901234567</td>
-                        <td><span class="badge bg-success">Hoạt động</span></td>
-                        <td>20-02-2005</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Trần Thị B</td>
-                        <td>tranb@gmail.com</td>
-                        <td>0912345678</td>
-                        <td><span class="badge bg-danger">Không hoạt động</span></td>
-                        <td>20-02-2005</td>
-                    </tr>
+
+                    @foreach ($list_client as $item)
+                        <tr>
+                            <td>{{ $loop->iteration + $list_client->firstItem() - 1 }}</td>
+                            <td>{{ $item->name }}</td>
+                            <td>{{ $item->email }}</td>
+                            <td>{{ $item->phone }}</td>
+
+                            <!-- check có đang online -->
+                            <td>
+                                @if ($item->last_activity == 'online')
+                                    <span class="badge bg-success">Online</span>
+                                @else
+                                    <span class="badge bg-danger">Off</span>
+                                @endif
+                            </td>
+
+                            <!-- show date -->
+                            <td>{{ $item->format_date() }}</td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

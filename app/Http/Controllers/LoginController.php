@@ -75,7 +75,7 @@ class LoginController extends Controller
                 /** check co dang online */
                 User::where('id', $id_status)->update(['last_activity' => "online"]);
 
-                session()->put('role_employees', $user->id);
+                session()->put('role_employees', $user->name);
                 return redirect()->route('employees');
             } else {
 
@@ -122,29 +122,6 @@ class LoginController extends Controller
 
         // layout main website
         return view('layout.index');
-    }
-
-    public function showAdmin()
-    {
-        // Gọi hàm checkLogin() với `return` để xử lý redirect
-        if ($redirect = $this->checkLogin()) {
-            return $redirect;
-        }
-
-        // layout Admin
-        return view('component.header.admin.client.list-client');
-    }
-
-    /** show form list employees */
-    public function showEmployees()
-    {
-        // Gọi hàm checkLogin() với `return` để xử lý redirect
-        if ($redirect = $this->checkLogin()) {
-            return $redirect;
-        }
-
-        // layout Employees
-        return redirect()->route('list_employees');
     }
 
 
@@ -287,7 +264,24 @@ class LoginController extends Controller
     }
 
     /**update password for client */
-    public function update_pw() {}
+    public function update_pw(Request $req)
+    {
+        $email = $req->input('email');
+        $pw = $req->input('password');
+        $pw_c = $req->input('password_confirmed');
+
+        if ($pw !== $pw_c) {
+            return redirect()->back()->with('update-failed', 'Password do not match!');
+        }
+
+        $login = User::where('email', $email)->first();
+        if ($login) {
+            $login->password = hash::make($pw);
+            $login->save();
+        }
+
+        return redirect()->route('wayLogin', ['page => login'])->with('update_pw_success', 'Update password success');
+    }
 
 
     // Xác minh OTP rồi create account
