@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Carbon\Carbon;
+use App\Models\Client;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
 
 class User extends Authenticatable
 {
@@ -50,21 +55,26 @@ class User extends Authenticatable
         ];
     }
 
-    // protected $casts = [
-    //     'email_verified_at' => 'datetime',
-    //     'password' => 'hashed',
-    //     'last_activity' => 'datetime',
-    // ];
-
-    // public function isActive()
-    // {
-    //     return $this->last_activity && now()->diffInMinutes($this->last_activity) < 5;
-    // }
-
-
-
+    /** format d-m-y */
     public function format_date()
     {
         return Carbon::parse($this->created_at)->format('d-m-Y');
+    }
+
+
+    /** relationship with table client */
+    public function client(): HasOne
+    {
+        return $this->hasOne(Client::class, 'user_id');
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Reviews::class, 'user_id');
+    }
+
+    public function carts(): HasMany
+    {
+        return $this->hasMany(Carts::class, 'user_id');
     }
 }
