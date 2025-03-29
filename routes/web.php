@@ -58,10 +58,14 @@ Route::get('otpForgot', [LoginController::class, 'formOtpForgot'])->name('form.o
 Route::post('/verify-otp-forgot', [LoginController::class, 'verifyOtpForgot'])->name('verifyOTP.otpForgot');
 
 
-/**
- * kiểm tra đang ở form để mà gửi lại mã otp
- * cái index 0 là form forgot 1 là register => chưa sử dụng
- */
-Route::get('{page}', [LoginController::class, 'wayOTP'])
-    ->where('page', 'form.otp|otp.form')
-    ->name('wayOTP');
+
+
+
+/** checkout toán vnpay */
+Route::post('/vnpay_payment', [AdminController::class, 'vnpay_payment'])->name('vnpay.payment');
+
+/** show form */
+Route::get('/showVnPay', [AdminController::class, 'showVnPayCheckout'])->name('showVnPayCheckout');
+
+// /** result success or failed */
+Route::get('/vnpay_return', [AdminController::class, 'vnpay_return'])->name('vnpay.return');

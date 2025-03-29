@@ -105,6 +105,11 @@
                     <li><a href="#"><i class="fas fa-box"></i> DS Sản Phẩm</a></li>
                 @endif
 
+                <!-- page -->
+                @if (Auth::check() && Auth::user()->role == 'admin')
+                    <li><a href="#"><i class="fas fa-envelope"></i>Mã giảm giá</a></li>
+                @endif
+
                 <li><a href="#"><i class="fas fa-envelope"></i> Tin Nhắn</a></li>
                 <li><a href="#"><i class="fas fa-cog"></i> Cài Đặt</a></li>
                 <li><a href="#"><i class="fas fa-lock"></i> Mật Khẩu</a></li>
