@@ -18,11 +18,46 @@
         </div>
     @endif
 
+
+
+    <!-- password or email  empty -->
+    @if (session('email-password-empty'))
+        <div class="alert alert-warning">
+            {{ session('email-password-empty') }}
+        </div>
+    @endif
+
+    <!-- user có đăng nhập đúng định dạng email không -->
+    @if (session('invalid-email'))
+        <div class="alert alert-warning">
+            {{ session('invalid-email') }}
+        </div>
+    @endif
+
+    <!-- password phải dài hơn 5 kí tự -->
+    @if (session('short-password'))
+        <div class="alert alert-warning">
+            {{ session('short-password') }}
+        </div>
+    @endif
+
     <!-- register success -->
     @if (session('success_register'))
         <div class="alert alert-success">
             {{ session('success_register') }}
         </div>
+    @endif
+
+    <!-- register success -->
+    @if (session('update_pw_success'))
+        <div class="alert alert-success">
+            {{ session('update_pw_success') }}
+        </div>
+    @endif
+
+    <!-- User phải login trước khi vào trang index chưa làm -->
+    @if (session('Right-login'))
+        <div class="alert alert-warning">{{ session('Right-login') }}</div>
     @endif
 
     {{--
@@ -34,15 +69,6 @@
         <div class="alert alert-success text-center">{{ session('logout-success') }}</div>
     @endif
 
-    <!-- User right login -->
-    @if (session('Right-login'))
-        <div class="alert alert-warning">{{ session('Right-login') }}</div>
-    @endif
-
-    <!-- register-success -->
-    @if (session('register-success'))
-        <div class="alert alert-success">{{ session('register-success') }}</div>
-    @endif
 
     <!-- update password success -->
     @if (session('update-success'))
@@ -53,13 +79,14 @@
             @csrf
             <!-- Email input -->
             <div data-mdb-input-init class="form-outline mb-4">
-                <input type="email" id="login-email" name="email" class="form-control" required />
+                <!-- có thể thay text thành email để không cần phải check email đúng định dạng -->
+                <input type="text" id="login-email" name="email" class="form-control" />
                 <label class="form-label" for="login-email">Email address</label>
             </div>
 
             <!-- Password input -->
             <div data-mdb-input-init class="form-outline mb-4">
-                <input type="password" name="password" id="login-pw" class="form-control" required />
+                <input type="password" name="password" id="login-pw" class="form-control" />
                 <label class="form-label" for="login-pw">Password</label>
             </div>
 

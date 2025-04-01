@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class bills extends Model
+class bill extends Model
 {
     //
     protected $primaryKey = 'bill_id'; // Khai báo khóa chính mới
@@ -26,7 +26,7 @@ class bills extends Model
     // Relationship với Cart
     public function cart()
     {
-        return $this->belongsTo(Carts::class, 'cart_id', 'cart_id');
+        return $this->belongsTo(Cart::class, 'cart_id', 'cart_id');
     }
 
     // Relationship với Payment Method
@@ -37,6 +37,6 @@ class bills extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Products::class, 'bill_product', 'bill_id', 'product_id');
+        return $this->belongsToMany(Product::class, 'bill_product', 'bill_id', 'product_id');
     }
 }

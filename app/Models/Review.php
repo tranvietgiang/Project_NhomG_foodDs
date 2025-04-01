@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Reviews extends Model
+class Review extends Model
 {
     //
 
@@ -28,7 +28,7 @@ class Reviews extends Model
      * */
     public function products(): belongsTo
     {
-        return $this->belongsTo(Products::class, 'product_id', 'product_id');
+        return $this->belongsTo(Product::class, 'product_id', 'product_id');
     }
 
     public function users(): belongsTo

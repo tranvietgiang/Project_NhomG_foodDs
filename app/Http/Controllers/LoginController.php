@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Http\Middleware\checkLogin;
 use App\Http\Middleware\LastActivity;
 use App\Mail\OTPMail;
@@ -34,34 +35,37 @@ class LoginController extends Controller
         return view("login.$page");
     }
 
-    public function wayOTP($page)
-    {
-        $checkWay = ['form-otp', 'otpForgot'];
-
-        if (!in_array($page, $checkWay)) {
-            abort(404);
-        }
-
-        return view($page);
-    }
-
 
     /**
-     * login
+     * login : kiểm tra user có đăng nhập chưa
      */
     public function login(Request $req)
     {
 
-        $req->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:4',
-        ]);
+        if (empty($req->email) || empty($req->password)) {
+            return  redirect()->back()->with('email-password-empty', 'Vui lòng nhập đầy đủ email or password');
+        }
 
+        // Kiểm tra email hợp lệ trước khi truy vấn database
+        if (!filter_var($req->email, FILTER_VALIDATE_EMAIL)) {
+            return redirect()->back()->with('invalid-email', 'Email không hợp lệ, vui lòng nhập lại.');
+        }
+
+        // Kiểm tra mật khẩu phải có ít nhất 5 ký tự
+        if (strlen($req->password) < 4) {
+            return redirect()->back()->with('short-password', 'Mật khẩu phải có ít nhất 4 ký tự.');
+        }
+
+        $req->validate([
+            'email' => 'required|email', // yêu cầu phải là email
+            'password' => 'required|min:4', // yêu cầu password tối hiểu 4 ký tự
+        ]);
 
         /** email have exists in database */
         if (!User::where('email', $req->email)->exists()) {
-            return  redirect()->back()->with('email-not-exists', 'This email has not been registered for an account');
+            return  redirect()->back()->with('email-not-exists', 'Email này chưa được đăng ký vào tài khoản');
         }
+
 
         if (Auth::attempt($req->only('email', 'password'))) {
             $user = Auth::user();
@@ -84,7 +88,7 @@ class LoginController extends Controller
             }
         }
 
-        return redirect()->back()->with('login-failed', 'Invalid email or password');
+        return redirect()->back()->with('login-failed', 'email hoặc mật khẩu sai');
     }
 
     /**
@@ -106,9 +110,10 @@ class LoginController extends Controller
     public function checkLogin()
     {
         if (!Auth::check()) {
-            return redirect()->route('wayLogin', ['page' => 'login']);
+            abort(redirect()->route('wayLogin', ['page' => 'login']));
         }
     }
+
 
     /**
      * show the form
@@ -117,11 +122,11 @@ class LoginController extends Controller
     {
         // Gọi hàm checkLogin() với `return` để xử lý redirect
         if ($redirect = $this->checkLogin()) {
-            return $redirect;
+            return $redirect; // chạy không đúng sửa sau
         }
 
-        // layout main website
-        return view('layout.index');
+        $content_data = Product::orderByDesc('created_at')->paginate(5);
+        return view('layout.index', compact('content_data'));
     }
 
 
@@ -150,11 +155,14 @@ class LoginController extends Controller
     {
         // laravel sẽ tự động kiểm tra xem có trường nào ko đúng request sẽ gửi thông báo error
         $req->validate([
+            'username' => 'required|max:50',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:4|confirmed'
         ], [
+            'username.max' => 'Username không được vượt quá 50 ký tự.',
             'email.unique' => 'Email đã tồn tại, vui lòng sử dụng email khác!',
-            'password.confirmed' => 'password do match.'
+            'password.min' => 'Trường mật khẩu phải có ít nhất 4 ký tự.',
+            'password.confirmed' => 'Mật khẩu không trùng nhau' //dùng confirmed khi có một field xác nhận tương ứng, ví dụ
         ]);
 
 
@@ -180,7 +188,7 @@ class LoginController extends Controller
             return back()->with('email_send_error', 'Gửi OTP thất bại. Vui lòng thử lại sau.');
         }
 
-        return redirect()->route('otp.form')->with('success_register', 'Register success, please login');
+        return redirect()->route('otp.form')->with('success_register', 'Đăng ký tài khoản thành công, vui lòng đăng nhập');
     }
 
 
@@ -271,7 +279,17 @@ class LoginController extends Controller
         $pw_c = $req->input('password_confirmed');
 
         if ($pw !== $pw_c) {
-            return redirect()->back()->with('update-failed', 'Password do not match!');
+            return redirect()->back()->with('password-do-not-match', 'password không trùng nhau!');
+        }
+
+        if (strlen($pw) < 4) {
+            return redirect()->back()->with('weak-password', 'ký tự password lớn hơn 4!');
+        }
+
+        /** lấy password cũ so sách với password new bằng hàm hash::check */
+        $pw_old = User::where('email', $email)->first();
+        if (Hash::check($pw, $pw_old->password)) {
+            return redirect()->back()->with('pw-pw_old-match', 'Mật khẩu mới không được trùng với mật khẩu cũ!');
         }
 
         $login = User::where('email', $email)->first();
@@ -280,7 +298,7 @@ class LoginController extends Controller
             $login->save();
         }
 
-        return redirect()->route('wayLogin', ['page => login'])->with('update_pw_success', 'Update password success');
+        return redirect()->route('wayLogin', ['page' => 'login'])->with('update_pw_success', 'Update password success');
     }
 
 

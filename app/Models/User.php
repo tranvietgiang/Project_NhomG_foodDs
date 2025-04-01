@@ -70,11 +70,11 @@ class User extends Authenticatable
 
     public function reviews(): HasMany
     {
-        return $this->hasMany(Reviews::class, 'user_id');
+        return $this->hasMany(Review::class, 'user_id');
     }
 
     public function carts(): HasMany
     {
-        return $this->hasMany(Carts::class, 'user_id');
+        return $this->hasMany(Cart::class, 'user_id');
     }
 }

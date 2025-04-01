@@ -1,7 +1,7 @@
 <!-- import library MDBootstrap_CSS -->
 <link rel="stylesheet" href="{{ asset('component/css/mdb.min.css') }}">
 {{-- <link rel="icon" href=""> --}}
-<section class="mt-5">
+<section class="mt-5 text-center">
     <div>
         <h1 class="display-6 text-center">Update Password</h1>
     </div>
@@ -9,7 +9,21 @@
     @if (session('success-otp-email-forgo'))
         <div class="alert alert-success">{{ session('success-otp-email-forgot') }}</div>
     @endif
-    <!-- check password do not match -->
+
+    <!-- password yếu -->
+    @if (session('weak-password'))
+        <div class="alert alert-warning">{{ session('weak-password') }}</div>
+    @endif
+
+    <!-- password không trùng nhau -->
+    @if (session('password-do-not-match'))
+        <div class="alert alert-warning">{{ session('password-do-not-match') }}</div>
+    @endif
+
+    <!-- password không trùng nhau -->
+    @if (session('pw-pw_old-match'))
+        <div class="alert alert-warning">{{ session('pw-pw_old-match') }}</div>
+    @endif
     <div>
         <form class="container w-25 mt-5" action="{{ route('update_pw') }}" method="post">
             @csrf
@@ -22,13 +36,13 @@
 
             <!-- Password input -->
             <div data-mdb-input-init class="form-outline mb-4">
-                <input type="password" name="password" id="login-pw" class="form-control" />
+                <input type="password" name="password" id="login-pw" class="form-control" required />
                 <label class="form-label" for="login-pw">Password</label>
             </div>
 
             <!-- Password Confirm input  -->
             <div data-mdb-input-init class="form-outline mb-4">
-                <input type="password" name="password_confirmed" id="login-pwc" class="form-control" />
+                <input type="password" name="password_confirmed" id="login-pwc" class="form-control" required />
                 <label class="form-label" for="login-pwc">Password</label>
             </div>
 

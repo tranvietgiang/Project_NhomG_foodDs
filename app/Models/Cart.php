@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Carts extends Model
+class Cart extends Model
 {
     //
     protected $primaryKey = 'cart_id'; // Khai báo khóa chính mới
@@ -22,7 +22,7 @@ class Carts extends Model
 
     public function products(): BelongsTo
     {
-        return $this->belongsTo(Products::class, 'product_id', 'product_id');
+        return $this->belongsTo(Product::class, 'product_id', 'product_id');
     }
 
     public function users(): BelongsTo

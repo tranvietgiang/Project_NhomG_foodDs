@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Illuminate\Database\Eloquent\Relations\hasMany;
 
-class Categories extends Model
+class Categorie extends Model
 {
+    use HasFactory;
     //
     protected $primaryKey = 'categories_id'; // Khai báo khóa chính mới
     public $incrementing = true;         // ID tự tăng
@@ -17,8 +20,8 @@ class Categories extends Model
     ];
 
 
-    public function products(): hasMany
+    public function products()
     {
-        return $this->hasMany(Products::class, 'categories_id', 'categories_id');
+        return $this->hasMany(Product::class, 'categories_id', 'categories_id');
     }
 }

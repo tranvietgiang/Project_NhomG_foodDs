@@ -26,6 +26,7 @@
              padding: 0;
              overflow-x: hidden;
              font-family: 'Roboto', sans-serif;
+             background: #eeeeee !important;
          }
 
          li {

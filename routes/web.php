@@ -9,10 +9,12 @@ use App\Http\Middleware\LastActivity;
 
 
 
+
 /**
  * tên domain default website
  */
 Route::get('/food_ds.com', [LoginController::class, 'showIndex'])->name('website-main');
+
 
 
 
@@ -69,3 +71,5 @@ Route::get('/showVnPay', [AdminController::class, 'showVnPayCheckout'])->name('s
 
 // /** result success or failed */
 Route::get('/vnpay_return', [AdminController::class, 'vnpay_return'])->name('vnpay.return');
+
+// Route::get('/food_ds.com', [AdminController::class, 'show_information'])->name('show_information');
