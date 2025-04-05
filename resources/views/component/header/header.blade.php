@@ -35,7 +35,8 @@
                     </li>
 
                     <li>
-                        <a class="d-flex justify-content-center align-items-center" href="#">
+                        <a class="d-flex justify-content-center align-items-center"
+                            href="{{ url('/information-client') }}">
                             <span class="material-symbols-outlined">account_circle</span><span class="px-2">Đăng
                                 nhập</span>
                         </a>

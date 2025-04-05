@@ -3,8 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\Client;
+use App\Models\daymonthyear;
+use App\Models\district;
 use App\Models\Product;
+use App\Models\province;
 use App\Models\User;
+use App\Models\ward;
+use App\Models\year;
 use Illuminate\Contracts\session\session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -172,11 +178,62 @@ class AdminController extends Controller
     }
 
 
-    /** show data content-product */
+    /** khách hàng cập nhật thông tin đầy đủ */
+    public function update_client(Request $req)
+    {
+        $req->validate([
+            'client_name' => 'required|max:50',
+            'client_phone' => 'required|regex:/^[0-9]{10,11}$/'
+        ], [
+            'client_name.max' => 'Ký tự không vượt quá 50!',
+            'client_phone.regex' => 'Số điện thoại phải gồm 10 hoặc 11 chữ số!',
+        ]);
 
-    //     public function content_product()
-    //     {
-    //         $content_data = Product::orderByDesc('created_at')->paginate(5);
-    //         return view('component.content.content', compact('content_data'));
-    //     }
+
+
+
+        $user = Auth::user();
+        $client = Client::where('user_id', $user->id)->first();
+
+        if ($client) {
+
+            // lấy giá trị các model
+            $province = Province::where('province_id', $req->client_province)->first();
+            $district = District::where('district_id', $req->client_district)->first();
+            $ward = Ward::where('wards_id', $req->client_wards)->first();
+
+            $year = year::find($req->client_year);  // Giả sử Year là bảng chứa thông tin năm
+
+
+            $client->client_name = $req->client_name;
+            $client->client_phone = $req->client_phone;
+            $client->client_address = $province->name . ', ' . $district->name . ', ' . $ward->name;
+
+            if (empty($req->client_address_tail)) {
+                $client->client_address_detail = "";
+            } else {
+                $client->client_address_detail = $req->client_address_detail;
+            }
+
+            $client->client_gender = $req->client_gender;
+            $client->dat_of_birth = $req->client_day . '/0' . $req->client_month . '/' . $year->year;
+
+            /** show address của khách hàng */
+            session()->put('client_province', $province->name);
+            session()->put('client_district', $district->name);
+            session()->put('client_wards', $ward->name);
+
+            /** show day of birth */
+            session()->put('client_day', $req->client_day);
+            session()->put('client_month', $req->client_month);
+            session()->put('client_year', $year->year);
+
+            /** phone */
+            session()->put('client_phone', $req->client_phone);
+
+            $client->save();
+        }
+
+        return redirect()->back()->with('update_client_success', 'bạn dã cập nhật thông tin thành công');
+    }
 }

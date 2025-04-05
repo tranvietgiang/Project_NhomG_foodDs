@@ -6,8 +6,15 @@ use App\Models\Product;
 use App\Http\Middleware\checkLogin;
 use App\Http\Middleware\LastActivity;
 use App\Mail\OTPMail;
+use App\Models\Client;
+use App\Models\day;
+use App\Models\district;
 use App\Models\login;
+use App\Models\month;
+use App\Models\province;
 use App\Models\User;
+use App\Models\ward;
+use App\Models\year;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
@@ -67,6 +74,10 @@ class LoginController extends Controller
         }
 
 
+        /**
+         * Auth::attempt(): Laravel sẽ kiểm tra xem email và mật khẩu có đúng không.
+         * $req->only('email', 'password'): Chỉ lấy 2 giá trị từ request.
+         */
         if (Auth::attempt($req->only('email', 'password'))) {
             $user = Auth::user();
 
@@ -82,8 +93,8 @@ class LoginController extends Controller
                 session()->put('role_employees', $user->name);
                 return redirect()->route('employees');
             } else {
-
                 session()->put('role_client', $user->name);
+                session()->put('role_client_email', $user->email);
                 return redirect()->route('website-main');
             }
         }
@@ -125,7 +136,8 @@ class LoginController extends Controller
             return $redirect; // chạy không đúng sửa sau
         }
 
-        $content_data = Product::orderByDesc('created_at')->paginate(5);
+        /** ít bửa sửa lại thành desc! */
+        $content_data = Product::orderBy('created_at', 'ASC')->paginate(5);
         return view('layout.index', compact('content_data'));
     }
 
@@ -165,6 +177,24 @@ class LoginController extends Controller
             'password.confirmed' => 'Mật khẩu không trùng nhau' //dùng confirmed khi có một field xác nhận tương ứng, ví dụ
         ]);
 
+        /**
+         * 📌 Giải thích từng phần:
+         * 
+         * required: Trường bắt buộc (không được bỏ trống).
+
+         * max:50: Giới hạn tối đa 50 ký tự.
+
+         * email: Phải là email hợp lệ.
+
+         * unique:users,email	Kiểm tra email có tồn tại trong bảng users chưa. Nếu có rồi, nó báo lỗi. Dùng để kiểm tra trùng lặp khi đăng ký.
+         
+         * exists:users,email	Kiểm tra email có tồn tại trong bảng users không. Nếu không có, nó báo lỗi. Dùng để kiểm tra khi đăng nhập hoặc khôi phục mật khẩu.
+         
+         * min:4: Mật khẩu phải có ít nhất 4 ký tự.
+
+         * confirmed: Laravel sẽ kiểm tra xem có password_confirmation không, nếu không có hoặc không khớp, sẽ báo lỗi.
+         */
+
 
         $email = $req->input('email');
         Session::put('otp_page', 'register'); // Lưu trạng thái là 'register'
@@ -188,7 +218,7 @@ class LoginController extends Controller
             return back()->with('email_send_error', 'Gửi OTP thất bại. Vui lòng thử lại sau.');
         }
 
-        return redirect()->route('otp.form')->with('success_register', 'Đăng ký tài khoản thành công, vui lòng đăng nhập');
+        return redirect()->route('otp.form');
     }
 
 
@@ -228,7 +258,7 @@ class LoginController extends Controller
     public function forgot(Request $req)
     {
 
-        $email = $req->input('email');
+        $email = $req->input('email'); // có thể dùng validate 'email' => 'required|email|exists:users,email',
 
 
         if (!User::where('email', $email)->first()) {
@@ -302,7 +332,7 @@ class LoginController extends Controller
     }
 
 
-    // Xác minh OTP rồi create account
+    // Xác minh OTP yêu cầu từ hàm(Register) rồi xuống đây mới create account
     public function verifyOtp(Request $request)
     {
         $request->validate([
@@ -311,6 +341,11 @@ class LoginController extends Controller
         ]);
 
 
+        /** nếu người dùng để chờ nhập otp quá
+         * Nếu người dùng rời khỏi trang hoặc đóng trình duyệt, session có thể hết hạn, lúc này Laravel báo lỗi "Phiên làm việc đã hết hạn".
+         * bạn có thể thiết lập session timeout trong config/session.php:
+         * 'lifetime' => 120, // Số phút trước khi session hết hạn
+         */
         if (!Session::has('user_account_otp')) {
             return redirect()->route('wayLogin', ['page' => 'login'])
                 ->with('error', 'Phiên làm việc đã hết hạn, vui lòng đăng ký lại.');
@@ -328,12 +363,44 @@ class LoginController extends Controller
                 'password' => $userData['password'],
                 'email_verified_at' => now()
             ]);
+
+            /** khi mà đăng ký thì client sẽ được information client */
+            Client::create([
+                'user_id' => $user->id,
+                'client_name' => $userData['name']
+            ]);
+
             Auth::login($user);
             Session::forget(['otp', 'email', 'user_account_otp']); // Xóa session sau khi thành công
-            return redirect()->route('wayLogin', ['page' => 'login'])->with('success', 'Đăng ký và xác thực thành công!');
+            return redirect()->route('wayLogin', ['page' => 'login'])->with('success_register', 'Đăng ký tài khoản thành công, vui lòng đăng nhập');
         }
 
 
         return back()->with('email_verifyOtp_failed', 'Mã OTP không chính xác, vui lòng thử lại.');
+    }
+
+    /** học json */
+    public function getDistricts(Request $request)
+    {
+        $districts = district::where('province_id', $request->province_id)->get();
+        return response()->json($districts);
+    }
+
+    public function getWards(Request $request)
+    {
+        $wards = ward::where('district_id', $request->district_id)->get();
+        return response()->json($wards);
+    }
+
+    /** show form information client */
+    public function show_information(Request $req)
+    {
+
+        $day = Day::orderBy('day', 'ASC')->get();
+        $year = Year::orderBy('year', 'ASC')->get();
+
+        $provinces = province::orderBy('province_id', 'ASC')->get();
+
+        return view('component.header.admin.client.information', compact('day', 'year', 'provinces'));
     }
 }

@@ -17,9 +17,14 @@ class checkLogin
     {
         // Kiểm tra nếu chưa đăng nhập và đường dẫn hiện tại không phải là trang đăng nhập
         // chưa sử dụng
+
         if (!Auth::check()) {
             return redirect()->route('wayLogin', ['page' => 'login']);
         }
+
+
+
+        // dd(Auth::check());
 
         return $next($request);
     }

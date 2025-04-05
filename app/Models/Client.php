@@ -19,6 +19,7 @@ class Client extends Model
         'client_address',
         'client_gender',
         'client_address_detail',
+        'dat_of_birth'
     ];
 
 

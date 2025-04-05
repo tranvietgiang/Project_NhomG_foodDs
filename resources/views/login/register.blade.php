@@ -7,9 +7,10 @@
     </div>
 
     <!-- show error -->
-    @if ($errors->any())
+    @if ($errors->any()) <!-- Kiểm tra nếu có lỗi validation nào không -->
         <div class="alert alert-danger">
-            <ul>
+            <ul style="list-style: none;">
+                <!-- Lấy tất cả lỗi validation hiện tại -->
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach

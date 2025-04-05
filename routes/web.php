@@ -6,14 +6,14 @@ use App\Http\Middleware\checkLogin;
 use App\Models\login;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\LastActivity;
-
-
-
+use App\Models\district;
+use App\Models\ward;
+use Illuminate\Http\Request;
 
 /**
  * tên domain default website
  */
-Route::get('/food_ds.com', [LoginController::class, 'showIndex'])->name('website-main');
+Route::get('/food_ds.com', [LoginController::class, 'showIndex'])->middleware(checkLogin::class)->name('website-main');
 
 
 
@@ -69,7 +69,14 @@ Route::post('/vnpay_payment', [AdminController::class, 'vnpay_payment'])->name('
 /** show form */
 Route::get('/showVnPay', [AdminController::class, 'showVnPayCheckout'])->name('showVnPayCheckout');
 
-// /** result success or failed */
+/* result success or failed */
 Route::get('/vnpay_return', [AdminController::class, 'vnpay_return'])->name('vnpay.return');
 
-// Route::get('/food_ds.com', [AdminController::class, 'show_information'])->name('show_information');
+/** show form information client */
+Route::get('/information-client', [LoginController::class, 'show_information'])->middleware(checkLogin::class);
+
+/** show ra địa chỉ vn */
+Route::post('/get-districts', [LoginController::class, 'getDistricts']);
+Route::post('/get-wards', [LoginController::class, 'getWards']);
+
+Route::post('/update-client', [AdminController::class, 'update_client'])->name('update_client');

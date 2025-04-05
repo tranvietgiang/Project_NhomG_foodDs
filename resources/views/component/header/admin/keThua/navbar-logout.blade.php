@@ -46,7 +46,7 @@
             </div>
         </div>
 
-        <!--  -->
+        <!-- logout  -->
         <div class="d-flex justify-content-center align-items-center position-relative">
             <!-- check user login yet? -->
             @if (Auth::check())
