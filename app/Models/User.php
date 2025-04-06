@@ -30,6 +30,8 @@ class User extends Authenticatable
         'role',
         'phone', // Thêm phone vào fillable vì nó có trong bảng users
         'last_activity',
+        'provider',
+        'provider_id',
     ];
 
     /**

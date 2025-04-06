@@ -381,6 +381,7 @@
                             <div class="col">
                                 <select id="year" name="client_year" class="form-control" required>
                                     <option value="" disabled selected>
+                                        <!-- cần sửa lại mỗi lần mà session hết thời gian thì nó sẽ ko coàn hiện nx -->
                                         @if (session('client_year'))
                                             {{ session('client_year') }}
                                         @else

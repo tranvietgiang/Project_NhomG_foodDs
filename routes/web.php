@@ -80,3 +80,9 @@ Route::post('/get-districts', [LoginController::class, 'getDistricts']);
 Route::post('/get-wards', [LoginController::class, 'getWards']);
 
 Route::post('/update-client', [AdminController::class, 'update_client'])->name('update_client');
+
+
+
+/** login vs google */
+Route::get('/auth/google', [LoginController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [LoginController::class, 'handleGoogleCallback']);

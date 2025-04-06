@@ -41,6 +41,13 @@
         </div>
     @endif
 
+    <!-- google-error-->
+    @if (session('google-error'))
+        <div class="alert alert-warning">
+            {{ session('google-error') }}
+        </div>
+    @endif
+
     <!-- register success -->
     @if (session('success_register'))
         <div class="alert alert-success">
@@ -109,6 +116,10 @@
             <!-- Submit button -->
             <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block mb-4">Sign
                 in</button>
+
+            <!-- Nút đăng nhập bằng Google -->
+            <a href="{{ route('auth.google') }}" class="google-btn">Login with Google</a>
+
             <!-- Register buttons -->
             <div class="text-center">
                 <p>Not a member? <a href="{{ route('wayLogin', ['page' => 'register']) }}">Register</a></p>
