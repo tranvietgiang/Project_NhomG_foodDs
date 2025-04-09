@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="{{ asset('component/css/mdb.min.css') }}">
 <style>
     * {
-        overflow: hidden;
+        overflow-x: hidden;
         margin: 0;
         padding: 0;
     }
@@ -117,7 +117,8 @@
 
                 @foreach ($list_employees as $item)
                     <tr>
-                        <td>{{ $loop->iteration + $list_employees->firstItem() - 1 }}</td>
+                        <td>{{ ($list_employees->currentPage() - 1) * $list_employees->perPage() + $loop->iteration }}
+                        </td>
                         <td>{{ $item->name }}</td>
                         <td>{{ $item->email }}</td>
                         <td>{{ $item->phone }}</td>
@@ -145,8 +146,22 @@
                 @endforeach
             </tbody>
         </table>
-        <!-- Thêm link phân trang -->
-        <div class="pagination">
-            {{ $list_employees->links() }}
-        </div>
+        <p>
+            {{ $list_employees->links('pagination::bootstrap-4') }}
+        </p>
+
+        <!-- cách 2 hơi xấu -->
+        {{-- <div>
+            @if ($list_employees->onFirstPage())
+                <span>Previous</span>
+            @else
+                <a href="{{ $list_employees->previousPageUrl() }}">Previous</a>
+            @endif
+
+            @if ($list_employees->hasMorePages())
+                <a href="{{ $list_employees->nextPageUrl() }}">Next</a>
+            @else
+                <span>Next</span>
+            @endif
+        </div> --}}
 </section>

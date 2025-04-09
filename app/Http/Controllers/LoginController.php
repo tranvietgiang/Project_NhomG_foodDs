@@ -134,10 +134,10 @@ class LoginController extends Controller
      */
     public function showIndex()
     {
-        // Gọi hàm checkLogin() với `return` để xử lý redirect
-        if ($redirect = $this->checkLogin()) {
-            return $redirect; // chạy không đúng sửa sau
-        }
+        //  Gọi hàm checkLogin() với `return` để xử lý redirect
+        // if ($redirect = $this->checkLogin()) {
+        //     return $redirect; 
+        // }
 
         /** ít bửa sửa lại thành desc! */
         $content_data = Product::orderBy('created_at', 'ASC')->paginate(5);
@@ -442,6 +442,9 @@ class LoginController extends Controller
                     'provider' => 'google',
                     'provider_id' => $googleUser->getId(),
                 ]);
+
+
+
                 Auth::login($newUser);
                 return redirect()->route('website-main');
             }

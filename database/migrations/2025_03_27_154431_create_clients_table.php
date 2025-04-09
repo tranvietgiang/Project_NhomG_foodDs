@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('clients', function (Blueprint $table) {
             $table->id('client_id');
             $table->foreignId('user_id')->constrained()->onDelete('cascade')->unique();
-            $table->string('client_name', 50)->index(); //index() giúp tăng tốc độ truy vấn trên các cột mà bạn thường xuyên tìm kiếm, sắp xếp hoặc lọc dữ liệu.
+            $table->string('client_name', 50);
             $table->string('client_phone', 15)->unique()->nullable();
             $table->string('client_address')->nullable();
             $table->enum('client_gender', ['Nam', 'Nu'])->nullable();

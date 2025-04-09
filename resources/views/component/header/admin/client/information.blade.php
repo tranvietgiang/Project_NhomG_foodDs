@@ -101,6 +101,43 @@
         color: orange;
     }
 
+    section.footer {
+        margin-top: 30px;
+        background: #eeeeee;
+        padding: 20px 0;
+        position: relative;
+    }
+
+    section.footer::after{
+        position: absolute;
+        content: '';
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 50px;
+        background: #218838;
+    }
+
+    .footer-section h5 {
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+
+    .footer-section p {
+        font-size: 14px;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .footer-section span {
+        font-size: 13px;
+        color: #555;
+        text-align: center;
+        display: block;
+        margin-top: 5px;
+    }
+    .social-icons i{
+                color: #007bff}
 
     /* phần code css của page============================================================================ */
 
@@ -145,6 +182,51 @@
     .btn-success:hover {
         background-color: #218838;
     }
+
+
+      /* Ảnh gốc nhỏ */
+  .thumbnail {
+    width: 200px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .thumbnail:hover {
+    opacity: 0.8;
+  }
+
+  /* Overlay nền mờ */
+  .lightbox {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Ảnh phóng to */
+  .lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  }
+
+  /* Nút đóng */
+  .lightbox::after {
+    content: "✖";
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 32px;
+    cursor: pointer;
+  }
 </style>
 
 
@@ -178,14 +260,24 @@
                 </li>
 
                 <li>
-                    <a class="d-flex justify-content-center align-items-center" href="{{ url('/information-client') }}">
-                        <span class="material-symbols-outlined">account_circle</span><span class="px-2">Đăng
-                            nhập</span>
-                    </a>
+                    @if (!Auth::check())
+                        <a class="d-flex justify-content-center align-items-center"
+                            href="{{ url('/information-client') }}">
+                            <span class="material-symbols-outlined">account_circle</span><span class="px-2">Đăng
+                                nhập</span>
+                        </a>
+                    @else
+                        <a href="{{ url('/information-client') }}"><span style="font-size: 3em;"
+                                class="material-symbols-outlined">account_circle</span></a>
+                    @endif
                 </li>
 
                 <li>
-                    <a href="#"><span>Đăng ký</span></a>
+                    @if (!Auth::check())
+                        <a href="{{ route('wayLogin', ['page' => 'register']) }}"><span>Đăng ký</span></a>
+                    @else
+                        <a href="#"><span>{{ Auth::user()->name }}</span></a>
+                    @endif
                 </li>
 
                 <li>
@@ -210,8 +302,25 @@
                 <!-- Barre latérale -->
                 <div class="col-md-3">
                     <div class="sidebar">
-                        <h5>Tài khoản</h5>
-                        <p><strong>{{ session('role_client') }}</strong><br>{{ session('role_client_email') }}</p>
+                        <h5 class="btn btn-success">Tài khoản</h5>
+                        <p>
+                            <img style="width: 100%; height: 100%; object-fit: cover; border: 5px solid green" 
+                            src="{{asset('component/header/img/img-animation-3.jpg')}}" alt=""
+                            class="thumbnail"
+                            onclick="showLightbox(this.src)">
+
+                            <input class="d-none" id="avatar-client" type="file" name="avatar-client">
+                            <label style='margin:-22px 0 0 10px; cursor: pointer;' for="avatar-client">
+                                <i style="display: inline-block; position: absolute; font-size: 18px"
+                                    class="fas fa-camera"></i>
+                            </label>
+
+                            <!-- phần click vào to ảnh -->
+<div class="lightbox" id="lightbox" onclick="hideLightbox()">
+    <img id="lightbox-img" />
+  </div>
+                        </p>
+                        <p><strong>{{ Auth::user()->name }}</strong><br>{{Auth::user()->email }}</p>
                         <a href="#">Số dư </a>
                         <a href="#">Đơn hàng </a>
                         <a href="#">My Farm</a>
@@ -225,7 +334,7 @@
                             @if (Auth::check())
                                 <form style="z-index: 1" class="" action="{{ route('logout') }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="btn btn-link text-black">Đăng xuất</button>
+                                    <button type="submit" style="border: 1px solid green" class="btn btn-link text-black">Đăng xuất</button>
                                 </form>
                             @endif
                         </div>
@@ -234,7 +343,6 @@
                 </div>
                 <!-- Formulaire -->
                 <div class="col-md-9">
-
                     <!-- show error phải dùng validate -->
                     @if ($errors->any())
                         <!-- Kiểm tra nếu có lỗi validation nào không -->
@@ -252,25 +360,32 @@
                     @if (session('update_client_success'))
                         <div class="alert alert-success">{{ session('update_client_success') }}</div>
                     @endif
-                    <h5 class="fw-bold">Thông tin tài khoản</h5>
+
+                    <!-- client_phone_unique -->
+                    @if (session('client_phone_unique'))
+                        <div class="alert alert-warning">{{ session('client_phone_unique') }}</div>
+                    @endif
+                    <h5 class="fw-bold btn btn-success">Thông tin tài khoản</h5>
                     <form action="{{ route('update_client') }}" method="POST">
                         @csrf
                         <!-- 2 column grid layout with text inputs for the first and last names -->
                         <div data-mdb-input-init class="form-outline mb-4">
                             <input type="text" id="form6Example2" name="client_name"
-                                value="{{ session('role_client') }}" class="form-control" required />
+                                value="{{ Auth::user()->name }}" class="form-control" required />
                             <label class="form-label" for="form6Example2"> name</label>
                         </div>
+
+
+                        <!-- lấy dữ liệu thông tin show ra nếu có -->
+                        @php
+                            $addressParts = explode(',', optional(Auth::user()->client)->client_address);
+                        @endphp
 
                         <!-- Thành phố (City) -->
                         <div class="form-group mb-4">
                             <select id="province" name="client_province" class="form-control" required>
-                                <option value="" disabled selected>
-                                    @if (session('client_province'))
-                                        {{ session('client_province') }}
-                                    @else
-                                        Thành phố
-                                    @endif
+                                <option style="color: #000" value="" disabled selected>
+                                    {{ !empty(trim($addressParts[0])) ? $addressParts[0] : 'Thành Phố' }}
                                 </option>
                                 @foreach ($provinces as $item)
                                     <option value="{{ $item->province_id }}">
@@ -284,11 +399,7 @@
                         <div class="form-group mb-4">
                             <select id="district" name="client_district" class="form-control" required>
                                 <option value="" disabled selected>
-                                    @if (session('client_district'))
-                                        {{ session('client_district') }}
-                                    @else
-                                        Quận/Huyện
-                                    @endif
+                                    {{ $addressParts[1] ?? 'Quận/Huyện' }}
                                 </option>
                             </select>
                         </div>
@@ -297,19 +408,15 @@
                         <div class="form-group mb-4">
                             <select id="wards" name="client_wards" class="form-control">
                                 <option value="" disabled selected>
-                                    @if (session('client_wards'))
-                                        {{ session('client_wards') }}
-                                    @else
-                                        Phường/Xã
-                                    @endif
+                                    {{ $addressParts[2] ?? ' Phường/Xã' }}
                                 </option>
                             </select>
                         </div>
 
                         <!-- Email input -->
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <input type="email" value="{{ session('role_client_email') }}" id="form6Example5"
-                                class="form-control" required />
+                            <input type="email" value="{{{ Auth::user()->email }}}" id="form6Example5"
+                                class="form-control"readonly/>
                             <label class="form-label" for="form6Example5">Email</label>
                         </div>
 
@@ -317,14 +424,16 @@
                         <div data-mdb-input-init class="form-outline mb-4">
                             <input type="text" id="form6Example6" name="client_phone" class="form-control"
                                 pattern="[0-9]{10}" inputmode="numeric" maxlength="10" required
-                                @if (session('client_phone')) value="  {{ session('client_phone') }}" @endif />
+                                value="{{ optional(Auth::user()->client)->client_phone ?? '' }}" />
                             <label class="form-label" for="form6Example6">Số điện thoại *</label>
                         </div>
 
                         <!-- address detail -->
                         <div data-mdb-input-init class="form-outline mb-4">
                             <input style="height: 100px" name="client_address_detail" type="text"
-                                id="form6Example6" value="" class="form-control" />
+                                id="form6Example6"
+                                value="{{ optional(Auth::user()->client)->client_address_detail ?? '' }}"
+                                class="form-control" />
                             <label class="form-label" for="form6Example6">Address detail(không bắt buộc) *</label>
                         </div>
 
@@ -334,31 +443,29 @@
                             <label class="form-label">Giới tính</label><br>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="client_gender" id="male"
-                                    value="Nam" />
+                                    value="Nam"
+                                    {{ optional(Auth::user()->client)->client_gender === 'Nam' ? 'checked' : '' }}  checked/>
                                 <label class="form-check-label" for="male">Nam</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="client_gender" id="female"
-                                    value="Nữ" />
+                                    value="Nữ"
+                                    {{ optional(Auth::user()->client)->client_gender === 'Nu' ? 'checked' : '' }} />
                                 <label class="form-check-label" for="female">Nữ</label>
                             </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="client_gender" id="other"
-                                    value="Khác" checked />
-                                <label class="form-check-label" for="other">Khác</label>
-                            </div>
                         </div>
+
+                        <!-- lấy dữ liệu thông tin show ra nếu có -->
+                        @php
+                            $dat_of_birth = explode('/', optional(Auth::user()->client)->dat_of_birth);
+                        @endphp
 
                         <!-- Sinh nhật (Birthday) -->
                         <div class="row mb-4">
                             <div class="col">
                                 <select name="client_day" id="daySelect" class="form-control" required>
                                     <option value="" disabled selected>
-                                        @if (session('client_day'))
-                                            {{ session('client_day') }}
-                                        @else
-                                            Ngày
-                                        @endif
+                                        {{ !empty($dat_of_birth[0]) ? $dat_of_birth[0] : 'ngày' }}
                                     </option>
                                     @foreach ($day as $item)
                                         <option value="{{ $item->day }}">{{ $item->day }}</option>
@@ -369,11 +476,7 @@
                             <div class="col">
                                 <select id="monthSelect" name="client_month" class="form-control" required>
                                     <option value="" disabled selected>
-                                        @if (session('client_month'))
-                                            {{ session('client_month') }}
-                                        @else
-                                            Tháng
-                                        @endif
+                                        {{ $dat_of_birth[1] ?? 'Month' }}
                                     </option>
                                 </select>
                             </div>
@@ -382,11 +485,7 @@
                                 <select id="year" name="client_year" class="form-control" required>
                                     <option value="" disabled selected>
                                         <!-- cần sửa lại mỗi lần mà session hết thời gian thì nó sẽ ko coàn hiện nx -->
-                                        @if (session('client_year'))
-                                            {{ session('client_year') }}
-                                        @else
-                                            Năm
-                                        @endif
+                                        {{ $dat_of_birth[2] ?? 'Year' }}
                                     </option>
                                     @foreach ($year as $item)
                                         <option value="{{ $item->id }}">{{ $item->year }}</option>
@@ -491,4 +590,47 @@
             }
         });
     });
+
+
+    //phần click vào to ảnh
+    function showLightbox(src) {
+    document.getElementById("lightbox-img").src = src;
+    document.getElementById("lightbox").style.display = "flex";
+  }
+
+  function hideLightbox() {
+    document.getElementById("lightbox").style.display = "none";
+  }
 </script>
+<!-- Footer -->
+<section class="footer ">
+   <div class="container">
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <h5>Về chúng tôi</h5>
+            <p>Foodmap là nền tảng kết nối nông dân, nhà sản xuất thực phẩm với người tiêu dùng thông qua các sản phẩm
+                chất lượng và an toàn.</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi, repudiandae!</p>
+        </div>
+        <div class="col-md-4 mb-3">
+            <h5>Liên hệ</h5>
+            <p>Email: contact@foodmap.vn</p>
+            <p>Điện thoại: 0123 456 789</p>
+            <p>Địa chỉ: 123 Đường ABC, TP.HCM</p>
+        </div>
+        <div class="col-md-4 mb-3">
+            <h5>Theo dõi chúng tôi</h5>
+            <div class="social-icons">
+                <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 text-center mt-3">
+            <p class="copyright">&copy; 2025 Foodmap. All rights reserved.</p>
+        </div>
+    </div>
+   </div>
+</section>

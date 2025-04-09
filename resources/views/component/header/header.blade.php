@@ -35,15 +35,24 @@
                     </li>
 
                     <li>
-                        <a class="d-flex justify-content-center align-items-center"
-                            href="{{ url('/information-client') }}">
-                            <span class="material-symbols-outlined">account_circle</span><span class="px-2">Đăng
-                                nhập</span>
-                        </a>
+                        @if (!Auth::check())
+                            <a class="d-flex justify-content-center align-items-center"
+                                href="{{ url('/information-client') }}">
+                                <span class="material-symbols-outlined">account_circle</span><span class="px-2">Đăng
+                                    nhập</span>
+                            </a>
+                        @else
+                            <a href="{{ url('/information-client') }}"><span style="font-size: 3em;"
+                                    class="material-symbols-outlined">account_circle</span></a>
+                        @endif
                     </li>
 
                     <li>
-                        <a href="#"><span>Đăng ký</span></a>
+                        @if (!Auth::check())
+                            <a href="{{ route('wayLogin', ['page' => 'register']) }}"><span>Đăng ký</span></a>
+                        @else
+                            <a href="#"><span>{{ Auth::user()->name }}</span></a>
+                        @endif
                     </li>
 
                     <li>
@@ -191,7 +200,8 @@
 
                 <li>
                     <a href="#">
-                        <img class="img-fluid" src="{{ asset('component/header/img/navbar-2/icon-agri.svg') }}"alt="">
+                        <img class="img-fluid"
+                            src="{{ asset('component/header/img/navbar-2/icon-agri.svg') }}"alt="">
                         <span>Agrishow</span>
                         <i class="fa-solid fa-chevron-down"></i>
                     </a>

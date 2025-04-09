@@ -65,16 +65,19 @@ class User extends Authenticatable
 
 
     /** relationship with table client */
+    /** mỗi user có một thông tin client */
     public function client(): HasOne
     {
         return $this->hasOne(Client::class, 'user_id');
     }
 
+    /** mỗi user có nhiều đánh giá */
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class, 'user_id');
     }
 
+    /** mỗi user có nhiều đơn hàng trong giỏ hàng */
     public function carts(): HasMany
     {
         return $this->hasMany(Cart::class, 'user_id');

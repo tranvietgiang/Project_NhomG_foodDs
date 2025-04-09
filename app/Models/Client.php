@@ -23,6 +23,7 @@ class Client extends Model
     ];
 
 
+    /** mỗi client chỉ thuộc 1 user */
     public function user(): belongsTo
     {
         return $this->belongsTo(User::class, 'user_id');

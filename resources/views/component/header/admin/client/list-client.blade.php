@@ -157,6 +157,9 @@
                     @endforeach
                 </tbody>
             </table>
+            <p>
+                {{ $list_client->links('pagination::bootstrap-4') }}
+            </p>
         </div>
     </section>
 

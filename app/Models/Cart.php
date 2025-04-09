@@ -25,6 +25,7 @@ class Cart extends Model
         return $this->belongsTo(Product::class, 'product_id', 'product_id');
     }
 
+    /** mỗi giỏ hàng chỉ thuộc 1 user */
     public function users(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');

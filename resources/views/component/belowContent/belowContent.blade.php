@@ -69,9 +69,12 @@
 
         <div class="col-9 col-md-9">
             <div class="row">
-                <div>
-                    <span class="btn btn-outline">Left</span>
-                    <span class="">Right</span>
+                <div style="margin: 10px 0;">
+                    <span class="btn btn-success"><a class="text-white" href="#">aaaaaaaaaaaaaa</a></span>
+                    <span class="btn btn-outline-success"><a class="text-white" href="#">aaaaaaaaaaaa</a></span>
+                    <span class="btn btn-outline-success"><a class="text-white" href="#">aaaaaaaaaaaaaa</a></span>
+                    <span class="btn btn-outline-success"><a class="text-white"
+                            href="#">aaaaaaaaaaaaaaa</a></span>
                 </div>
                 @for ($i = 1; $i <= 8; $i++)
                     <div class="col-2 col-md-3 mb-3">

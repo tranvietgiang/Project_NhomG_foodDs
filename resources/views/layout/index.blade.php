@@ -54,6 +54,7 @@
      <!-- belowContent duyHung -->
      <div class="belowContent">
          @include('component.belowContent.belowContent')
+         @include('component.belowContent.content-ca')
      </div>
 
      <!-- Footer dinh -->

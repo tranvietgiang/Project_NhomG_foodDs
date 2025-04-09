@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 /**
  * tên domain default website
  */
-Route::get('/food_ds.com', [LoginController::class, 'showIndex'])->middleware(checkLogin::class)->name('website-main');
+Route::get('/food_ds.com', [LoginController::class, 'showIndex'])->name('website-main');
 
 
 
@@ -49,39 +49,38 @@ Route::prefix('/role/admin')->group(function () {
 
 
 /**email form register */
-Route::get('/form-otp', [LoginController::class, 'showOtpForm'])->name('otp.form');
-Route::post('/send-otp', [LoginController::class, 'sendOtp'])->name('send.otp');
-Route::post('/verify-otp', [LoginController::class, 'verifyOtp'])->name('verify.otp');
+Route::get('/form-otp', [LoginController::class, 'showOtpForm'])->name('otp.form') /*->middleware(checkLogin::class)*/;
+Route::post('/send-otp', [LoginController::class, 'sendOtp'])->name('send.otp')/*->middleware(checkLogin::class)*/;
+Route::post('/verify-otp', [LoginController::class, 'verifyOtp'])->name('verify.otp')/*->middleware(checkLogin::class)*/;
 
 
 /** forgot-email-otp*/
 Route::get('otpForgot', [LoginController::class, 'formOtpForgot'])->name('form.otp');
 // form confirm otp email
-Route::post('/verify-otp-forgot', [LoginController::class, 'verifyOtpForgot'])->name('verifyOTP.otpForgot');
+Route::post('/verify-otp-forgot', [LoginController::class, 'verifyOtpForgot'])->name('verifyOTP.otpForgot')/*->middleware(checkLogin::class)*/;
 
 
 
 
 
 /** checkout toán vnpay */
-Route::post('/vnpay_payment', [AdminController::class, 'vnpay_payment'])->name('vnpay.payment');
+Route::post('/vnpay_payment', [AdminController::class, 'vnpay_payment'])->name('vnpay.payment')/*->middleware(checkLogin::class)*/;
 
 /** show form */
-Route::get('/showVnPay', [AdminController::class, 'showVnPayCheckout'])->name('showVnPayCheckout');
+Route::get('/showVnPay', [AdminController::class, 'showVnPayCheckout'])->name('showVnPayCheckout') /*->middleware(checkLogin::class)*/;
 
 /* result success or failed */
-Route::get('/vnpay_return', [AdminController::class, 'vnpay_return'])->name('vnpay.return');
+Route::get('/vnpay_return', [AdminController::class, 'vnpay_return'])->name('vnpay.return')/*->middleware(checkLogin::class)*/;
 
-/** show form information client */
-Route::get('/information-client', [LoginController::class, 'show_information'])->middleware(checkLogin::class);
 
 /** show ra địa chỉ vn */
 Route::post('/get-districts', [LoginController::class, 'getDistricts']);
 Route::post('/get-wards', [LoginController::class, 'getWards']);
 
-Route::post('/update-client', [AdminController::class, 'update_client'])->name('update_client');
 
-
+/** show form information client */
+Route::get('/information-client', [LoginController::class, 'show_information'])->middleware(checkLogin::class);
+Route::post('/update-client', [AdminController::class, 'update_client'])->middleware(checkLogin::class)->name('update_client');
 
 /** login vs google */
 Route::get('/auth/google', [LoginController::class, 'redirectToGoogle'])->name('auth.google');

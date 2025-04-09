@@ -11,6 +11,7 @@ use App\Models\province;
 use App\Models\User;
 use App\Models\ward;
 use App\Models\year;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Contracts\session\session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -37,7 +38,7 @@ class AdminController extends Controller
         // Lấy danh sách nhân viên với phân trang và sắp xếp
         $list_employees = User::where('role', 'employees')
             ->orderByDesc('created_at')
-            ->paginate(10); // Sử dụng paginate() để hỗ trợ firstItem()
+            ->paginate(5); // Sử dụng paginate() để hỗ trợ firstItem()
 
 
         return view('component.header.admin.employees.show', compact('list_employees'));
@@ -54,7 +55,7 @@ class AdminController extends Controller
 
         $list_client = User::where('role', 'user')
             ->orderByDesc('created_at')
-            ->paginate(10);
+            ->paginate(1);
 
         return view('component.header.admin.client.list-client', compact('list_client'));
     }
@@ -189,10 +190,42 @@ class AdminController extends Controller
             'client_phone.regex' => 'Số điện thoại phải gồm 10 hoặc 11 chữ số!',
         ]);
 
-
-
-
         $user = Auth::user();
+
+        /** kiểm tra xem information trong table client created chưa?
+         *  nếu chưa thì sẽ create một thông tin với user_id người đang đăng nhập
+         */
+        if (!optional(Auth::user()->client)->client_id) {
+            Client::create([
+                'user_id' => $user->id,
+                'client_name' => $user->name,
+            ]);
+        }
+
+
+
+
+        /** kiểm tra nếu sdt user đã tồn tại trong table vì nếu trùng sdt thì người giao hàng sẽ không điện mà 
+         * người mình đang cần giao có đúng số điện này không.
+         */
+        $check_phone = $req->client_phone;
+        if (Client::Where('client_phone', $check_phone)->exists()) {
+
+            // Tìm client khác đang dùng cùng số điện thoại
+            $duplicateClient = Client::where('client_phone', $check_phone)
+                ->where('user_id', '!=', $user->id)
+                ->first();
+
+            // get ra client có sdt này có trùng với thằng đang login không.
+            if ($duplicateClient) {
+                return redirect()->back()->with(
+                    'client_phone_unique',
+                    'Xin lỗi quý khách, hãy kiểm tra lại số điện thoại mình dùng, vì đã có người khác sử dụng
+                    có phải là sim chính chủ không, xin cảm ơn!'
+                );
+            }
+        }
+
         $client = Client::where('user_id', $user->id)->first();
 
         if ($client) {
@@ -209,27 +242,13 @@ class AdminController extends Controller
             $client->client_phone = $req->client_phone;
             $client->client_address = $province->name . ', ' . $district->name . ', ' . $ward->name;
 
-            if (empty($req->client_address_tail)) {
-                $client->client_address_detail = "";
-            } else {
+            if ($req->client_address_tail !== "") {
                 $client->client_address_detail = $req->client_address_detail;
             }
 
+
             $client->client_gender = $req->client_gender;
             $client->dat_of_birth = $req->client_day . '/0' . $req->client_month . '/' . $year->year;
-
-            /** show address của khách hàng */
-            session()->put('client_province', $province->name);
-            session()->put('client_district', $district->name);
-            session()->put('client_wards', $ward->name);
-
-            /** show day of birth */
-            session()->put('client_day', $req->client_day);
-            session()->put('client_month', $req->client_month);
-            session()->put('client_year', $year->year);
-
-            /** phone */
-            session()->put('client_phone', $req->client_phone);
 
             $client->save();
         }
