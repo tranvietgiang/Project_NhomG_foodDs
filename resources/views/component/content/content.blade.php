@@ -44,7 +44,7 @@
             <span>TINH HOA QUÀ VIỆT</span>
             <span>aaaaaaaat</span>
             <span>aaaaaaaat</span>
-            <span>aaaaaaaat</span>
+            <span><a href="#" style="color: black;">Xem tất cả >></a></span>
         </div>
 
         <div class="row">
