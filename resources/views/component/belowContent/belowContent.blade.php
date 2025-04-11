@@ -76,7 +76,7 @@
                     <span class="btn btn-outline-success"><a class="text-white"
                             href="#">aaaaaaaaaaaaaaa</a></span>
                 </div>
-                @for ($i = 1; $i <= 8; $i++)
+                @foreach($products as $product)
                     <div class="col-2 col-md-3 mb-3">
                         <div class="frame-image">
                             <div>
@@ -84,7 +84,7 @@
                                     src="{{ asset('component/image-product/mi-tron-cay.png') }}" alt="">
                             </div>
                             <h5 class="product_name text-center"><b>
-                                    Cà phê muối thơm ngon đặc biệt đậm vị Việt Nam, hương vị độc đáo khó quên.
+                            {{ $product->product_name }}
                                 </b></h5>
 
                             <span class="text-warning product_star">
@@ -107,7 +107,7 @@
                             </div>
                         </div>
                     </div>
-                @endfor
+                @endforeach
             </div>
         </div>
     </div>

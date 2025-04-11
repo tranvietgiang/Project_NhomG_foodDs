@@ -8,9 +8,10 @@
         <div class="d-flex justify-content-center align-items-center gap-2">
             @foreach ($content_data as $item)
                 <div class="frame-image">
-                    <div>
+                    <div><a href="">
                         <img class="image-product-content-1 img-fluid"
-                            src="{{ asset('component/image-product/' . $item->product_image) }}" alt="">
+                            src="{{ asset('images/' . $item->product_image) }}" alt="">
+                            </a>
                     </div>
                     <h5 class="product_name"><b>
                             {{ $item->product_name }}
@@ -75,7 +76,7 @@
                         <div class="d-flex justify-content-center align-items-center gap-3">
                             <span class="old-price">1500.0<sub>đ</sub></span>
                             <span class="discount">-35%</span>
-                            <span class="btn btn-outline-success btn-sm">cart</span>
+                            <span class="btn btn-outline-success btn-sm"><a href=""></a>cart</span>
                         </div>
                     </div>
                 </div>

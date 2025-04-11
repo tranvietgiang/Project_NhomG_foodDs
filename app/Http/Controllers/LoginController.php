@@ -141,7 +141,10 @@ class LoginController extends Controller
 
         /** ít bửa sửa lại thành desc! */
         $content_data = Product::orderBy('created_at', 'ASC')->paginate(5);
-        return view('layout.index', compact('content_data'));
+
+        $products = Product::latest()->take(8)->get();
+
+        return view('layout.index', compact(['content_data','products']));
     }
 
 

@@ -9,6 +9,7 @@ use App\Http\Middleware\LastActivity;
 use App\Models\district;
 use App\Models\ward;
 use Illuminate\Http\Request;
+use App\Http\Controllers\ProductController;
 
 /**
  * tên domain default website
@@ -85,3 +86,5 @@ Route::post('/update-client', [AdminController::class, 'update_client'])->middle
 /** login vs google */
 Route::get('/auth/google', [LoginController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [LoginController::class, 'handleGoogleCallback']);
+
+
