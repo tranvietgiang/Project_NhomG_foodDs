@@ -35,6 +35,11 @@
 
          a {
              text-decoration: none;
+
+         }
+
+         img {
+             cursor: pointer;
          }
      </style>
  </head>
@@ -61,6 +66,7 @@
      <footer>
          @include('component.footer.footer')
      </footer>
+
      <!-- link bootstrap js  -->
      <script src="{{ asset('component/js/bootstrap.bundle.min.js') }}"></script>
 

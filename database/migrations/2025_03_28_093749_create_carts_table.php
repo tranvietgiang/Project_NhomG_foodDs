@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('quantity_sp')->default(0)->comment('số lượng sản phẩm');
             $table->double('total_price')->default(0)->comment('tổng số tiền');
             $table->timestamps();
+            $table->string('image')->nullable();
         });
     }
 

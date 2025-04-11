@@ -36,18 +36,18 @@ class UserSeeders extends Seeder
         //     'phone' => '0336833827'
         // ]);
 
-        // User::create([
-        //     'name' => 'Ca pham',
-        //     'email' => 'capham02@gmail.com',
-        //     'password' => bcrypt('2005'),
-        //     'role' => "employees",
-        // ]);
-
         User::create([
-            'name' => 'dHung',
-            'email' => 'dHung@gmail.com',
+            'name' => 'Ca pham',
+            'email' => 'capham02@gmail.com',
             'password' => bcrypt('2005'),
-            'role' => "user",
+            'role' => "employees",
         ]);
+
+        // User::create([
+        //     'name' => 'dHung',
+        //     'email' => 'dHung@gmail.com',
+        //     'password' => bcrypt('2005'),
+        //     'role' => "user",
+        // ]);
     }
 }

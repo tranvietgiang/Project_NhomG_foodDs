@@ -106,6 +106,7 @@
                     <th>Email</th>
                     <th>Số Điện Thoại</th>
                     <th>Trạng Thái</th>
+
                     <th>Created_at</th>
                     <!-- check role crud không -->
                     @if (Auth::check() && Auth::user()->role == 'admin')

@@ -2,13 +2,18 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PTTTController;
+use App\Http\Controllers\ViewController;
 use App\Http\Middleware\checkLogin;
 use App\Models\login;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\LastActivity;
 use App\Models\district;
 use App\Models\ward;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\View\View as ViewView;
 
 /**
  * tên domain default website
@@ -63,14 +68,15 @@ Route::post('/verify-otp-forgot', [LoginController::class, 'verifyOtpForgot'])->
 
 
 
-/** checkout toán vnpay */
-Route::post('/vnpay_payment', [AdminController::class, 'vnpay_payment'])->name('vnpay.payment')/*->middleware(checkLogin::class)*/;
 
 /** show form */
 Route::get('/showVnPay', [AdminController::class, 'showVnPayCheckout'])->name('showVnPayCheckout') /*->middleware(checkLogin::class)*/;
 
+/** checkout toán vnpay */
+Route::post('/vnpay_payment', [PTTTController::class, 'vnpay_payment'])->name('vnpay.payment')/*->middleware(checkLogin::class)*/;
+
 /* result success or failed */
-Route::get('/vnpay_return', [AdminController::class, 'vnpay_return'])->name('vnpay.return')/*->middleware(checkLogin::class)*/;
+Route::get('/vnpay_return', [PTTTController::class, 'vnpay_return'])->name('vnpay.return')/*->middleware(checkLogin::class)*/;
 
 
 /** show ra địa chỉ vn */
@@ -81,7 +87,14 @@ Route::post('/get-wards', [LoginController::class, 'getWards']);
 /** show form information client */
 Route::get('/information-client', [LoginController::class, 'show_information'])->middleware(checkLogin::class);
 Route::post('/update-client', [AdminController::class, 'update_client'])->middleware(checkLogin::class)->name('update_client');
+Route::post('/client-avatar-image-update', [AdminController::class, 'client_avatar_update'])->middleware(checkLogin::class);
 
 /** login vs google */
 Route::get('/auth/google', [LoginController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [LoginController::class, 'handleGoogleCallback']);
+
+
+/** cart and review */
+Route::get('/cart/{product_id}', [ViewController::class, 'show_cart'])->name('show_cart');
+Route::get('/review/cart', [ProductController::class, 'review'])->name('review');
+Route::get('/delete/client_comment/{review_id}', [ProductController::class, 'delete_review'])->name('client.comment.delete');

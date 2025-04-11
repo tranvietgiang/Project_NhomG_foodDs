@@ -18,6 +18,7 @@ class Cart extends Model
         'user_id',
         'quantity_sp',
         'total_price',
+        'image'
     ];
 
     public function products(): BelongsTo

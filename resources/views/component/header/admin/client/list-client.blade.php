@@ -129,6 +129,7 @@
                         <th>Tên Khách Hàng</th>
                         <th>Email</th>
                         <th>Số Điện Thoại</th>
+                        <th>Số Lần đăng nhập</th>
                         <th>Trạng Thái</th>
                         <th>Created_at</th>
                     </tr>
@@ -140,7 +141,11 @@
                             <td>{{ $loop->iteration + $list_client->firstItem() - 1 }}</td>
                             <td>{{ $item->name }}</td>
                             <td>{{ $item->email }}</td>
-                            <td>{{ $item->phone }}</td>
+
+                            <td>{{ $item->client->client_phone ?? '' }}
+                            </td>
+
+                            <td>{{ $item->client->login_count ?? '' }}</td>
 
                             <!-- check có đang online -->
                             <td>

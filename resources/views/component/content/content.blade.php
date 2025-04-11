@@ -8,9 +8,12 @@
         <div class="d-flex justify-content-center align-items-center gap-2">
             @foreach ($content_data as $item)
                 <div class="frame-image">
+                    <input type="hidden" name="product_id" value="{{ $item->product_id }}">
                     <div>
-                        <img class="image-product-content-1 img-fluid"
-                            src="{{ asset('component/image-product/' . $item->product_image) }}" alt="">
+                        <a href="{{ route('show_cart', ['product_id' => $item->product_id]) }}">
+                            <img class="image-product-content-1 img-fluid"
+                                src="{{ asset('component/image-product/' . $item->product_image) }}" alt="">
+                        </a>
                     </div>
                     <h5 class="product_name"><b>
                             {{ $item->product_name }}
@@ -29,8 +32,11 @@
                     <div class="d-flex justify-content-center align-items-center gap-3">
                         <span class="old-price">1500.0<sub>đ</sub></span>
                         <span class="discount">-35%</span>
-                        <span class="btn btn-outline-success "><a class="text-danger" href="#">Cart</a></span>
+                        <span class="btn btn-outline-success "><a class="text-danger" href="">Cart</a></span>
                     </div>
+                    <p>
+                        <a class="text-black" href="#">Review</a>
+                    </p>
                 </div>
             @endforeach
         </div>

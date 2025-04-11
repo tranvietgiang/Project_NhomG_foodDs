@@ -368,6 +368,48 @@ dropdown menu
     display: none;
 }
 
+.zalo-chat {
+    position: fixed;
+    /* cố định so với màn hình */
+    bottom: 70px;
+    /* cách đáy 20px */
+    right: 20px;
+    /* cách bên phải 20px */
+    z-index: 999;
+}
+
+.zalo-chat a img {
+    object-fit: cover;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    transition: all 0.3s ease-in-out;
+}
+
+.zalo-chat:hover > a img {
+    transform: scale(1.3);
+}
+
+/* Nút quay lại đầu trang */
+#go-to-top {
+    position: fixed;
+    bottom: 20px; /* Cách nút Zalo 100px */
+    right: 20px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+    cursor: pointer;
+    display: none;
+    z-index: 1000;
+}
+
+#go-to-top:hover {
+    background-color: #45a049;
+}
+
 @media (max-width: 768px) {
     body {
         overflow-x: hidden;

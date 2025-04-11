@@ -53,9 +53,15 @@ class AdminController extends Controller
             return $redirect;
         }
 
-        $list_client = User::where('role', 'user')
-            ->orderByDesc('created_at')
-            ->paginate(1);
+
+        // cần sửa cái phone không liên kết được
+        $list_client = User::select('users.*') // chọn các cột từ bảng users
+            ->join('clients', 'users.id', '=', 'clients.user_id') // join bảng clients
+            ->where('users.role', 'user')
+            ->orderByDesc('clients.login_count') // sắp xếp theo cột login_count trong bảng clients
+            ->with('client') // load thêm quan hệ client nếu cần
+            ->paginate(5);
+
 
         return view('component.header.admin.client.list-client', compact('list_client'));
     }
@@ -78,7 +84,7 @@ class AdminController extends Controller
          *  vd dùng name and email => closure
          */
 
-        $list_client = User::where('role', 'user')
+        $list_client = User::with('client')->where('role', 'user')
             ->where(function ($query) use ($keyword) {
                 $query->where('name', 'like', "%{$keyword}%")
                     ->orWhere('email', 'like', "%{$keyword}%");
@@ -104,79 +110,6 @@ class AdminController extends Controller
         return view('component.header.admin.pttt.vnpay-payment');
     }
 
-
-
-    public function vnpay_payment(Request $request)
-    {
-        $vnp_TmnCode = "PR7H47SW"; // Mã website của bạn tại VNPAY
-        $vnp_HashSecret = "WGUPUW7FBTFZHEF52ZPMDZ7IMFWT1Z7K"; // Chuỗi bí mật
-        $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-
-        $vnp_Returnurl = route('vnpay.return'); // URL nhận kết quả trả về
-        $vnp_TxnRef = 'madonhang' . time(); // Mã đơn hàng duy nhất
-        $vnp_OrderInfo = "Thanh toán hóa đơn";
-        $vnp_OrderType = "billpayment";
-        $vnp_Amount = $request->input('price') * 100; // Số tiền phải nhân 100 (VNPAY yêu cầu)
-        $vnp_Locale = "vn";
-        $vnp_BankCode = "NCB"; // Có thể đổi thành ngân hàng khác nếu cần
-        $vnp_IpAddr = $request->ip(); // IP khách hàng
-
-        // Tạo dữ liệu gửi đi
-        $inputData = [
-            "vnp_Version" => "2.1.0",
-            "vnp_TmnCode" => $vnp_TmnCode,
-            "vnp_Amount" => $vnp_Amount,
-            "vnp_Command" => "pay",
-            "vnp_CreateDate" => date('YmdHis'),
-            "vnp_CurrCode" => "VND",
-            "vnp_IpAddr" => $vnp_IpAddr,
-            "vnp_Locale" => $vnp_Locale,
-            "vnp_OrderInfo" => $vnp_OrderInfo,
-            "vnp_OrderType" => $vnp_OrderType,
-            "vnp_ReturnUrl" => $vnp_Returnurl,
-            "vnp_TxnRef" => $vnp_TxnRef
-        ];
-
-        // Tạo chữ ký bảo mật (checksum)
-        ksort($inputData);
-        $query = "";
-        $i = 0;
-        $hashdata = "";
-        foreach ($inputData as $key => $value) {
-            if ($i == 1) {
-                $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
-            } else {
-                $hashdata .= urlencode($key) . "=" . urlencode($value);
-                $i = 1;
-            }
-            $query .= urlencode($key) . "=" . urlencode($value) . '&';
-        }
-
-        $vnp_Url = $vnp_Url . "?" . $query;
-        $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret); // Tạo mã bảo mật
-        $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
-
-        // Lưu thông tin vào session (để hiển thị khi thanh toán thành công/thất bại)
-        session([
-            'vnpay-name' => $request->input('name'),
-            'vnpay-price' => $request->input('price')
-        ]);
-
-        // Chuyển hướng (redirect) đến trang thanh toán VNPAY
-        return redirect($vnp_Url);
-    }
-
-    /** show ra bills */
-    public function vnpay_return(Request $request)
-    {
-        // lưu data vào data base
-        $status = 'success'; // Hoặc lấy từ logic kiểm tra
-        $vnp_TxnRef = $request->input('vnp_TxnRef', 'No Data');
-        $name = session('vnpay-name');
-        $price = session('vnpay-price');
-
-        return view('component.header.admin.pttt.form-vnpay-checkout', compact('status', 'vnp_TxnRef', 'name', 'price'));
-    }
 
 
     /** khách hàng cập nhật thông tin đầy đủ */
@@ -229,7 +162,6 @@ class AdminController extends Controller
         $client = Client::where('user_id', $user->id)->first();
 
         if ($client) {
-
             // lấy giá trị các model
             $province = Province::where('province_id', $req->client_province)->first();
             $district = District::where('district_id', $req->client_district)->first();
@@ -254,5 +186,32 @@ class AdminController extends Controller
         }
 
         return redirect()->back()->with('update_client_success', 'bạn dã cập nhật thông tin thành công');
+    }
+
+    public function client_avatar_update(Request $req)
+    {
+        $client = Client::where('user_id', Auth::user()->id)->first();
+
+        /** uploads image */
+        if ($req->hasFile('avatar-client')) { // Kiểm tra xem người dùng có upload file 'avatar-client' không
+            $image = $req->file('avatar-client'); // Lấy file từ request
+            $imageName = time() . '_' . $image->getClientOriginalName(); // Tạo tên mới cho file (thêm timestamp vào tên gốc)
+            $image->move(public_path('image-store'), $imageName); // Di chuyển file vào thư mục public/image-store
+
+            // Nếu client đã có ảnh cũ
+            if ($client->client_avatar) {
+                $oldImagePath = public_path('image-store/' . $client->client_avatar); // Tạo đường dẫn ảnh cũ
+                if (file_exists($oldImagePath)) { // Kiểm tra xem ảnh cũ có tồn tại không
+                    unlink($oldImagePath); // Nếu có thì xóa ảnh cũ đi khỏi thư mục
+                }
+            }
+
+            $client->client_avatar = $imageName; // Gán tên ảnh mới vào cột 'image' của client (để lưu vào DB sau)
+        }
+
+
+        $client->save();
+
+        return redirect()->back();
     }
 }

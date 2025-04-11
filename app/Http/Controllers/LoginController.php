@@ -89,13 +89,15 @@ class LoginController extends Controller
                 session()->put('role_admin', $user->name);
                 return redirect()->route('manager')->with('manage-success', 'Welcome admin to website');
             } else if ($user->role == 'employees') {
+
                 $id_status = $user->id;
                 /** check co dang online */
                 User::where('id', $id_status)->update(['last_activity' => "online"]);
 
                 session()->put('role_employees', $user->name);
                 return redirect()->route('employees');
-            } else {
+            } else if ($user->role == 'user') {
+                /** số lần đăng nhập */
                 session()->put('role_client', $user->name);
                 session()->put('role_client_email', $user->email);
                 return redirect()->route('website-main');
@@ -134,10 +136,18 @@ class LoginController extends Controller
      */
     public function showIndex()
     {
-        //  Gọi hàm checkLogin() với `return` để xử lý redirect
-        // if ($redirect = $this->checkLogin()) {
-        //     return $redirect; 
-        // }
+        if (Auth::check()) {
+
+            if (Auth::user()->role == 'admin') {
+                Auth::logout(); // Đăng xuất user hiện tại
+                return redirect()->route('wayLogin', ['page' => 'login']);
+            }
+
+            $login_count = Client::where('user_id', Auth::user()->id)->first();
+            if ($login_count) {
+                $login_count->increment('login_count', 1);
+            }
+        }
 
         /** ít bửa sửa lại thành desc! */
         $content_data = Product::orderBy('created_at', 'ASC')->paginate(5);
@@ -163,6 +173,8 @@ class LoginController extends Controller
     {
         return view('login.form-forgot');
     }
+
+
 
 
     /** register email otp */
@@ -406,7 +418,10 @@ class LoginController extends Controller
 
         $provinces = province::orderBy('province_id', 'ASC')->get();
 
-        return view('component.header.admin.client.information', compact('day', 'year', 'provinces'));
+
+        $client_image = Client::where('user_id', Auth::user()->id)->first(['client_avatar']);
+
+        return view('component.header.admin.client.information', compact('day', 'year', 'provinces', 'client_image'));
     }
 
 

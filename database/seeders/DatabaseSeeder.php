@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder
             // CategorieSeeders::class,
             // ProductsSeeder::class
             // DayMonthYearSeeder::class
+
+            UserSeeders::class
         ]);
     }
 }

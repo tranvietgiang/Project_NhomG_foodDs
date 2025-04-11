@@ -19,7 +19,9 @@ class Client extends Model
         'client_address',
         'client_gender',
         'client_address_detail',
-        'dat_of_birth'
+        'dat_of_birth',
+        'client_avatar',
+        'login_count',
     ];
 
 
@@ -28,4 +30,18 @@ class Client extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+
+
+    //         Nếu client_avatar không được set, gán giá trị mặc định
+    // protected static function boot()
+    // {
+    //     parent::boot();
+
+    //     static::creating(function ($client) {
+    //         if (empty($client->client_avatar)) {
+    //             $client->client_avatar = 'user_default.png';
+    //         }
+    //     });
+    // }
 }

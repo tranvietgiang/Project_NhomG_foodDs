@@ -82,14 +82,20 @@ document.querySelector(".fa-chevron-left").addEventListener("click", () => {
     resetInterval(); // Reset interval khi nhấp vào nút
 });
 
-// dropdown menu bên css
-// const menuItem = document.querySelector(".navbar-2 li:first-child");
-// const dropdown = document.querySelector(".dropdown-1");
+// Hiển thị nút quay lại đầu trang khi cuộn xuống
+window.onscroll = function () {
+    var goToTopButton = document.getElementById("go-to-top");
+    if (
+        document.body.scrollTop > 100 ||
+        document.documentElement.scrollTop > 100
+    ) {
+        goToTopButton.style.display = "block";
+    } else {
+        goToTopButton.style.display = "none";
+    }
+};
 
-// menuItem.addEventListener("mouseenter", () => {
-//     dropdown.style.height = "300px";
-// });
-
-// menuItem.addEventListener("mouseleave", () => {
-//     dropdown.style.height = "0";
-// });
+// Hàm cuộn về đầu trang
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}

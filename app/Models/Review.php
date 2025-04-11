@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Carbon\Carbon;
 
 class Review extends Model
 {
@@ -34,5 +35,10 @@ class Review extends Model
     public function users(): belongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+    /** format d-m-y */
+    public function format_date()
+    {
+        return Carbon::parse($this->created_at)->format('d-m-Y');
     }
 }

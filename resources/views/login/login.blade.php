@@ -118,7 +118,8 @@
                 in</button>
 
             <!-- Nút đăng nhập bằng Google -->
-            <a href="{{ route('auth.google') }}" class="google-btn">Login with Google</a>
+            <a href="{{ route('auth.google') }}" class="google-btn">Login with Google</a> |
+            <a href="{{ route('website-main') }}" class="">Home</a>
 
             <!-- Register buttons -->
             <div class="text-center">

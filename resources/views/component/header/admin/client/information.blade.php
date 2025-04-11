@@ -108,7 +108,7 @@
         position: relative;
     }
 
-    section.footer::after{
+    section.footer::after {
         position: absolute;
         content: '';
         top: 0;
@@ -136,8 +136,10 @@
         display: block;
         margin-top: 5px;
     }
-    .social-icons i{
-                color: #007bff}
+
+    .social-icons i {
+        color: #007bff
+    }
 
     /* phần code css của page============================================================================ */
 
@@ -184,49 +186,49 @@
     }
 
 
-      /* Ảnh gốc nhỏ */
-  .thumbnail {
-    width: 200px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
+    /* Ảnh gốc nhỏ */
+    .thumbnail {
+        width: 200px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
 
-  .thumbnail:hover {
-    opacity: 0.8;
-  }
+    .thumbnail:hover {
+        opacity: 0.8;
+    }
 
-  /* Overlay nền mờ */
-  .lightbox {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.8);
-    justify-content: center;
-    align-items: center;
-  }
+    /* Overlay nền mờ */
+    .lightbox {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.8);
+        justify-content: center;
+        align-items: center;
+    }
 
-  /* Ảnh phóng to */
-  .lightbox img {
-    max-width: 90%;
-    max-height: 90%;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-  }
+    /* Ảnh phóng to */
+    .lightbox img {
+        max-width: 90%;
+        max-height: 90%;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    }
 
-  /* Nút đóng */
-  .lightbox::after {
-    content: "✖";
-    position: absolute;
-    top: 20px;
-    right: 30px;
-    color: white;
-    font-size: 32px;
-    cursor: pointer;
-  }
+    /* Nút đóng */
+    .lightbox::after {
+        content: "✖";
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        color: white;
+        font-size: 32px;
+        cursor: pointer;
+    }
 </style>
 
 
@@ -244,6 +246,7 @@
             <ul class="nav-1 d-flex align-items-center">
                 <li class="search-bar">
                     <form action="#" method="get">
+                        @csrf
                         <div class="form-outline input-group mb-0 " data-mdb-input-init>
                             <input type="text" id="key-word" value="" name="search" class="form-control"
                                 required>
@@ -266,13 +269,12 @@
                             <span class="material-symbols-outlined">account_circle</span><span class="px-2">Đăng
                                 nhập</span>
                         </a>
-                    @else
-                        <a href="{{ url('/information-client') }}"><span style="font-size: 3em;"
-                                class="material-symbols-outlined">account_circle</span></a>
+                        {{-- <a href="{{ url('/information-client') }}"><span style="font-size: 3em;"
+                                class="material-symbols-outlined">account_circle</span></a> --}}
                     @endif
                 </li>
 
-                <li>
+                <li style="margin-left: -20px">
                     @if (!Auth::check())
                         <a href="{{ route('wayLogin', ['page' => 'register']) }}"><span>Đăng ký</span></a>
                     @else
@@ -293,7 +295,7 @@
     </div>
 </nav>
 
-
+<!-- code trang wensite này -->
 <section class="container">
 
     <body>
@@ -303,24 +305,61 @@
                 <div class="col-md-3">
                     <div class="sidebar">
                         <h5 class="btn btn-success">Tài khoản</h5>
-                        <p>
-                            <img style="width: 100%; height: 100%; object-fit: cover; border: 5px solid green" 
-                            src="{{asset('component/header/img/img-animation-3.jpg')}}" alt=""
-                            class="thumbnail"
-                            onclick="showLightbox(this.src)">
 
+                        <style>
+                            .btn-save {
+                                opacity: 0;
+                                position: fixed;
+                                z-index: -1;
+                            }
+
+                            .btn-avatar {
+                                position: absolute;
+                                opacity: 1;
+                                z-index: 999;
+                            }
+                        </style>
+
+
+                        <!-- avatar -->
+                        <p>
+                            <!-- hiện ra ảnh cho clien xem trước -->
+                            <img id="show-avatar"
+                                style="width: 100%; height: 100%; object-fit: cover; border: 5px solid green"
+                                <?php $avatar_user_default = 'avatar_default.png'; ?>
+                                src="{{ asset('image-store/' . (!empty($client_image->client_avatar) ? $client_image->client_avatar : $avatar_user_default)) }}"
+                                class="thumbnail" onclick="showLightbox(this.src)">
+
+                            <!-- btn-save update avatar vào db -->
+                        <form action="{{ url('client-avatar-image-update') }}" method="post"
+                            enctype="multipart/form-data">
+                            @csrf
                             <input class="d-none" id="avatar-client" type="file" name="avatar-client">
-                            <label style='margin:-22px 0 0 10px; cursor: pointer;' for="avatar-client">
+                            <label class="position-relation " id="select-avatar"
+                                style='margin:-40px 0 0 10px; cursor: pointer; z-index: 5;' for="avatar-client">
                                 <i style="display: inline-block; position: absolute; font-size: 18px"
                                     class="fas fa-camera"></i>
                             </label>
 
-                            <!-- phần click vào to ảnh -->
-<div class="lightbox" id="lightbox" onclick="hideLightbox()">
-    <img id="lightbox-img" />
-  </div>
+                            <!-- gửi yêu cầu -->
+                            <input class="d-none" id="label-replace" type="submit">
+                            <label class="btn-save" id="label-replace" style='margin:-22px 0 0 10px; cursor: pointer;'
+                                for="label-replace">
+                                <i style="margin: -17px 0 0 -2px;"
+                                    class="fw-100 text-success fa-solid fa-circle-check"></i>
+                            </label>
+                        </form>
+                        <!-- phần click vào to ảnh -->
+                        <div class="lightbox" id="lightbox" onclick="hideLightbox()">
+                            <img id="lightbox-img" />
+                        </div>
                         </p>
-                        <p><strong>{{ Auth::user()->name }}</strong><br>{{Auth::user()->email }}</p>
+
+
+                        <!-- hiện name & email -->
+                        <p>
+                            <strong>{{ Auth::user()->name }}</strong><br>{{ Auth::user()->email }}
+                        </p>
                         <a href="#">Số dư </a>
                         <a href="#">Đơn hàng </a>
                         <a href="#">My Farm</a>
@@ -334,7 +373,8 @@
                             @if (Auth::check())
                                 <form style="z-index: 1" class="" action="{{ route('logout') }}" method="POST">
                                     @csrf
-                                    <button type="submit" style="border: 1px solid green" class="btn btn-link text-black">Đăng xuất</button>
+                                    <button type="submit" style="border: 1px solid green"
+                                        class="btn btn-link text-black">Đăng xuất</button>
                                 </form>
                             @endif
                         </div>
@@ -415,8 +455,8 @@
 
                         <!-- Email input -->
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <input type="email" value="{{{ Auth::user()->email }}}" id="form6Example5"
-                                class="form-control"readonly/>
+                            <input type="email" value="{{ Auth::user()->email }}" id="form6Example5"
+                                class="form-control"readonly />
                             <label class="form-label" for="form6Example5">Email</label>
                         </div>
 
@@ -444,7 +484,8 @@
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="client_gender" id="male"
                                     value="Nam"
-                                    {{ optional(Auth::user()->client)->client_gender === 'Nam' ? 'checked' : '' }}  checked/>
+                                    {{ optional(Auth::user()->client)->client_gender === 'Nam' ? 'checked' : '' }}
+                                    checked />
                                 <label class="form-check-label" for="male">Nam</label>
                             </div>
                             <div class="form-check form-check-inline">
@@ -594,43 +635,72 @@
 
     //phần click vào to ảnh
     function showLightbox(src) {
-    document.getElementById("lightbox-img").src = src;
-    document.getElementById("lightbox").style.display = "flex";
-  }
+        document.getElementById("lightbox-img").src = src;
+        document.getElementById("lightbox").style.display = "flex";
+    }
 
-  function hideLightbox() {
-    document.getElementById("lightbox").style.display = "none";
-  }
+    function hideLightbox() {
+        document.getElementById("lightbox").style.display = "none";
+    }
+
+    // hiện ra ảnh cho clien xem trước
+    const select_avatar = document.querySelector('#select-avatar')
+    const btn_save = document.querySelector('.btn-save')
+
+    function show_avatar() {
+        const avatar = document.getElementById('avatar-client').files;
+        if (avatar.length > 0) {
+
+            btn_save.classList.add('btn-avatar');
+            select_avatar.classList.add('btn-save')
+
+            const storeAvatar = avatar[0];
+            const readAvatar = new FileReader();
+
+            readAvatar.onload = (e) => {
+                const copy_src = e.target.result;
+                const pathAvatar = document.getElementById('show-avatar');
+                if (pathAvatar.tagName === 'IMG') {
+                    pathAvatar.src = copy_src;
+                }
+            };
+            readAvatar.readAsDataURL(storeAvatar);
+        }
+    }
+
+    // Tự động gọi show_avatar() khi chọn file
+    document.getElementById('avatar-client').addEventListener('change', show_avatar);
 </script>
 <!-- Footer -->
 <section class="footer ">
-   <div class="container">
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            <h5>Về chúng tôi</h5>
-            <p>Foodmap là nền tảng kết nối nông dân, nhà sản xuất thực phẩm với người tiêu dùng thông qua các sản phẩm
-                chất lượng và an toàn.</p>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <h5>Về chúng tôi</h5>
+                <p>Foodmap là nền tảng kết nối nông dân, nhà sản xuất thực phẩm với người tiêu dùng thông qua các sản
+                    phẩm
+                    chất lượng và an toàn.</p>
                 <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi, repudiandae!</p>
+            </div>
+            <div class="col-md-4 mb-3">
+                <h5>Liên hệ</h5>
+                <p>Email: contact@foodmap.vn</p>
+                <p>Điện thoại: 0123 456 789</p>
+                <p>Địa chỉ: 123 Đường ABC, TP.HCM</p>
+            </div>
+            <div class="col-md-4 mb-3">
+                <h5>Theo dõi chúng tôi</h5>
+                <div class="social-icons">
+                    <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
         </div>
-        <div class="col-md-4 mb-3">
-            <h5>Liên hệ</h5>
-            <p>Email: contact@foodmap.vn</p>
-            <p>Điện thoại: 0123 456 789</p>
-            <p>Địa chỉ: 123 Đường ABC, TP.HCM</p>
-        </div>
-        <div class="col-md-4 mb-3">
-            <h5>Theo dõi chúng tôi</h5>
-            <div class="social-icons">
-                <a href="#"><i class="fa-brands fa-facebook"></i></a>
-                <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                <a href="#"><i class="fa-brands fa-youtube"></i></a>
+        <div class="row">
+            <div class="col-12 text-center mt-3">
+                <p class="copyright">&copy; 2025 Foodmap. All rights reserved.</p>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12 text-center mt-3">
-            <p class="copyright">&copy; 2025 Foodmap. All rights reserved.</p>
-        </div>
-    </div>
-   </div>
 </section>

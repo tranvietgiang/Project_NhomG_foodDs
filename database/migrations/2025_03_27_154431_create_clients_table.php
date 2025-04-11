@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('client_address_detail')->nullable();
             $table->timestamps();
             $table->string('dat_of_birth')->nullable();
+            $table->string('client_avatar')->nullable();
+            $table->integer('login_count')->default(0)->nullable();
         });
     }
 

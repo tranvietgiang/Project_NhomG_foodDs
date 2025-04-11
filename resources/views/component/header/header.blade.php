@@ -41,17 +41,16 @@
                                 <span class="material-symbols-outlined">account_circle</span><span class="px-2">Đăng
                                     nhập</span>
                             </a>
-                        @else
-                            <a href="{{ url('/information-client') }}"><span style="font-size: 3em;"
-                                    class="material-symbols-outlined">account_circle</span></a>
+                            {{-- <a href=""><span style="font-size: 3em;"
+                                    class="material-symbols-outlined">account_circle</span></a> --}}
                         @endif
                     </li>
 
-                    <li>
+                    <li style="margin-left: -20px">
                         @if (!Auth::check())
                             <a href="{{ route('wayLogin', ['page' => 'register']) }}"><span>Đăng ký</span></a>
                         @else
-                            <a href="#"><span>{{ Auth::user()->name }}</span></a>
+                            <a href="{{ url('/information-client') }}"><span>{{ Auth::user()->name }}</span></a>
                         @endif
                     </li>
 
@@ -275,6 +274,17 @@
             </div>
         </div>
     </div>
+    <style>
+
+    </style>
+    <!-- Zalo Official Chat Widget -->
+    <div class="zalo-chat">
+        <a href="https://zalo.me/0336833827" target="_blank">
+            <img src="{{ asset('image-store/zalo.png') }}" alt="">
+        </a>
+    </div>
+
+    <button id="go-to-top" onclick="scrollToTop()">↑</button>
 </section>
 <!-- js header -->
 <script src="{{ asset('component/header/header.js') }}"></script>
