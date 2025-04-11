@@ -81,7 +81,7 @@
                         <div class="frame-image">
                             <div>
                                 <img class="image-product-content-1 img-fluid"
-                                    src="{{ asset('component/image-product/mi-tron-cay.png') }}" alt="">
+                                    src="{{ asset('images/'. $product->product_image) }}" alt="">
                             </div>
                             <h5 class="product_name text-center"><b>
                             {{ $product->product_name }}
