@@ -86,5 +86,6 @@ Route::post('/update-client', [AdminController::class, 'update_client'])->middle
 /** login vs google */
 Route::get('/auth/google', [LoginController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [LoginController::class, 'handleGoogleCallback']);
+Route::get('/cart',[ProductController::class,'show_cartCa'])->name('cart');
 
 

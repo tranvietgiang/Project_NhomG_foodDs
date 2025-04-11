@@ -126,7 +126,7 @@
             <!-- hiển thị sản phẩm-->
             <div class="product" id="productContainer">
                 <!-- Sản phẩm -->
-                @for ($i = 0; $i <= 10; $i++)
+                @foreach($products as $product)
                     <div class="owl-item">
                         <div class="item">
                             <a href="#"><img src="{{ asset('component/image-product/mi-tron-cay.png') }}"
@@ -146,7 +146,7 @@
                             </div>
                         </div>
                     </div>
-                @endfor
+                @endforeach
             </div>
 
             <!-- nut di chuyen -->

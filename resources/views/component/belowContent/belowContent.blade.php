@@ -98,12 +98,12 @@
 
                             <span style="font-size:14px" class="text-success">đã bán 103</span>
 
-                            <span class="new-price"><b>1000.0 </b><sub>đ</sub></span>
+                            <span class="new-price"><b>{{$product->product_price}}</b><sub>đ</sub></span>
 
                             <div class="d-flex justify-content-center align-items-center gap-3">
                                 <span class="old-price">1500.0<sub>đ</sub></span>
                                 <span class="discount">-35%</span>
-                                <span class="btn btn-outline-success btn-sm">cart</span>
+                                <span class="btn btn-outline-success btn-sm"><a href="cart" style="color: black;">cart</a></span>
                             </div>
                         </div>
                     </div>
