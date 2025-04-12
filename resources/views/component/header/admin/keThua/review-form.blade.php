@@ -1,3 +1,7 @@
+<!-- link google icon -->
+<!-- Link fontawesome  -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 <style>
     .review-container {
         background-color: white;
@@ -7,7 +11,7 @@
         /* Giảm border-radius */
         box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
         width: 100%;
-        max-width: 600px;
+        max-width: 650px;
         /* Giảm chiều rộng tối đa */
     }
 
@@ -21,12 +25,14 @@
     .rating-section {
         display: flex;
         justify-content: space-between;
+        gap: 30%;
         margin-bottom: 15px;
         /* Giảm margin */
     }
 
     .average-rating {
         text-align: center;
+        white-space: nowrap;
     }
 
     .rating-score {
@@ -152,6 +158,25 @@
     .view-images:hover {
         text-decoration: underline;
     }
+
+    .comment-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        width: 100%;
+        max-height: 300px;
+        overflow-y: auto;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+    }
+
+    .comment-box p {
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+
+    .star-color {
+        color: gold;
+    }
 </style>
 <div class="review-container">
     @if (session('client-not-buy'))
@@ -163,37 +188,51 @@
             <span class="rating-score">5.0</span>
             <span class="stars">★★★★★</span>
         </div>
+
+        <!-- hiện lượt đánh giá -->
         <div class="rating-details">
+
             <div class="rating-bar"><span>5 ★</span>
                 <div class="bar">
                     <div class="filled" style="width: 100%;"></div>
-                </div><span>0 đánh giá</span>
+                </div><span>
+                    <!-- vì sao lại để index là 5 mà laravel vẫn hiểu raring == 5
+                    là gì tôi đã dùng cái pluck(): để tại một mảng chứa [key => valued]
+                    nếu tôi bình luận  5 thì tôi sẽ có index(key) là 5 và tôi chỉ cần index(50
+                     thi là sẽ hiện ra value của index(5) -->
+                    {{ $client_review_category[5] ?? '0' }}
+                    đánh giá
+                </span>
             </div>
+
             <div class="rating-bar"><span>4 ★</span>
                 <div class="bar">
-                    <div class="filled" style="width: 0%;"></div>
-                </div><span>0 đánh giá</span>
+                    <div class="filled" style="width: 80%;"></div>
+                </div><span>{{ $client_review_category[4] ?? '0' }} đánh giá</span>
             </div>
             <div class="rating-bar"><span>3 ★</span>
                 <div class="bar">
-                    <div class="filled" style="width: 0%;"></div>
-                </div><span>0 đánh giá</span>
+                    <div class="filled" style="width: 60%;"></div>
+                </div><span> {{ $client_review_category[3] ?? '0' }} đánh giá</span>
             </div>
             <div class="rating-bar"><span>2 ★</span>
                 <div class="bar">
-                    <div class="filled" style="width: 0%;"></div>
-                </div><span>0 đánh giá</span>
+                    <div class="filled" style="width: 40%;"></div>
+                </div><span> {{ $client_review_category[2] ?? '0' }} đánh giá</span>
             </div>
             <div class="rating-bar"><span>1 ★</span>
                 <div class="bar">
-                    <div class="filled" style="width: 0%;"></div>
-                </div><span>0 đánh giá</span>
+                    <div class="filled" style="width: 20%;"></div>
+                </div><span> {{ $client_review_category[1] ?? '0' }} đánh giá</span>
             </div>
         </div>
     </div>
+
+    <!-- form -->
     <form id="review-form" action="{{ url('/review/cart') }}" method="get">
         <input type="text" name="product_id" value="{{ $product_id = $cart->first()->product_id }}">
 
+        @csrf
         <div class="user-review">
             <label>Chọn đánh giá của bạn</label>
             <div class="star-rating">
@@ -215,35 +254,75 @@
             <label for="image-review">Đính kèm hình ảnh</label>
         </div>
     </form>
-    <style>
-        .comment-box {
-            border: 1px solid #ccc;
-            padding: 10px;
-            width: 100%;
-            max-height: 300px;
-            overflow-y: auto;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-        }
 
-        .comment-box p {
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-    </style>
     <!-- show comment -->
-    <span class="">Những đánh giá</span>
+    <span class="">Đánh giá của khách hàng ({{ $review_count_rating }})</span><br>
+    <span><b>{{ $final_rating_tbc }}</b>/5 <span class="star-color">★★★★★</span></span>
     <div id="show_comment_client" class="comment-box">
         <div id="show_comment_client" class="comment-box">
             @foreach ($list_review as $comment)
-                <span>{{ $comment->format_date() }}</span>
-                <p><strong>{{ $comment->users->name }}:</strong> {{ $comment->review_comment }}
-                    <br>
-                    <span class="d-flex gap-3">
-                        <a class="btn-sm btn btn-outline-warning" href="#">Sửa</a>
-                        <a class="btn-sm btn btn-outline-danger"
-                            href="{{ route('client.comment.delete', $comment->review_id) }}">Xóa</a>
+                <p style="padding: 0; margin: 0;">
+                    <span>{{ $comment->format_date() }}</span>
+                    <span class="star-color" style="font-size: 17px" class="review_rating">
+                        @switch($comment->review_rating)
+                            @case(5)
+                                ★★★★★
+                            @break
+
+                            @case(4)
+                                ★★★★
+                            @break
+
+                            @case(3)
+                                ★★★
+                            @break
+
+                            @case(2)
+                                ★★
+                            @break
+
+                            @case(1)
+                                ★
+                            @break
+
+                            @default
+                        @endswitch
                     </span>
+                </p>
+                <!-- mỗi comment -->
+                <p>
+                    <strong>{{ $comment->users->name }}:</strong> {{ $comment->review_comment }}
+                    <span id="" style="cursor: pointer" class="btn-sm fw-bold edit_span">sửa</span>
+
+
+                <div style="margin: 0; padding: 0;"><img width="70px" height="70px" class=" object-fit-cover"
+                        src="{{ asset('component/image-product/tra-moc-thao-green.png') }}" alt=""></div>
+                <br>
+                <span class="d-flex gap-3">
+                    <!-- form sửa -->
+                    <form id="form_edit_review" action="{{ route('client.comment.update', $comment->review_id) }}"
+                        method="GET">
+                        @csrf
+                        <!-- input edit -->
+                        <p style="margin: 0; padding: 0;">
+                            <input class="form-control mb-3 input_review-comment" style="display: none"
+                                name="edit_comment_input" placeholder="Nhập chỉnh sủa comment của bạn... "
+                                type="text">
+                        </p>
+                        <!-- gửi form -->
+                        <div>
+                            <input class="d-none" id="icon_span_review" type="submit">
+                            <label class="btn-sm btn btn-outline-warning icon_hidden_label" for="icon_span_review">
+                                <i class="fa-solid fa-pencil icon_hidden"></i></label>
+                        </div>
+                        <span class="text-danger fw-bold" id="errorMessage-edit"></span>
+                    </form>
+
+                    <!-- delete -->
+                    <a class="btn-sm btn btn-outline-danger"
+                        href="{{ route('client.comment.delete', $comment->review_id) }}"><i
+                            class="fa-solid fa-eraser"></i></a>
+                </span>
                 </p>
             @endforeach
         </div>
@@ -259,7 +338,7 @@
 
 
         if (inputValue.length < 11) {
-            errorMessages.push('ký tự phải lớn hơn 10! \n');
+            errorMessages.push('ký tự phải lớn hơn 10!, ');
         }
 
         if (!selectedRating) {
@@ -275,4 +354,57 @@
             errorMessage.textContent = "";
         }
     });
+
+    // phần code khác của review-update
+    // Phần code khác của review-update
+    const editSpans = document.querySelectorAll('.edit_span');
+    const inputReviews = document.querySelectorAll('.input_review-comment');
+    const iconHiddenLabels = document.querySelectorAll('.icon_hidden_label');
+
+    // Ngăn sự kiện click trên edit_span không bị lan truyền (propagation)
+    editSpans.forEach(span => {
+        span.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    });
+
+    // Ẩn input nếu click ra ngoài
+    document.addEventListener('click', (e) => {
+        inputReviews.forEach(input => {
+            const isClickInsideInput = Array.from(inputReviews).some(input => input.contains(e.target));
+            const isClickInsideSpan = Array.from(editSpans).some(span => span.contains(e.target));
+            const isClickInsideLabel = Array.from(iconHiddenLabels).some(label => label.contains(e
+                .target));
+
+            if (!isClickInsideInput && !isClickInsideSpan && !isClickInsideLabel) {
+                input.style.display = "none";
+            }
+        });
+    });
+
+    // Hiển thị input khi click vào edit_span
+    editSpans.forEach((span, index) => {
+        span.addEventListener('click', () => {
+            const input = inputReviews[index]; // Đảm bảo input tương ứng với span
+            input.style.display = "block";
+            input.focus();
+        });
+    });
+
+    // const forms_edit_review = document.querySelectorAll('#form_edit_review');
+
+    // forms_edit_review.forEach(form => {
+    //     const input_review = form.querySelector('.input_review-comment');
+    //     const errorMessage_edit = form.querySelector('#errorMessage-edit'); // Sửa class thành ID
+
+    //     form.addEventListener('submit', (e) => {
+    //         let length_edit_review = input_review.value.trim().length; // Sửa cách tính độ dài
+    //         if (length_edit_review < 11) {
+    //             e.preventDefault();
+    //             errorMessage_edit.textContent = "Ký tự phải lớn hơn 10!";
+    //         } else {
+    //             errorMessage_edit.textContent = "";
+    //         }
+    //     });
+    // });
 </script>

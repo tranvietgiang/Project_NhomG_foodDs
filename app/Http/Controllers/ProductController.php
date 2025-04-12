@@ -57,6 +57,22 @@ class ProductController extends Controller
     {
         Review::where('user_id', Auth::id())->where('review_id', $review_id)->delete();
 
-        return redirect()->back()->with('success', 'Đã xóa đánh giá.');
+        return redirect()->back();
+    }
+
+    /** chỉnh sủa nếu client muốn sửa lại comment
+     * cái review_id là lấy từ cái get mà khi client click vào cart
+     */
+    public function update_review(Request $req, $review_id)
+    {
+        $edit_update_review = Review::where('user_id', Auth::id())->where('review_id', $review_id)->first();
+
+        if ($edit_update_review) {
+            $edit_update_review->review_comment = $req->input('edit_comment_input');
+            // $edit_update_review->created_at->now();
+            $edit_update_review->save();
+        }
+
+        return redirect()->back();
     }
 }

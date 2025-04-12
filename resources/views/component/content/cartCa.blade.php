@@ -1,4 +1,8 @@
 <link rel="stylesheet" href="{{ asset('component/css/bootstrap.min.css') }}">
+<!-- Google Fonts -->
+<link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&display=swap">
+
 <h1>Product Details</h1>
 @foreach ($cart as $item)
     <div class="frame-image">

@@ -98,3 +98,4 @@ Route::get('/auth/google/callback', [LoginController::class, 'handleGoogleCallba
 Route::get('/cart/{product_id}', [ViewController::class, 'show_cart'])->name('show_cart');
 Route::get('/review/cart', [ProductController::class, 'review'])->name('review');
 Route::get('/delete/client_comment/{review_id}', [ProductController::class, 'delete_review'])->name('client.comment.delete');
+Route::get('/update/review/{review_id}', [ProductController::class, 'update_review'])->name('client.comment.update');
