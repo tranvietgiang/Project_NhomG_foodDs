@@ -299,8 +299,16 @@
                         src="{{ asset('component/image-product/tra-moc-thao-green.png') }}" alt=""></div>
                 <br>
                 <span class="d-flex gap-3">
-                    <!-- form sửa -->
-                    <form id="form_edit_review" action="{{ route('client.comment.update', $comment->review_id) }}"
+                    <!-- để lấy để cho mỗi lần mình click mỗi comment để chỉnh sửa thì nó sẽ có những cái id khác,
+                         để cái hiện lỗi sẽ không bị trùng id nhau tại vì trùng id sẽ gây ra lỗi và form sẽ không hoạt động
+                         "form_edit_review" -->
+                    <!-- là cú pháp Blade Template của Laravel dùng để viết một đoạn PHP thuần bên trong file -->
+                    @php
+                        $inputId = 'icon_submit_' . $comment->review_id;
+                    @endphp
+
+                    <!-- form chỉnh sửa comment -->
+                    <form class="form_edit_review" action="{{ route('client.comment.update', $comment->review_id) }}"
                         method="GET">
                         @csrf
                         <!-- input edit -->
@@ -309,13 +317,18 @@
                                 name="edit_comment_input" placeholder="Nhập chỉnh sủa comment của bạn... "
                                 type="text">
                         </p>
+
+                        <!-- CHUYỂN THẺ SPAN này VÀO TRONG FORM -->
+                        <span class="text-danger fw-bold errorMessage-edit"></span>
+
                         <!-- gửi form -->
                         <div>
-                            <input class="d-none" id="icon_span_review" type="submit">
-                            <label class="btn-sm btn btn-outline-warning icon_hidden_label" for="icon_span_review">
+                            <input class="d-none" id="{{ $inputId }}" type="submit">
+                            <label class="btn-sm btn btn-outline-warning icon_hidden_label"
+                                for="{{ $inputId }}">
                                 <i class="fa-solid fa-pencil icon_hidden"></i></label>
                         </div>
-                        <span class="text-danger fw-bold" id="errorMessage-edit"></span>
+
                     </form>
 
                     <!-- delete -->
@@ -355,28 +368,29 @@
         }
     });
 
-    // phần code khác của review-update
-    // Phần code khác của review-update
+    // phần code chỉnh sửa comment của client
+
     const editSpans = document.querySelectorAll('.edit_span');
     const inputReviews = document.querySelectorAll('.input_review-comment');
     const iconHiddenLabels = document.querySelectorAll('.icon_hidden_label');
+    const icon_hidden = document.querySelectorAll('.icon_hidden');
 
-    // Ngăn sự kiện click trên edit_span không bị lan truyền (propagation)
+    /*nếu bạn không dùng e.stopPropagation(); khi bạn click vào nút sửa comment thì
+      thằng cha của thẻ bạn click sẽ bị ảnh sử click của bạn luôn */
     editSpans.forEach(span => {
         span.addEventListener('click', (e) => {
             e.stopPropagation();
         });
     });
 
-    // Ẩn input nếu click ra ngoài
+    // ẩn đi cái input edit comment nếu như client không click đúng chữ chỉnh 'sửa comment'
     document.addEventListener('click', (e) => {
-        inputReviews.forEach(input => {
-            const isClickInsideInput = Array.from(inputReviews).some(input => input.contains(e.target));
-            const isClickInsideSpan = Array.from(editSpans).some(span => span.contains(e.target));
-            const isClickInsideLabel = Array.from(iconHiddenLabels).some(label => label.contains(e
-                .target));
-
-            if (!isClickInsideInput && !isClickInsideSpan && !isClickInsideLabel) {
+        inputReviews.forEach((input, index) => {
+            const span = editSpans[index];
+            if (
+                !input.contains(e.target) &&
+                !span.contains(e.target)
+            ) {
                 input.style.display = "none";
             }
         });
@@ -391,20 +405,21 @@
         });
     });
 
-    // const forms_edit_review = document.querySelectorAll('#form_edit_review');
+    // kiểm tra xem client chỉnh sủa commnet có đủ 10 ký tự không.
+    const forms_edit_review = document.querySelectorAll('.form_edit_review');
 
-    // forms_edit_review.forEach(form => {
-    //     const input_review = form.querySelector('.input_review-comment');
-    //     const errorMessage_edit = form.querySelector('#errorMessage-edit'); // Sửa class thành ID
+    forms_edit_review.forEach(form => {
+        const input_review = form.querySelector('.input_review-comment');
+        const errorMessage_edit = form.querySelector('.errorMessage-edit');
 
-    //     form.addEventListener('submit', (e) => {
-    //         let length_edit_review = input_review.value.trim().length; // Sửa cách tính độ dài
-    //         if (length_edit_review < 11) {
-    //             e.preventDefault();
-    //             errorMessage_edit.textContent = "Ký tự phải lớn hơn 10!";
-    //         } else {
-    //             errorMessage_edit.textContent = "";
-    //         }
-    //     });
-    // });
+        form.addEventListener('submit', (e) => {
+            let length_edit_review = input_review.value.trim().length;
+            if (length_edit_review < 11) {
+                e.preventDefault();
+                errorMessage_edit.textContent = "Ký tự phải lớn hơn 10!";
+            } else {
+                errorMessage_edit.textContent = "";
+            }
+        });
+    });
 </script>
