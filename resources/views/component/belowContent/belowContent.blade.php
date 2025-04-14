@@ -103,7 +103,12 @@
                             <div class="d-flex justify-content-center align-items-center gap-3">
                                 <span class="old-price">1500.0<sub>đ</sub></span>
                                 <span class="discount">-35%</span>
-                                <span class="btn btn-outline-success btn-sm"><a href="cart" style="color: black;">cart</a></span>
+                                <form action="{{ route('cart.add') }}" method="POST" style="display:inline;">
+                    @csrf
+                    <input type="hidden" name="product_id" value="{{ $product->product_id }}">
+                    <input type="hidden" name="quantity_sp" value="1"> <!-- Thêm trường quantity_sp nếu cần -->
+                    <button type="submit" class="btn btn-outline-success btn-sm" style="display: inline;">Thêm vào giỏ hàng</button>
+                </form>
                             </div>
                         </div>
                     </div>

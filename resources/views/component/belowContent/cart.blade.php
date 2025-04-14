@@ -20,29 +20,22 @@
                 </tr>
             </thead>
             <tbody>
+                
                 <!-- Giả sử bạn sẽ thêm sản phẩm vào đây bằng PHP -->
+                 @foreach($cartItems as $item)
                 <tr>
-                    <td>Sản phẩm 1</td>
-                    <td>100,000 VND</td>
+                    <td><img src="{{ asset('images/'. $item->product_image) }}" alt=""></td>
+                    <td>{{$item->product_name}}</td>
                     <td>
                         <input type="number" value="1" min="1" class="form-control" />
                     </td>
-                    <td>100,000 VND</td>
+                    <td>{{$item->product_price}}</td>
+                    
                     <td>
                         <button class="btn btn-danger">Xóa</button>
                     </td>
                 </tr>
-                <tr>
-                    <td>Sản phẩm 2</td>
-                    <td>200,000 VND</td>
-                    <td>
-                        <input type="number" value="1" min="1" class="form-control" />
-                    </td>
-                    <td>200,000 VND</td>
-                    <td>
-                        <button class="btn btn-danger">Xóa</button>
-                    </td>
-                </tr>
+               @endforeach
             </tbody>
         </table>
         <div class="total">
