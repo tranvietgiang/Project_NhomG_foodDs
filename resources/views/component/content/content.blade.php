@@ -9,6 +9,7 @@
             @foreach ($content_data as $item)
                 <div class="frame-image">
                     <input type="hidden" name="product_id" value="{{ $item->product_id }}">
+                    <!-- cart -->
                     <div>
                         <a href="{{ route('show_cart', ['product_id' => $item->product_id]) }}">
                             <img class="image-product-content-1 img-fluid"

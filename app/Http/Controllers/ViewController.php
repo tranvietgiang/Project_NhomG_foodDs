@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ class ViewController extends Controller
     public function show_cart(Request $req, $product_id)
     {
 
+        /** lấy ra sản phẩm nè */
         $cart = Product::where('product_id', $req->product_id)->orderByDesc('created_at')->get();
 
         /** số lượt đánh giá */
@@ -52,5 +54,43 @@ class ViewController extends Controller
          */
 
         return view('component.content.cartCa', compact(['cart', 'list_review', 'review_count_rating', 'final_rating_tbc', 'client_review_category']));
+    }
+
+
+    // cần fix
+    /** show cart sản phẩm mà khách hàng đã bấm mua ngay */
+    public function show_cart_mua_ngay(Request $req, $product_id)
+    {
+        /** số lượng mà khách hàng đã chọn */
+        $product_client_quantity = $req->input('cart_quantity');
+        /** lấy ra sản phẩm mà client bấm mua ngay dựa vào id */
+        $product_get = Product::where('product_id', $product_id)->first();
+
+        /** thêm sản phẩm vào cart để show ra */
+        $add_cart = Cart::updateOrCreate(
+            /** Tham số đầu tiên: Là một mảng chứa các điều kiện tìm kiếm */
+            [
+                'user_id' => Auth::id(),
+                'product_id' => $product_id,
+            ],
+            /** tham số thứ 2
+             * Nếu có một bản ghi trong bảng Cart với user_id và product_id khớp, phương thức sẽ cập nhật bản ghi đó với giá trị mới:
+             */
+            [
+                'quantity_sp' => DB::raw('quantity_sp +' . $product_client_quantity),
+                'total_price' => $product_get->product_price,
+                'image' => $product_get->product_image,
+                'updated_at' => now(),
+            ]
+        );
+
+
+        $cart = Cart::select('carts.*', 'products.*')
+            ->join('products', 'carts.product_id', '=', 'products.product_id')
+            ->where('user_id', Auth::id())
+            ->where('carts.product_id', $product_id)
+            ->get();
+
+        return view('component.header.dathang.checkout', compact(['cart', 'product_id']));
     }
 }

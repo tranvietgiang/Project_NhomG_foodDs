@@ -93,9 +93,11 @@ Route::post('/client-avatar-image-update', [AdminController::class, 'client_avat
 Route::get('/auth/google', [LoginController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [LoginController::class, 'handleGoogleCallback']);
 
+/* cart đặt hàng */
+Route::get('/cart/show_checkout/{product_id}', [ViewController::class, 'show_cart_mua_ngay']);
+// Route::get('/cart/dathang/{product_id}', [ProductController::class, 'cart_mua_ngay'])->name('cart.show_cart_mua_ngay');
 
 /** cart and review */
 Route::get('/cart/{product_id}', [ViewController::class, 'show_cart'])->name('show_cart');
-Route::get('/review/cart', [ProductController::class, 'review'])->name('review');
 Route::get('/delete/client_comment/{review_id}', [ProductController::class, 'delete_review'])->name('client.comment.delete');
 Route::get('/update/review/{review_id}', [ProductController::class, 'update_review'])->name('client.comment.update');

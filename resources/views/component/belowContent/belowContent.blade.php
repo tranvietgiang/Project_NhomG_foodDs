@@ -76,15 +76,17 @@
                     <span class="btn btn-outline-success"><a class="text-white"
                             href="#">aaaaaaaaaaaaaaa</a></span>
                 </div>
-                @for ($i = 1; $i <= 8; $i++)
+                @foreach ($products as $item)
                     <div class="col-2 col-md-3 mb-3">
                         <div class="frame-image">
                             <div>
-                                <img class="image-product-content-1 img-fluid"
-                                    src="{{ asset('component/image-product/mi-tron-cay.png') }}" alt="">
+                                <a href="">
+                                    <img class="image-product-content-1 img-fluid"
+                                        src="{{ asset('component/image-product/mi-tron-cay.png') }}" alt="">
+                                </a>
                             </div>
                             <h5 class="product_name text-center"><b>
-                                    Cà phê muối thơm ngon đặc biệt đậm vị Việt Nam, hương vị độc đáo khó quên.
+                                    {{ $item->product_name }}
                                 </b></h5>
 
                             <span class="text-warning product_star">
@@ -98,16 +100,16 @@
 
                             <span style="font-size:14px" class="text-success">đã bán 103</span>
 
-                            <span class="new-price"><b>1000.0 </b><sub>đ</sub></span>
+                            <span class="new-price"><b>{{ $item->product_price }} </b><sub>đ</sub></span>
 
                             <div class="d-flex justify-content-center align-items-center gap-3">
-                                <span class="old-price">1500.0<sub>đ</sub></span>
+                                <span class="old-price">{{ $item->product_price }}<sub>đ</sub></span>
                                 <span class="discount">-35%</span>
                                 <span class="btn btn-outline-success btn-sm">cart</span>
                             </div>
                         </div>
                     </div>
-                @endfor
+                @endforeach
             </div>
         </div>
     </div>

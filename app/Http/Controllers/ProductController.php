@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\bill_product;
 use App\Models\Cart;
+use App\Models\Product;
 use App\Models\Review;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -75,4 +76,6 @@ class ProductController extends Controller
 
         return redirect()->back();
     }
+
+    /** đặt đơn hàng */
 }
