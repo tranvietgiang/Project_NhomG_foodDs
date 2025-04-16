@@ -31,6 +31,9 @@
                 $cart_id_payment = $item->cart_id;
                 $product_get_id = $item->product_id;
                 $total_price_final = $item->total_price * $item->quantity_sp;
+                $product_name = $item->product_name;
+                $product_quantity = $item->quantity_sp;
+                $product_image = $item->product_image;
             @endphp
         @endforeach
 
@@ -53,6 +56,9 @@
         <input type="hidden" name="cart_id_payment" value="{{ $cart_id_payment }}">
         <input type="hidden" name="total_price_payment" value="{{ $total_price_final }}">
         <input type="hidden" name="product_id" value="{{ $product_id }}">
+        <input type="hidden" name="product_name" value="{{ $product_name }}">
+        <input type="hidden" name="product_quantity" value="{{ $product_quantity }}">
+        <input type="hidden" name="product_image" value="{{ $product_image }}">
 
         <!-- Radio chọn phương thức -->
         <div>

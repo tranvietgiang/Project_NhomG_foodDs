@@ -22,10 +22,10 @@ class PTTTController extends Controller
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
 
         $vnp_Returnurl = route('vnpay.return'); // URL nhận kết quả trả về
-        $vnp_TxnRef = 'madonhang' . time(); // Mã đơn hàng duy nhất
+        $vnp_TxnRef =  time(); // Mã đơn hàng duy nhất
         $vnp_OrderInfo = "Thanh toán hóa đơn";
         $vnp_OrderType = "billpayment";
-        $vnp_Amount = $request->input('total_price_payment') * 100; // Số tiền phải nhân 100 (VNPAY yêu cầu)
+        $vnp_Amount = $request->input('total_price_payment') * 10000; // Số tiền phải nhân 100 (VNPAY yêu cầu)
         $vnp_Locale = "vn";
         $vnp_BankCode = "NCB"; // Có thể đổi thành ngân hàng khác nếu cần
         // $vnp_IpAddr = $request->ip(); // IP khách hàng
@@ -68,8 +68,14 @@ class PTTTController extends Controller
 
         // Lưu thông tin vào session (để hiển thị khi thanh toán thành công/thất bại)
         session([
-            'vnpay-name' => $request->input('name'),
-            'vnpay-price' => $request->input('price')
+            'vnpay' => [
+                'name' => $request->input('product_name'),
+                'price' => $vnp_Amount,
+                'image' => $request->input('product_image'),
+                'quantity' => $request->input('product_quantity'),
+                'client_name' => Auth::user()?->name,
+                'order_id' => $vnp_TxnRef,
+            ]
         ]);
 
         // Chuyển hướng (redirect) đến trang thanh toán VNPAY
@@ -80,12 +86,17 @@ class PTTTController extends Controller
     public function vnpay_return(Request $request)
     {
         // lưu data vào data base
-        $status = 'success'; // Hoặc lấy từ logic kiểm tra
-        $vnp_TxnRef = $request->input('vnp_TxnRef', 'No Data');
-        $name = session('vnpay-name');
-        $price = session('vnpay-price');
+        $vnpData = session('vnpay', []);
+        $name = $vnpData['name'];
+        $price = $vnpData['price'];
+        $orderId = $vnpData['order_id'];
+        $image = $vnpData['image'];
+        $quantity = $vnpData['quantity'];
+        $client = $vnpData['client_name'];
 
-        return view('component.header.admin.pttt.form-vnpay-checkout', compact('status', 'vnp_TxnRef', 'name', 'price'));
+        $status = 'success';
+
+        return view('component.header.admin.pttt.form-vnpay-checkout', compact('status', 'orderId', 'name', 'price', 'image', 'quantity', 'client'));
     }
 
 

@@ -55,9 +55,13 @@
 @if ($status == 'success')
     <section>
         <h1>Thanh toán thành công!</h1>
-        <p>Mã giao dịch: {{ $txnRef ?? 'Không có mã giao dịch' }}</p>
-        <p>Sản phẩm: {{ $name ?? 'Không có thông tin sản phẩm' }}</p>
-        <p>Số tiền: {{ number_format($price ?? 0, 0, ',', '.') }} VND</p>
+        <p>Mã giao dịch: {{ $orderId }}</p>
+        <p>Tên người nhận: {{ $client }}</p>
+        <p><img width="200" height="200" style="object-fit: contain"
+                src="{{ asset('component/image-product/' . $image) }}" alt=""></p>
+        <p>Tên sản phẩm: {{ $name }}</p>
+        <p>Số lượng: {{ $quantity }}</p>
+        <p>Tổng tiền: {{ number_format($price ?? 0, 0, ',', '.') }} VND</p>
         <div><a href="{{ route('website-main') }}">Quay lại</a></div>
     </section>
 @else
