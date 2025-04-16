@@ -229,7 +229,7 @@
     </div>
 
     <!-- form -->
-    <form id="review-form" action="{{ url('/review/cart') }}" method="get">
+    <form id="review-form" action="{{ url('/client/review/cart/bought') }}" method="get">
         <input type="text" name="product_id" value="{{ $product_id = $cart->first()->product_id }}">
 
         @csrf
@@ -246,7 +246,7 @@
         <div>
             <textarea name="review_content" id="client-comment" class="form-control" rows="4"
                 placeholder="Nhập đánh giá về sản phẩm (tối thiểu 10 ký tự)"></textarea>
-            <button class="submit-btn">GỬI ĐÁNH GIÁ</button>
+            <button type="submit" class="submit-btn">GỬI ĐÁNH GIÁ</button>
             <span class="text-danger fw-bold" id="errorMessage"></span>
         </div>
         <div>

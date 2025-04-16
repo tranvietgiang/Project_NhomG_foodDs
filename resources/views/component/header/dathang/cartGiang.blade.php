@@ -36,9 +36,7 @@
         padding: 0;
     }
 </style>
-<div>
-    <a href="{{ url()->previous() }}">Quay lại</a>
-</div>
+
 <h1>Product Details</h1>
 @foreach ($cart as $item)
     <div class="frame-image">

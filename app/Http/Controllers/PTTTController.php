@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\bill;
+use App\Models\bill_product;
+use App\Models\Cart;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class PTTTController extends Controller
 {
@@ -17,10 +23,11 @@ class PTTTController extends Controller
         $vnp_TxnRef = 'madonhang' . time(); // Mã đơn hàng duy nhất
         $vnp_OrderInfo = "Thanh toán hóa đơn";
         $vnp_OrderType = "billpayment";
-        $vnp_Amount = $request->input('price') * 100; // Số tiền phải nhân 100 (VNPAY yêu cầu)
+        $vnp_Amount = $request->input('total_price_payment') * 100; // Số tiền phải nhân 100 (VNPAY yêu cầu)
         $vnp_Locale = "vn";
         $vnp_BankCode = "NCB"; // Có thể đổi thành ngân hàng khác nếu cần
-        $vnp_IpAddr = $request->ip(); // IP khách hàng
+        // $vnp_IpAddr = $request->ip(); // IP khách hàng
+        $vnp_IpAddr = $request->input('user_id_payment'); // IP khách hàng
 
         // Tạo dữ liệu gửi đi
         $inputData = [
@@ -77,5 +84,35 @@ class PTTTController extends Controller
         $price = session('vnpay-price');
 
         return view('component.header.admin.pttt.form-vnpay-checkout', compact('status', 'vnp_TxnRef', 'name', 'price'));
+    }
+
+
+
+
+    /** thanh toán khi nhận hàng*/
+    public function payment_cod(Request $req)
+    {
+        $product_id = $req->input('product_id');
+        try {
+            // 1. Tạo bill
+            $bill = bill::create([
+                'user_id' => Auth::id(),
+                'cart_id' => $req->input('cart_id_payment'),
+                'method_payment_id' => 2 // 2 là thanh toán khi nhận tiền mặc định của pttt
+            ]);
+
+            // 2. Tạo bill_product
+            bill_product::create([
+                'bill_id' => $bill->bill_id, // nếu là bill_id thì sửa thành $bill->bill_id
+                'product_id' =>  $product_id,
+                'quantity' => 1 // 1 là số lượng mặc định mà khách hàng bấm vào sản phẩm và mua ngay
+            ]);
+
+            // 4. Trả về kết quả
+            return redirect()->route('bill.show_bill_product', ['cart_id' => $bill->cart_id]);
+        } catch (\Exception $e) {
+            // Nếu lỗi khi tạo bill hoặc bill_product thì bắt ở đây
+            return redirect()->back()->with('payment-error', 'Đặt hàng thất bại: ' . $e->getMessage());
+        }
     }
 }

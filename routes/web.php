@@ -10,7 +10,9 @@ use App\Models\login;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\LastActivity;
 use App\Models\district;
+use App\Models\Product;
 use App\Models\ward;
+use Database\Seeders\ProductsSeeder;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\View\View as ViewView;
@@ -68,7 +70,7 @@ Route::post('/verify-otp-forgot', [LoginController::class, 'verifyOtpForgot'])->
 
 
 
-
+/** các phương thức thanh toán đơn hàng */
 /** show form */
 Route::get('/showVnPay', [AdminController::class, 'showVnPayCheckout'])->name('showVnPayCheckout') /*->middleware(checkLogin::class)*/;
 
@@ -77,6 +79,15 @@ Route::post('/vnpay_payment', [PTTTController::class, 'vnpay_payment'])->name('v
 
 /* result success or failed */
 Route::get('/vnpay_return', [PTTTController::class, 'vnpay_return'])->name('vnpay.return')/*->middleware(checkLogin::class)*/;
+
+/** kiểm tra xem client chọn pttt nào */
+Route::post('/pttt/payment/checkout', [PTTTController::class, 'select_payment_client'])->name('checkout.pptt.payment');
+
+/** thanh toán khi nhận hàng */
+Route::post('/pttt/payment/ttknh', [PTTTController::class, 'payment_cod'])->name('pptt.payment.cod');
+/** show form bill */
+Route::get('show/bill/products/{cart_id}', [ViewController::class, 'show_bill_product'])->name('bill.show_bill_product');
+/**====================================================================================================== */
 
 
 /** show ra địa chỉ vn */
@@ -99,5 +110,6 @@ Route::get('/cart/show_checkout/{product_id}', [ViewController::class, 'show_car
 
 /** cart and review */
 Route::get('/cart/{product_id}', [ViewController::class, 'show_cart'])->name('show_cart');
+Route::get('/client/review/cart/bought', [ProductController::class, 'review']);
 Route::get('/delete/client_comment/{review_id}', [ProductController::class, 'delete_review'])->name('client.comment.delete');
 Route::get('/update/review/{review_id}', [ProductController::class, 'update_review'])->name('client.comment.update');

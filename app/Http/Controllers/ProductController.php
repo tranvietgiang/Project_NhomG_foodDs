@@ -28,8 +28,8 @@ class ProductController extends Controller
 
         $review = User::select('users.*')
             ->join('bills', 'users.id', '=', 'bills.user_id')
-            ->join('bill_product', 'bills.bill_id', '=', 'bill_product.bill_id')
-            ->where('bill_product.product_id', $product_id)
+            ->join('bill_products', 'bills.bill_id', '=', 'bill_products.bill_id')
+            ->where('bill_products.product_id', $product_id)
             ->where('users.id', $user->id)->exists();
 
 
