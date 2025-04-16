@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\bill;
 use App\Models\bill_product;
 use App\Models\Cart;
+use App\Models\Client;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -92,6 +94,12 @@ class PTTTController extends Controller
     /** thanh toán khi nhận hàng*/
     public function payment_cod(Request $req)
     {
+        // kiểm tra xem user đã có đại chỉ chưa
+        $check_address = Client::where('user_id', Auth::id())->exists();
+
+        if (empty($check_address)) {
+            return redirect()->back()->with('address_null', 'Vui lòng quay về form cá nhân để nhập thông tin địa chỉ, xin cảm ơn');
+        }
         $product_id = $req->input('product_id');
         try {
             // 1. Tạo bill
@@ -108,7 +116,7 @@ class PTTTController extends Controller
                 'quantity' => 1 // 1 là số lượng mặc định mà khách hàng bấm vào sản phẩm và mua ngay
             ]);
 
-            // 4. Trả về kết quả
+            // 4. Trả về kết quả qua form bill
             return redirect()->route('bill.show_bill_product', ['cart_id' => $bill->cart_id]);
         } catch (\Exception $e) {
             // Nếu lỗi khi tạo bill hoặc bill_product thì bắt ở đây

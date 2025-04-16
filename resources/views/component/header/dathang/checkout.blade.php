@@ -2,9 +2,12 @@
 <link rel="stylesheet" href="{{ asset('component/css/mdb.min.css') }}">
 <div class=""><a href="{{ url()->previous() }}">Quay lại</a></div>
 <section>
-    <div>thêm địa chỉ nhận hàng(chưa có) <a href="{{ url('/information-client') }}">tại đây</a></div>
     <!-- Thông tin đơn hàng -->
     <div class="">
+        @if (session('address_null'))
+            <div class="alert alert-warning text-center">{{ session('address_null') }}, <a
+                    href="{{ url('/information-client') }}">tại đây</div>
+        @endif
         <h3>Thông tin đơn hàng</h3>
         @foreach ($cart as $item)
             <div class="card mb-3 p-3 d-flex flex-row align-items-center" style="gap: 20px;">
@@ -84,6 +87,9 @@
         } else {
             form.action = "{{ route('pptt.payment.cod') }}";
         }
+
+
+
 
         form.submit(); // Tiến hành submit theo action mới
     });
