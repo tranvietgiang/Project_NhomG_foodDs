@@ -119,6 +119,8 @@
 
             <!-- Nút đăng nhập bằng Google -->
             <a href="{{ route('auth.google') }}" class="google-btn">Login with Google</a> |
+            <a href="{{ url('login/github') }}" class="github-btn">Login with Github <img class="object-fit-cover"
+                    width="20" height="20" src="{{ asset('image-store/github.png') }}" alt=""></a> |
             <a href="{{ route('website-main') }}" class="">Home</a>
 
             <!-- Register buttons -->

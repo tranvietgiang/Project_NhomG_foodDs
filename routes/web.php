@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\GithubController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PTTTController;
@@ -103,6 +104,11 @@ Route::post('/client-avatar-image-update', [AdminController::class, 'client_avat
 /** login vs google */
 Route::get('/auth/google', [LoginController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [LoginController::class, 'handleGoogleCallback']);
+
+/** login vs github */
+Route::get('login/github', [GithubController::class, 'redirectToProvider']);
+Route::get('login/github/callback', [GithubController::class, 'handleProviderCallback']);
+
 
 /* cart đặt hàng */
 Route::get('/cart/show_checkout/{product_id}', [ViewController::class, 'show_cart_mua_ngay'])->middleware(checkLogin::class);

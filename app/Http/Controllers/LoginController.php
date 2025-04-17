@@ -456,7 +456,7 @@ class LoginController extends Controller
                 $newUser = User::create([
                     'name' => $googleUser->getName(),
                     'email' => $googleUser->getEmail(),
-                    'password' => bcrypt('google-auth-user'), // Giá trị tạm
+                    'password' => bcrypt('google-auth-user'), // Giá trị tạm để không bị lỗi null password
                     'provider' => 'google',
                     'provider_id' => $googleUser->getId(),
                 ]);
