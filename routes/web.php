@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\GithubController;
+use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PTTTController;
@@ -102,8 +103,8 @@ Route::post('/update-client', [AdminController::class, 'update_client'])->middle
 Route::post('/client-avatar-image-update', [AdminController::class, 'client_avatar_update'])->middleware(checkLogin::class);
 
 /** login vs google */
-Route::get('/auth/google', [LoginController::class, 'redirectToGoogle'])->name('auth.google');
-Route::get('/auth/google/callback', [LoginController::class, 'handleGoogleCallback']);
+Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
 /** login vs github */
 Route::get('login/github', [GithubController::class, 'redirectToProvider']);

@@ -21,6 +21,7 @@ class GithubController extends Controller
     // Handle the GitHub callback
     public function handleProviderCallback()
     {
+
         $socialUser = Socialite::driver('github')->user();
 
         // $socialUser->getNickname() → trích từ "login" → luôn có → bạn thấy dùng được là đúng.
