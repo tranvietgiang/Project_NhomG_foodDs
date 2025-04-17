@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\LoginController;
 use App\Http\Middleware\checkLogin;
 use App\Models\login;
@@ -89,5 +90,8 @@ Route::get('/auth/google/callback', [LoginController::class, 'handleGoogleCallba
 Route::get('/cart',[ProductController::class,'show_cartCa'])->name('cart');
 Route::post('/cart/add', [ProductController::class, 'addtocart'])->name('cart.add');
 Route::get('/viewcart',[ProductController::class,'viewcart'])->name('viewcart'); 
+Route::delete('/cart/removeCart/{id}',[ProductController::class,'removeCart'])->name('cart.removeCart');
+Route::put('/cart/update/{id}', [ProductController::class, 'updateSL'])->name('cart.update');
 
-
+// thanh toán momo
+Route::post('/momo_payment',[CheckoutController::class, 'momo_payment'])->name('momo_payment');
