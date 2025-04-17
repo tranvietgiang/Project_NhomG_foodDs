@@ -105,7 +105,7 @@ Route::get('/auth/google', [LoginController::class, 'redirectToGoogle'])->name('
 Route::get('/auth/google/callback', [LoginController::class, 'handleGoogleCallback']);
 
 /* cart đặt hàng */
-Route::get('/cart/show_checkout/{product_id}', [ViewController::class, 'show_cart_mua_ngay']);
+Route::get('/cart/show_checkout/{product_id}', [ViewController::class, 'show_cart_mua_ngay'])->middleware(checkLogin::class);
 // Route::get('/cart/dathang/{product_id}', [ProductController::class, 'cart_mua_ngay'])->name('cart.show_cart_mua_ngay');
 
 /** cart and review */

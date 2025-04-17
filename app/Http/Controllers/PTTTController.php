@@ -25,7 +25,7 @@ class PTTTController extends Controller
         $vnp_TxnRef =  time(); // Mã đơn hàng duy nhất
         $vnp_OrderInfo = "Thanh toán hóa đơn";
         $vnp_OrderType = "billpayment";
-        $vnp_Amount = $request->input('total_price_payment') * 10000; // Số tiền phải nhân 100 (VNPAY yêu cầu)
+        $vnp_Amount = $request->input('total_price_payment') * 100; // Số tiền phải nhân 100 (VNPAY yêu cầu)
         $vnp_Locale = "vn";
         $vnp_BankCode = "NCB"; // Có thể đổi thành ngân hàng khác nếu cần
         // $vnp_IpAddr = $request->ip(); // IP khách hàng
@@ -76,6 +76,26 @@ class PTTTController extends Controller
                 'client_name' => Auth::user()?->name,
                 'order_id' => $vnp_TxnRef,
             ]
+        ]);
+
+        $product_id = $request->input('product_id');
+        $cart = Cart::create([
+            'product_id' => $product_id,
+            'user_id' => Auth::id(),
+            'quantity_sp' => $request->input('product_quantity'),
+            'total_price' => $request->input('product_price'),
+        ]);
+
+        $bill = bill::create([
+            'user_id' => Auth::id(),
+            'cart_id' => $cart->cart_id,
+            'method_payment_id' => 1 // mặc định vnpay là 1
+        ]);
+
+        bill_product::create([
+            'bill_id' => $bill->bill_id,
+            'product_id' =>  $product_id,
+            'quantity' => 1 // do là click mua ngay nên chỉ loại hàng hóa là 1  
         ]);
 
         // Chuyển hướng (redirect) đến trang thanh toán VNPAY

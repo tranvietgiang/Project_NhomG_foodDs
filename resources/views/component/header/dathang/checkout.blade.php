@@ -34,6 +34,7 @@
                 $product_name = $item->product_name;
                 $product_quantity = $item->quantity_sp;
                 $product_image = $item->product_image;
+                $product_price = $item->total_price;
             @endphp
         @endforeach
 
@@ -59,6 +60,7 @@
         <input type="hidden" name="product_name" value="{{ $product_name }}">
         <input type="hidden" name="product_quantity" value="{{ $product_quantity }}">
         <input type="hidden" name="product_image" value="{{ $product_image }}">
+        <input type="hidden" name="product_price" value="{{ $product_price }}">
 
         <!-- Radio chọn phương thức -->
         <div>

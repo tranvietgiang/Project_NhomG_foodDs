@@ -69,6 +69,7 @@ class ViewController extends Controller
     /** show cart sản phẩm mà khách hàng đã bấm mua ngay */
     public function show_cart_mua_ngay(Request $req, $product_id)
     {
+
         /** số lượng mà khách hàng đã chọn */
         $product_client_quantity = $req->input('cart_quantity');
         /** lấy ra sản phẩm mà client bấm mua ngay dựa vào id */
