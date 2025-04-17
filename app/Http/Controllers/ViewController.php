@@ -123,7 +123,7 @@ class ViewController extends Controller
             ->join('clients', 'users.id', '=', 'clients.user_id')
             ->join('carts', 'users.id', '=', 'carts.user_id')
             ->join('products', 'carts.product_id', '=', 'products.product_id')
-            ->where('users.id', Auth::id())->where('carts.cart_id', $cart_id)->get();
+            ->where('users.id', Auth::id())->where('carts.cart_id', $cart_id)->limit('1')->get();
 
         return view('component.header.dathang.bill', compact('show_bill'))->with('order-success', 'Thanh toán đơn hàng thành công.');
     }
