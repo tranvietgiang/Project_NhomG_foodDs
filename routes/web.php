@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\GithubController;
 use App\Http\Controllers\GoogleController;
@@ -14,6 +15,7 @@ use App\Http\Middleware\LastActivity;
 use App\Models\district;
 use App\Models\Product;
 use App\Models\ward;
+use Database\Seeders\CategorieSeeders;
 use Database\Seeders\ProductsSeeder;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -120,3 +122,6 @@ Route::get('/cart/{product_id}', [ViewController::class, 'show_cart'])->name('sh
 Route::get('/client/review/cart/bought', [ProductController::class, 'review']);
 Route::get('/delete/client_comment/{review_id}', [ProductController::class, 'delete_review'])->name('client.comment.delete');
 Route::get('/update/review/{review_id}', [ProductController::class, 'update_review'])->name('client.comment.update');
+
+/** categories hung */
+Route::resource('categories', CategoryController::class);

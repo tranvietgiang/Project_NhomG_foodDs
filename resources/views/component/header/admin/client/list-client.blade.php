@@ -105,6 +105,14 @@
                     <li><a href="#"><i class="fas fa-box"></i> DS Sản Phẩm</a></li>
                 @endif
 
+                <!-- page categories -->
+                @if (Auth::check() && Auth::user()->role == 'admin')
+                    <li class=""><a href="{{ url('categories') }}"><i class="fas fa-box"></i> Quản Lý Phân
+                            loại</a></li>
+                @else
+                    <li><a href="#"><i class="fas fa-box"></i> Quản Lý Phân loại</a></li>
+                @endif
+
                 <!-- page -->
                 @if (Auth::check() && Auth::user()->role == 'admin')
                     <li><a href="#"><i class="fas fa-envelope"></i>Mã giảm giá</a></li>
