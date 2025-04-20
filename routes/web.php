@@ -95,3 +95,6 @@ Route::put('/cart/update/{id}', [ProductController::class, 'updateSL'])->name('c
 
 // thanh toán momo
 Route::post('/momo_payment',[CheckoutController::class, 'momo_payment'])->name('momo_payment');
+
+// hiện thị tất cả sản phẩm
+Route::get('/allproduct',[ProductController::class,'showallproduct'])->name('allproduct');

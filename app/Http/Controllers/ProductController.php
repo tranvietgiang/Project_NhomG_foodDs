@@ -92,7 +92,12 @@ class ProductController extends Controller
     return view('component.belowContent.cart', compact('cartItems', 'totalAmount'));
     }
 
-
+  
+    // hiển thị tất cả sản phẩm
+    public function showallproduct(){
+        $products = $products = Product::paginate(12);
+        return view('component.belowContent.allproduct',compact('products'));
+    }
 
  
 }

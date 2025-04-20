@@ -129,19 +129,22 @@
                 @foreach($products as $product)
                     <div class="owl-item">
                         <div class="item">
-                            <a href="#"><img src="{{ asset('component/image-product/mi-tron-cay.png') }}"
+                            <a href="#"><img src="{{ asset('images/'. $product->product_image) }}"
                                     alt="Sản phẩm 2"></a>
                             <div class="divtext">
-                                <h3 class="name-product"><a href="#">Sản phẩm 2</a></h3>
+                                <h3 class="name-product"><a href="#">{{$product->product_name}}</a></h3>
                                 <div class="price">
                                     <div class="giatien">
-                                        <strong>40,000 đ</strong>
+                                        <strong>{{$product->product_price}} đ</strong>
                                         <p><span style="text-decoration: line-through;">50,000 ₫</span><span
                                                 style="color: #e00;">-20%</span></p>
                                     </div>
-                                    <div class="add-to-cart">
-                                        <a href="#">ADD</a>
-                                    </div>
+                                    <form action="{{ route('cart.add') }}" method="POST" style="display:inline;">
+                    @csrf
+                    <input type="hidden" name="product_id" value="{{ $product->product_id }}">
+                    <input type="hidden" name="quantity_sp" value="1"> <!-- Thêm trường quantity_sp nếu cần -->
+                    <button type="submit" class="btn btn-outline-success btn-sm" style="display: inline;">Add</button>
+                </form>
                                 </div>
                             </div>
                         </div>

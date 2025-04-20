@@ -70,11 +70,10 @@
         <div class="col-9 col-md-9">
             <div class="row">
                 <div style="margin: 10px 0;">
-                    <span class="btn btn-success"><a class="text-white" href="#">aaaaaaaaaaaaaa</a></span>
-                    <span class="btn btn-outline-success"><a class="text-white" href="#">aaaaaaaaaaaa</a></span>
-                    <span class="btn btn-outline-success"><a class="text-white" href="#">aaaaaaaaaaaaaa</a></span>
-                    <span class="btn btn-outline-success"><a class="text-white"
-                            href="#">aaaaaaaaaaaaaaa</a></span>
+                    <span class="btn btn-success" ><a class="abc" href="#">aaaaaaaaaaaaaa</a></span>
+                    <span class="btn btn-success"><a class="abc" href="">sắp xếp theo giá cao đén thấp</a></span>
+                    <span class="btn btn-success"><a class="abc" href="#">sắp xếp theo giá thấp đén cao</a></span>     
+                    <span class="btn btn-success"><a class="abc " href="{{route('allproduct')}}">Xem tất cả</a></span>
                 </div>
                 @foreach($products as $product)
                     <div class="col-2 col-md-3 mb-3">
@@ -103,7 +102,7 @@
                             <div class="d-flex justify-content-center align-items-center gap-3">
                                 <span class="old-price">1500.0<sub>đ</sub></span>
                                 <span class="discount">-35%</span>
-                                <form action="{{ route('cart.add') }}" method="POST" style="display:inline;">
+                <form action="{{ route('cart.add') }}" method="POST" style="display:inline;">
                     @csrf
                     <input type="hidden" name="product_id" value="{{ $product->product_id }}">
                     <input type="hidden" name="quantity_sp" value="1"> <!-- Thêm trường quantity_sp nếu cần -->

@@ -55,11 +55,14 @@
             <h3>Tổng Tiền: {{ number_format($totalAmount, 0, ',', '.') }} VND</h3>
         </div>
         <button class="btn btn-primary">Tiến Hành Thanh Toán</button>
-        <form action="{{ route('momo_payment') }}" method="post">
+        <div class="mt-2">
+            <form action="{{ route('momo_payment') }}" method="post">
         @csrf
             <input type="hidden" name="totalAmount" value="{{$totalAmount}}">
              <button class="momo btn btn-primary">Thanh toán  bằng  momo </button>
         </form>
+        </div>
+        
        
     </div>
 
