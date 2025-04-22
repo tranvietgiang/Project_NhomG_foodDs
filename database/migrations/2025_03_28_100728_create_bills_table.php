@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('bills', function (Blueprint $table) {
             $table->id('bill_id');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('cart_id')->constrained('carts', 'cart_id')->onDelete('cascade');
+            $table->foreignId('cart_id')->constrained('carts', 'cart_id');
             $table->foreignId('method_payment_id')->constrained('method_payments', 'method_payment_id')->onDelete('cascade');
             $table->timestamps();
         });

@@ -45,10 +45,10 @@ class GoogleController extends Controller
                     'provider_id' => $googleUser->getId(),
                 ]);
 
-                Client::create([
-                    'user_id' => $newUser->id,
-                    'client_name' => $newUser->name,
-                ]);
+                // Client::create([
+                //     'user_id' => $newUser->id,
+                //     'client_name' => $newUser->name,
+                // ]);
 
 
                 Auth::login($newUser);

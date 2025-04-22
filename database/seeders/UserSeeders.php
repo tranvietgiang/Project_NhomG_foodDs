@@ -15,26 +15,26 @@ class UserSeeders extends Seeder
     public function run(): void
     {
 
-        // $faker = Faker::create();
+        $faker = Faker::create();
 
-        // for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= 10; $i++) {
 
-        //     User::create([
-        //         'name' => $faker->name(),
-        //         'email' => $faker->email(),
-        //         'password' => bcrypt('2005'),
-        //         'role' => 'employees',
-        //         'phone' => $faker->numerify('03########')
-        //     ]);
-        // }
+            User::create([
+                'name' => $faker->name(),
+                'email' => $faker->email(),
+                'password' => bcrypt('2005'),
+                'role' => 'employees',
+                'phone' => $faker->numerify('03########')
+            ]);
+        }
 
-        // User::create([
-        //     'name' => 'Tran Viet Giang',
-        //     'email' => 'tranvietgiang@gmail.com',
-        //     'password' => bcrypt('2005'),
-        //     'role' => "admin",
-        //     'phone' => '0336833827'
-        // ]);
+        User::create([
+            'name' => 'Tran Viet Giang',
+            'email' => 'admin@gmail.com',
+            'password' => bcrypt('2005'),
+            'role' => "admin",
+            'phone' => '99999999999'
+        ]);
 
         User::create([
             'name' => 'Ca pham',
@@ -43,11 +43,11 @@ class UserSeeders extends Seeder
             'role' => "employees",
         ]);
 
-        // User::create([
-        //     'name' => 'dHung',
-        //     'email' => 'dHung@gmail.com',
-        //     'password' => bcrypt('2005'),
-        //     'role' => "user",
-        // ]);
+        User::create([
+            'name' => 'dHung',
+            'email' => 'dHung@gmail.com',
+            'password' => bcrypt('2005'),
+            'role' => "user",
+        ]);
     }
 }

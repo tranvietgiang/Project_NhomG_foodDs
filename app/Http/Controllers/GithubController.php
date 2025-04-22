@@ -37,10 +37,10 @@ class GithubController extends Controller
             ]
         );
 
-        Client::create([
-            'user_id' => $user->id,
-            'client_name' => $socialUser->getNickname(),
-        ]);
+        // Client::create([
+        //     'user_id' => $user->id,
+        //     'client_name' => $socialUser->getNickname(),
+        // ]);
 
         auth::login($user);
         return redirect()->route('website-main');

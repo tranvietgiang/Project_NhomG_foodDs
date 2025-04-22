@@ -22,8 +22,8 @@ return new class extends Migration
             $table->string('last_activity')->default('off');
             $table->rememberToken();
             $table->timestamps();
-            $table->string('provider');
-            $table->string('provider_id');
+            $table->string('provider')->default('gg');
+            $table->string('provider_id')->default('gg');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

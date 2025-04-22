@@ -8,6 +8,8 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PTTTController;
 use App\Http\Controllers\ViewController;
+use App\Http\Controllers\SDTController;
+use App\Http\Controllers\ZaloPayController;
 use App\Http\Middleware\checkLogin;
 use App\Models\login;
 use Illuminate\Support\Facades\Route;
@@ -112,16 +114,29 @@ Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallb
 Route::get('login/github', [GithubController::class, 'redirectToProvider']);
 Route::get('login/github/callback', [GithubController::class, 'handleProviderCallback']);
 
+/** logon with sdt không thành công */
+Route::get('/send-sms', [SDTController::class, 'sendSMS']);
+Route::post('/login-sdt', [SDTController::class, 'checkLogin'])->name('auth.checkLogin');
+Route::post('/send-otp', [SDTController::class, 'sendOtp'])->name('send.otp');
+Route::post('/verify-otp', [SDTController::class, 'verifyOtp'])->name('verify.otp');
 
 /* cart đặt hàng */
 Route::get('/cart/show_checkout/{product_id}', [ViewController::class, 'show_cart_mua_ngay'])->middleware(checkLogin::class);
 // Route::get('/cart/dathang/{product_id}', [ProductController::class, 'cart_mua_ngay'])->name('cart.show_cart_mua_ngay');
 
-/** cart and review */
+/** cart and review  giang*/
 Route::get('/cart/{product_id}', [ViewController::class, 'show_cart'])->name('show_cart');
 Route::get('/client/review/cart/bought', [ProductController::class, 'review']);
 Route::get('/delete/client_comment/{review_id}', [ProductController::class, 'delete_review'])->name('client.comment.delete');
 Route::get('/update/review/{review_id}', [ProductController::class, 'update_review'])->name('client.comment.update');
 
-/** categories hung */
+/** categories hung crud */
 Route::resource('categories', CategoryController::class);
+
+/** zaloPay */
+Route::post('/zaloPay/payment', [ZaloPayController::class, 'zalopay'])->name('zalo.payment');
+Route::get('/zaloPay/callback', [ZaloPayController::class, 'callback_zalopay'])->name('zalo.callback');
+
+
+/** xem thông tin chi tiết */
+Route::get('/client/info/{user_id}', [AdminController::class, 'client_detail_manager'])->name('client.detail.manager');

@@ -17,6 +17,14 @@ class PTTTController extends Controller
     //
     public function vnpay_payment(Request $request)
     {
+        // kiểm tra xem user đã có điạ chỉ chưa
+        $check_address = Client::where('user_id', Auth::id())->exists();
+
+        if (empty($check_address)) {
+            return redirect()->back()->with('address_null', 'Vui lòng quay về form cá nhân để nhập thông tin địa chỉ, xin cảm ơn');
+        }
+
+
         $vnp_TmnCode = "PR7H47SW"; // Mã website của bạn tại VNPAY
         $vnp_HashSecret = "WGUPUW7FBTFZHEF52ZPMDZ7IMFWT1Z7K"; // Chuỗi bí mật
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
@@ -66,6 +74,19 @@ class PTTTController extends Controller
         $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret); // Tạo mã bảo mật
         $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
 
+
+
+        $product_id = $request->input('product_id');
+
+        $cart = Cart::where('user_id', Auth::id())->orderByDesc('cart_id')->first();
+        // $cart = Cart::create([
+        //     'product_id' => $product_id,
+        //     'user_id' => Auth::id(),
+        //     'quantity_sp' => $request->input('product_quantity'),
+        //     'total_price' => $request->input('product_price'),
+        // ]);
+
+
         // Lưu thông tin vào session (để hiển thị khi thanh toán thành công/thất bại)
         session([
             'vnpay' => [
@@ -75,16 +96,11 @@ class PTTTController extends Controller
                 'quantity' => $request->input('product_quantity'),
                 'client_name' => Auth::user()?->name,
                 'order_id' => $vnp_TxnRef,
+                'delete_cart' => $cart->cart_id,
             ]
         ]);
 
-        $product_id = $request->input('product_id');
-        $cart = Cart::create([
-            'product_id' => $product_id,
-            'user_id' => Auth::id(),
-            'quantity_sp' => $request->input('product_quantity'),
-            'total_price' => $request->input('product_price'),
-        ]);
+
 
         $bill = bill::create([
             'user_id' => Auth::id(),
@@ -98,6 +114,8 @@ class PTTTController extends Controller
             'quantity' => 1 // do là click mua ngay nên chỉ loại hàng hóa là 1  
         ]);
 
+
+
         // Chuyển hướng (redirect) đến trang thanh toán VNPAY
         return redirect($vnp_Url);
     }
@@ -105,8 +123,17 @@ class PTTTController extends Controller
     /** show ra bills */
     public function vnpay_return(Request $request)
     {
-        // lưu data vào data base
+
         $vnpData = session('vnpay', []);
+        $delete_cart = $vnpData['delete_cart'];
+
+
+        // xau khi thanh toán thành công thì xóa đi cart
+        /** tại vì phải xóa thằng bill mới xóa dc thằng cart */
+        // bill::where('cart_id', $delete_cart)->where('user_id', Auth::id())->delete();
+        // Cart::where('cart_id', $delete_cart)->where('user_id', Auth::id())->delete();
+
+        // lưu data vào data base
         $name = $vnpData['name'];
         $price = $vnpData['price'];
         $orderId = $vnpData['order_id'];
@@ -125,12 +152,14 @@ class PTTTController extends Controller
     /** thanh toán khi nhận hàng*/
     public function payment_cod(Request $req)
     {
-        // kiểm tra xem user đã có đại chỉ chưa
+        // kiểm tra xem user đã có điạ chỉ chưa
         $check_address = Client::where('user_id', Auth::id())->exists();
 
         if (empty($check_address)) {
             return redirect()->back()->with('address_null', 'Vui lòng quay về form cá nhân để nhập thông tin địa chỉ, xin cảm ơn');
         }
+
+
         $product_id = $req->input('product_id');
         try {
             // 1. Tạo bill

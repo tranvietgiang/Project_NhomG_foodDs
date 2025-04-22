@@ -119,8 +119,15 @@
 
             <!-- Nút đăng nhập bằng Google -->
             <a href="{{ route('auth.google') }}" class="google-btn">Login with Google</a> |
+
+            <!-- Nút đăng nhập bằng Google -->
+            <a href="{{ url('login/sdt') }}" data-mdb-toggle="modal" data-mdb-target="#addModal"
+                class="google-btn">Login with sdt</a> |
+
+            <!-- Nút đăng nhập bằng Google -->
             <a href="{{ url('login/github') }}" class="github-btn">Login with Github <img class="object-fit-cover"
                     width="20" height="20" src="{{ asset('image-store/github.png') }}" alt=""></a> |
+            <!-- quay ve trang chinh -->
             <a href="{{ route('website-main') }}" class="">Home</a>
 
             <!-- Register buttons -->
@@ -130,5 +137,33 @@
         </form>
     </div>
 </section>
+
+<!-- Modal nhập SDT -->
+<div class="modal fade" id="addModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('send.otp') }}" method="POST">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác minh số điện thoại</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-outline">
+                        <input type="text" name="phone" class="form-control" required />
+                        <label class="form-label">Số điện thoại</label>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Gửi mã OTP</button>
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Đóng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- import library  MDBootstrap_JS-->
 <script src="{{ asset('component/js/mdb.umd.min.js') }}"></script>

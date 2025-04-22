@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('bill_products', function (Blueprint $table) {
             $table->id('bill_product_id');
-            $table->foreignId('bill_id')->constrained('bills', 'bill_id')->onDelete('cascade');
+            $table->foreignId('bill_id')->constrained('bills', 'bill_id');
             $table->foreignId('product_id')->constrained('products', 'product_id')->onDelete('cascade');
             $table->integer('quantity')->default(0)->comment('số lượng trong bill thanh toán');
             $table->timestamps();

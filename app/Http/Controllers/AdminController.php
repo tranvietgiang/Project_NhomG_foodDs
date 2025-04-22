@@ -54,6 +54,7 @@ class AdminController extends Controller
         }
 
 
+
         // cần sửa cái phone không liên kết được
         $list_client = User::select('users.*') // chọn các cột từ bảng users
             ->join('clients', 'users.id', '=', 'clients.user_id') // join bảng clients
@@ -64,6 +65,19 @@ class AdminController extends Controller
 
 
         return view('component.header.admin.client.list-client', compact('list_client'));
+    }
+    public function client_detail_manager($user_id)
+    {
+        // Lấy thông tin chi tiết khách hàng
+
+        $userid = session()->put('userid', $user_id);
+        $user_detail = Client::select('clients.*')
+            ->join('users', 'clients.user_id', '=', 'users.id')
+            ->where('clients.user_id', $userid)
+            ->first();
+
+        // Trả về view, truyền dữ liệu vào
+        return response()->json($user_detail);
     }
 
     /** show information client */

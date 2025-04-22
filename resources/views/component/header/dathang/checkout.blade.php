@@ -67,9 +67,16 @@
             <input type="radio" name="payment_method" value="cod" id="cod" checked>
             <label for="cod">Thanh toán khi nhận hàng</label>
         </div>
+        <!-- vnpay -->
         <div>
             <input type="radio" name="payment_method" value="vnpay" id="vnpay">
             <label for="vnpay">VNPAY</label>
+        </div>
+
+        <!-- zaloPay -->
+        <div>
+            <input type="radio" name="payment_method" value="zalopay" id="zalopay">
+            <label for="zalopay">ZALOPAY</label>
         </div>
 
         <!-- Nút đặt hàng -->
@@ -92,11 +99,11 @@
 
         if (selected == "vnpay") {
             form.action = "{{ route('vnpay.payment') }}";
-        } else {
+        } else if (selected == "zalopay")
+            form.action = "{{ route('zalo.payment') }}";
+        else {
             form.action = "{{ route('pptt.payment.cod') }}";
         }
-
-
 
 
         form.submit(); // Tiến hành submit theo action mới

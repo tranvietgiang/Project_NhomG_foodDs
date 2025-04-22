@@ -1,8 +1,4 @@
 <link rel="stylesheet" href="{{ asset('component/css/mdb.min.css') }}">
-
-
-
-<link rel="stylesheet" href="{{ asset('component/css/mdb.min.css') }}">
 <style>
     * {
         overflow-x: hidden;
@@ -236,5 +232,8 @@
 </section>
 <!-- Scripts -->
 <script src="{{ asset('component/js/mdb.umd.min.js') }}"></script>
+
+
+{{-- 
 <!-- jQuery (cần cho modal) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
