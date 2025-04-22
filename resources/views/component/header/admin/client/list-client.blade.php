@@ -1,5 +1,4 @@
 <link rel="stylesheet" href="{{ asset('component/css/mdb.min.css') }}">
-{{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> --}}
 <style>
     * {
         overflow: hidden;
@@ -134,6 +133,7 @@
             <thead>
                 <tr>
                     <th>STT</th>
+                    <th>ID</th>
                     <th>Tên Khách Hàng</th>
                     <th>Email</th>
                     <th>Số Điện Thoại</th>
@@ -148,6 +148,7 @@
                 @foreach ($list_client as $item)
                     <tr>
                         <td>{{ $loop->iteration + $list_client->firstItem() - 1 }}</td>
+                        <td>{{ $item->id }}</td>
                         <td>{{ $item->name }}</td>
                         <td>{{ $item->email }}</td>
 
@@ -169,12 +170,9 @@
                         <td>{{ $item->format_date() }}</td>
 
                         <td>
-                            <a href="{{ route('manager', ['user_id' => $item->user_id]) }}">
-                                <button type="button" class="btn btn-link view-info-btn" data-bs-toggle="modal"
-                                    data-bs-target="#infoModal">
-                                    <img width="30" height="30" class="object-fit-cover"
-                                        src="{{ asset('image-store/eye.png') }}" alt="">
-                                </button>
+                            <a href="{{ url('/client/info', ['user_id' => $item->id]) }}">
+                                <img width="30" height="30" class="object-fit-cover"
+                                    src="{{ asset('image-store/eye.png') }}" alt="">
                             </a>
                         </td>
                     </tr>
@@ -187,41 +185,6 @@
         </p>
     </div>
 </section>
-
-
-
-@if (!is_null($user_detail))
-    <div class="modal fade" id="infoModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form action="#" method="POST">
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title">Thông tin chi tiết</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body mb-1">
-                        <div class="form-outline">
-                            <input type="text" readonly value="{{ $user_detail->client_name }}" id="client_name"
-                                name="client_name" class="form-control" />
-                            <label class="form-label" for="client_name">Tên</label>
-                        </div>
-                    </div>
-                    <div class="modal-body mb-1">
-                        <div class="form-outline">
-                            <input readonly type="text" value="21312321" id="client_email" name="client_email"
-                                class="form-control" />
-                            <label class="form-label" for="client_email">Email</label>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-@endif
 
 
 <!-- Bootstrap Bundle JS (bao gồm cả Popper) -->

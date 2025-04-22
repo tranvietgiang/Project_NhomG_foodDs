@@ -114,11 +114,6 @@ Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallb
 Route::get('login/github', [GithubController::class, 'redirectToProvider']);
 Route::get('login/github/callback', [GithubController::class, 'handleProviderCallback']);
 
-/** logon with sdt không thành công */
-Route::get('/send-sms', [SDTController::class, 'sendSMS']);
-Route::post('/login-sdt', [SDTController::class, 'checkLogin'])->name('auth.checkLogin');
-Route::post('/send-otp', [SDTController::class, 'sendOtp'])->name('send.otp');
-Route::post('/verify-otp', [SDTController::class, 'verifyOtp'])->name('verify.otp');
 
 /* cart đặt hàng */
 Route::get('/cart/show_checkout/{product_id}', [ViewController::class, 'show_cart_mua_ngay'])->middleware(checkLogin::class);

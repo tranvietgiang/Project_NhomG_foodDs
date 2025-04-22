@@ -69,15 +69,15 @@ class AdminController extends Controller
     public function client_detail_manager($user_id)
     {
         // Lấy thông tin chi tiết khách hàng
-
-        $userid = session()->put('userid', $user_id);
+        // $userid = session()->put('userid', $user_id);
         $user_detail = Client::select('clients.*')
             ->join('users', 'clients.user_id', '=', 'users.id')
-            ->where('clients.user_id', $userid)
+            ->where('clients.user_id', $user_id)
             ->first();
 
+        // dd($user_detail);
         // Trả về view, truyền dữ liệu vào
-        return response()->json($user_detail);
+        return view('component.header.admin.client.form-info-detail', compact('user_detail'));
     }
 
     /** show information client */
@@ -204,8 +204,16 @@ class AdminController extends Controller
 
     public function client_avatar_update(Request $req)
     {
-        $client = Client::where('user_id', Auth::user()->id)->first();
 
+        /** nếu mà chưa có client thì tạo new */
+        if (!optional(Auth::user()->client)->client_id) {
+            Client::create([
+                'user_id' => Auth::id(),
+                'client_name' => Auth::user()->name,
+            ]);
+        }
+
+        $client = Client::where('user_id', Auth::user()->id)->first();
         /** uploads image */
         if ($req->hasFile('avatar-client')) { // Kiểm tra xem người dùng có upload file 'avatar-client' không
             $image = $req->file('avatar-client'); // Lấy file từ request
@@ -213,7 +221,7 @@ class AdminController extends Controller
             $image->move(public_path('image-store'), $imageName); // Di chuyển file vào thư mục public/image-store
 
             // Nếu client đã có ảnh cũ
-            if ($client->client_avatar) {
+            if (!empty($client->client_avatar)) {
                 $oldImagePath = public_path('image-store/' . $client->client_avatar); // Tạo đường dẫn ảnh cũ
                 if (file_exists($oldImagePath)) { // Kiểm tra xem ảnh cũ có tồn tại không
                     unlink($oldImagePath); // Nếu có thì xóa ảnh cũ đi khỏi thư mục
@@ -222,7 +230,6 @@ class AdminController extends Controller
 
             $client->client_avatar = $imageName; // Gán tên ảnh mới vào cột 'image' của client (để lưu vào DB sau)
         }
-
 
         $client->save();
 
