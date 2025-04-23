@@ -26,7 +26,7 @@ class bill extends Model
     // Relationship với Cart
     public function cart()
     {
-        return $this->belongsTo(Cart::class, 'cart_id', 'cart_id');
+        return $this->belongsTo(Cart_buyed::class, 'cart_id', 'cart_id');
     }
 
     // Relationship với Payment Method

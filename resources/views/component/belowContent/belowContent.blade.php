@@ -69,24 +69,29 @@
 
         <div class="col-9 col-md-9">
             <div class="row">
+                <style>
+                    .abc {
+                        color: #000;
+                    }
+                </style>
                 <div style="margin: 10px 0;">
-                    <span class="btn btn-success"><a class="text-white" href="#">aaaaaaaaaaaaaa</a></span>
-                    <span class="btn btn-outline-success"><a class="text-white" href="#">aaaaaaaaaaaa</a></span>
-                    <span class="btn btn-outline-success"><a class="text-white" href="#">aaaaaaaaaaaaaa</a></span>
-                    <span class="btn btn-outline-success"><a class="text-white"
-                            href="#">aaaaaaaaaaaaaaa</a></span>
+                    <span class="btn btn-success"><a class="abc" href="#">aaaaaaaaaaaaaa</a></span>
+                    <span class="btn btn-success"><a class="abc" href="">sắp xếp theo giá cao đén
+                            thấp</a></span>
+                    <span class="btn btn-success"><a class="abc" href="#">sắp xếp theo giá thấp đén
+                            cao</a></span>
+                    <span class="btn btn-success"><a class="abc " href="{{ route('allproduct') }}">Xem tất
+                            cả</a></span>
                 </div>
-                @foreach ($products as $item)
+                @foreach ($products as $product)
                     <div class="col-2 col-md-3 mb-3">
                         <div class="frame-image">
                             <div>
-                                <a href="">
-                                    <img class="image-product-content-1 img-fluid"
-                                        src="{{ asset('component/image-product/mi-tron-cay.png') }}" alt="">
-                                </a>
+                                <img class="image-product-content-1 img-fluid"
+                                    src="{{ asset('images/' . $product->product_image) }}" alt="">
                             </div>
                             <h5 class="product_name text-center"><b>
-                                    {{ $item->product_name }}
+                                    {{ $product->product_name }}
                                 </b></h5>
 
                             <span class="text-warning product_star">
@@ -100,12 +105,19 @@
 
                             <span style="font-size:14px" class="text-success">đã bán 103</span>
 
-                            <span class="new-price"><b>{{ $item->product_price }} </b><sub>đ</sub></span>
+                            <span class="new-price"><b>{{ $product->product_price }}</b><sub>đ</sub></span>
 
                             <div class="d-flex justify-content-center align-items-center gap-3">
-                                <span class="old-price">{{ $item->product_price }}<sub>đ</sub></span>
+                                <span class="old-price">1500.0<sub>đ</sub></span>
                                 <span class="discount">-35%</span>
-                                <span class="btn btn-outline-success btn-sm">cart</span>
+                                <form action="{{ route('cart.add') }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    <input type="hidden" name="product_id" value="{{ $product->product_id }}">
+                                    <input type="hidden" name="quantity_sp" value="1">
+                                    <!-- Thêm trường quantity_sp nếu cần -->
+                                    <button type="submit" class="btn btn-outline-success btn-sm"
+                                        style="display: inline;">Thêm vào giỏ hàng</button>
+                                </form>
                             </div>
                         </div>
                     </div>

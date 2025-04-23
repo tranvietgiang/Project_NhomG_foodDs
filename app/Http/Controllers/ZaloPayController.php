@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\bill;
 use App\Models\bill_product;
 use App\Models\Cart;
+use App\Models\Cart_buyed;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -98,18 +99,33 @@ class ZaloPayController extends Controller
         //     'quantity_sp' => $request->input('product_quantity'), // đây là số lượng sản phẩm mà user mua chứ không tổng các loại
         //     'total_price' => $request->input('product_price'), // là số tiền chưa cộng all lại
         // ]);
+        $product_id = $request->input('product_id');
 
-        $bills = bill::create([
-            'user_id' => Auth::id(),
+        $cartbuyed = Cart_buyed::create([
             'cart_id' => $request->input('cart_id_payment'),
-            'method_payment_id' => 3
+            'user_id' => Auth::id(),
+            'product_id' => $product_id,
+            'quantity_sp' => $request->input('product_quantity'),
+            'total_price' => $request->input('product_price'),
+            'image' =>  $request->input('product_image'),
         ]);
 
-        bill_product::create([
-            'bill_id' => $bills->bill_id,
-            'product_id' => $request->input('product_id'),
-            'quantity' => 1
+        // 1. Tạo bill
+        $bill = bill::create([
+            'user_id' => Auth::id(),
+            'cart_id' => $cartbuyed->cart_id,
+            'method_payment_id' => 1 // vnpay
         ]);
+
+        // 2. Tạo bill_product
+        bill_product::create([
+            'bill_id' => $bill->bill_id, // nếu là bill_id thì sửa thành $bill->bill_id
+            'product_id' =>  $product_id,
+            'quantity' => 1 // 1 là số lượng mặc định mà khách hàng bấm vào sản phẩm và mua ngay
+        ]);
+
+        /** sau khi thanh toán thành công thì xóa đi cart của client */
+        Cart::where('user_id', Auth::id())->where('cart_id', $cartbuyed->cart_id,)->delete();
 
         $resp = file_get_contents($config["endpoint"], false, $context);
         $result = json_decode($resp, true);

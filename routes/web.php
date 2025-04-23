@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\GithubController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\LoginController;
@@ -135,3 +136,16 @@ Route::get('/zaloPay/callback', [ZaloPayController::class, 'callback_zalopay'])-
 
 /** xem thông tin chi tiết */
 Route::get('/client/info/{user_id}', [AdminController::class, 'client_detail_manager'])->name('client.detail.manager');
+
+// thanh toán momo ca
+Route::post('/momo_payment', [CheckoutController::class, 'momo_payment'])->name('momo_payment');
+
+// hiện thị tất cả sản phẩm ca
+Route::get('/allproduct', [ProductController::class, 'showallproduct'])->name('allproduct');
+
+/** cart cả */
+Route::get('/cart', [ProductController::class, 'show_cartCa'])->name('cart');
+Route::post('/cart/add', [ProductController::class, 'addtocart'])->name('cart.add');
+Route::get('/viewcart', [ProductController::class, 'viewcart'])->name('viewcart');
+Route::delete('/cart/removeCart/{id}', [ProductController::class, 'removeCart'])->name('cart.removeCart');
+Route::put('/cart/update/{id}', [ProductController::class, 'updateSL'])->name('cart.update');

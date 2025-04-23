@@ -1,3 +1,4 @@
+<!-- show_bill_product -->
 <section>
     <div>
         @foreach ($show_bill as $item)

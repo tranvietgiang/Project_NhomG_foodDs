@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\bill;
 use App\Models\bill_product;
 use App\Models\Cart;
+use App\Models\Cart_buyed;
 use App\Models\Client;
 use App\Models\Product;
 use App\Models\User;
@@ -100,21 +101,31 @@ class PTTTController extends Controller
             ]
         ]);
 
+        $cartbuyed = Cart_buyed::create([
+            'cart_id' => $request->input('cart_id_payment'),
+            'user_id' => Auth::id(),
+            'product_id' => $product_id,
+            'quantity_sp' => $request->input('product_quantity'),
+            'total_price' => $request->input('product_price'),
+            'image' =>  $request->input('product_image'),
+        ]);
 
-
+        // 1. Tạo bill
         $bill = bill::create([
             'user_id' => Auth::id(),
-            'cart_id' => $cart->cart_id,
-            'method_payment_id' => 1 // mặc định vnpay là 1
+            'cart_id' => $cartbuyed->cart_id,
+            'method_payment_id' => 1 // vnpay
         ]);
 
+        // 2. Tạo bill_product
         bill_product::create([
-            'bill_id' => $bill->bill_id,
+            'bill_id' => $bill->bill_id, // nếu là bill_id thì sửa thành $bill->bill_id
             'product_id' =>  $product_id,
-            'quantity' => 1 // do là click mua ngay nên chỉ loại hàng hóa là 1  
+            'quantity' => 1 // 1 là số lượng mặc định mà khách hàng bấm vào sản phẩm và mua ngay
         ]);
 
-
+        /** sau khi thanh toán thành công thì xóa đi cart của client */
+        Cart::where('user_id', Auth::id())->where('cart_id', $cartbuyed->cart_id,)->delete();
 
         // Chuyển hướng (redirect) đến trang thanh toán VNPAY
         return redirect($vnp_Url);
@@ -155,17 +166,33 @@ class PTTTController extends Controller
         // kiểm tra xem user đã có điạ chỉ chưa
         $check_address = Client::where('user_id', Auth::id())->exists();
 
+        /** nếu chưa quay về */
         if (empty($check_address)) {
             return redirect()->back()->with('address_null', 'Vui lòng quay về form cá nhân để nhập thông tin địa chỉ, xin cảm ơn');
         }
 
 
         $product_id = $req->input('product_id');
+
+
         try {
+            /** là khi client click mua đơn hàng tạo bên cart một cái id xong qua bên này add
+             * cái đơn hàng mà người dùng đã mua đó xong thêm vào cái bill trách trường hợp xóa đơn
+             * hàng sau khi thanh toán thành công ko bị lỗi
+             */
+            $cartbuyed = Cart_buyed::create([
+                'cart_id' => $req->input('cart_id_payment'),
+                'user_id' => Auth::id(),
+                'product_id' => $product_id,
+                'quantity_sp' => $req->input('product_quantity'),
+                'total_price' => $req->input('product_price'),
+                'image' =>  $req->input('product_image'),
+            ]);
+
             // 1. Tạo bill
             $bill = bill::create([
                 'user_id' => Auth::id(),
-                'cart_id' => $req->input('cart_id_payment'),
+                'cart_id' => $cartbuyed->cart_id,
                 'method_payment_id' => 2 // 2 là thanh toán khi nhận tiền mặc định của pttt
             ]);
 
@@ -175,6 +202,9 @@ class PTTTController extends Controller
                 'product_id' =>  $product_id,
                 'quantity' => 1 // 1 là số lượng mặc định mà khách hàng bấm vào sản phẩm và mua ngay
             ]);
+
+            /** sau khi thanh toán thành công thì xóa đi cart của client */
+            Cart::where('user_id', Auth::id())->where('cart_id', $cartbuyed->cart_id,)->delete();
 
             // 4. Trả về kết quả qua form bill
             return redirect()->route('bill.show_bill_product', ['cart_id' => $bill->cart_id]);

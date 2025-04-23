@@ -2,6 +2,9 @@
 <link rel="stylesheet" href="{{ asset('component/css/mdb.min.css') }}">
 <div class=""><a href="{{ url()->previous() }}">Quay lại</a></div>
 <section>
+    @if (session('payment-error'))
+        <div>{{ session('payment-error') }}</div>
+    @endif
     <!-- Thông tin đơn hàng -->
     <div class="">
         @if (session('address_null'))

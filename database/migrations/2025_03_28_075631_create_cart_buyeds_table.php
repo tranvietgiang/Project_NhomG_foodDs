@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bills', function (Blueprint $table) {
-            $table->id('bill_id');
+        Schema::create('cart_buyeds', function (Blueprint $table) {
+            $table->id('cart_id');
+            $table->foreignId('product_id')->constrained('products', 'product_id')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('cart_id')->constrained('cart_buyeds', 'cart_id');
-            $table->foreignId('method_payment_id')->constrained('method_payments', 'method_payment_id')->onDelete('cascade');
+            $table->integer('quantity_sp')->default(0)->comment('số lượng sản phẩm');
+            $table->double('total_price')->default(0)->comment('tổng số tiền');
             $table->timestamps();
+            $table->string('image')->nullable();
         });
     }
 
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bills');
+        Schema::dropIfExists('cart_buyed');
     }
 };

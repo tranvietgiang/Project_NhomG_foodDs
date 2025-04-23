@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\Cart_buyed;
+use App\Models\Cartbuyed;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -83,6 +85,9 @@ class ViewController extends Controller
             'image' => $product_get->product_image,
         ]);
 
+
+
+
         // dd($a->product_id, $a->quantity_sp, $a->image);
 
         // /** thêm sản phẩm vào cart để show ra */
@@ -119,11 +124,11 @@ class ViewController extends Controller
     /** hiển thị ra sản phẩm mà client bấm mua ngay */
     public function show_bill_product($cart_id)
     {
-        $show_bill = User::select('clients.*', 'products.*', 'carts.quantity_sp', DB::raw('(carts.quantity_sp * carts.total_price) AS TOTAL_PRICE'))
+        $show_bill = User::select('clients.*', 'products.*', 'cart_buyeds.quantity_sp', DB::raw('(cart_buyeds.quantity_sp * cart_buyeds.total_price) AS TOTAL_PRICE'))
             ->join('clients', 'users.id', '=', 'clients.user_id')
-            ->join('carts', 'users.id', '=', 'carts.user_id')
-            ->join('products', 'carts.product_id', '=', 'products.product_id')
-            ->where('users.id', Auth::id())->where('carts.cart_id', $cart_id)->limit('1')->get();
+            ->join('cart_buyeds', 'users.id', '=', 'cart_buyeds.user_id')
+            ->join('products', 'cart_buyeds.product_id', '=', 'products.product_id')
+            ->where('users.id', Auth::id())->where('cart_buyeds.cart_id', $cart_id)->limit('1')->get();
 
         return view('component.header.dathang.bill', compact('show_bill'))->with('order-success', 'Thanh toán đơn hàng thành công.');
     }
