@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\bill_product;
 use App\Models\Cart;
 use App\Models\Cart_buyed;
 use App\Models\Cartbuyed;
+use App\Models\Client;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -59,11 +61,22 @@ class ViewController extends Controller
          */
 
 
-        //  $add_comment = Review::create([
-        //     ''
-        //  ])
+        /** get quantity client review(5 star) product */
+        $quantity_item_review = Review::where('product_id', $product_id)
+            ->where('review_rating', 5)
+            ->count();
 
-        return view('component.header.dathang.cartGiang', compact(['cart', 'list_review', 'review_count_rating', 'final_rating_tbc', 'client_review_category']));
+        /** get quantity in warehouse */
+        $quantity_store = Product::where('product_id', $product_id)->value('quantity_store');
+
+
+        /** get amount client buyed */
+        $goods_sold = bill_product::where('product_id', $req->route('product_id'))->count();
+
+        /** show avatar */
+        $client_Avatar = Client::where('user_id', Auth::id())->value('client_avatar');
+
+        return view('component.header.dathang.cartGiang', compact(['cart', 'list_review', 'review_count_rating', 'final_rating_tbc', 'client_review_category', 'quantity_item_review', 'quantity_store', 'goods_sold', 'client_Avatar']));
     }
 
 
@@ -115,6 +128,7 @@ class ViewController extends Controller
             ->where('user_id', Auth::id())
             ->where('carts.cart_id', $cart_add->cart_id)
             ->get();
+
 
 
         return view('component.header.dathang.checkout', compact(['cart', 'product_id']));

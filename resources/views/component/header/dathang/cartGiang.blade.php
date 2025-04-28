@@ -38,6 +38,7 @@
 </style>
 
 <h1>Product Details</h1>
+<!-- show_cart -->
 @foreach ($cart as $item)
     <div class="frame-image">
         <span>{{ $item->product_id }}</span>
@@ -54,11 +55,11 @@
             <i class="fa-solid fa-star"></i>
             <i class="fa-solid fa-star"></i>
             <i class="fa-solid fa-star"></i>
-            <span style="display: inline; color: #000">(0)</span>
+            <span style="display: inline; color: #000">({{ $quantity_item_review ?? '0' }})</span>
         </span>
 
-        <span style="font-size:14px " class="text-success">đã bán 103</span>
-        <span class="new-price"><b> {{ $item->product_price }}</b><sub>đ</sub></span><br>
+        <span style="font-size:14px " class="text-success">đã bán {{ $goods_sold ?? '0' }}</span><br>
+        <span class="new-price"><b>Giá: {{ $item->product_price }}</b><sub>đ</sub></span><br>
 
 
 
@@ -66,11 +67,13 @@
 
             <span class="">
                 <!-- khi mà client bấm mua ngay thì sản phẩm sẽ được add vào giỏ hàng của ng đó -->
-                <form action="{{ url('/cart/show_checkout', ['product_id' => $item->product_id]) }}" method="get">
+                <form id="form_immediately"
+                    action="{{ url('/cart/show_checkout', ['product_id' => $item->product_id]) }}" method="get">
                     @csrf
                     <!-- chỉnh quality -->
                     <div class="mb-3">
-                        <label class="form-label">Số lượng:</label>
+                        <label class="form-label">Số lượng còn: <b id="amount_item">
+                                {{ $quantity_store ?? '0' }}</b></label>
                         <div class="quantity-container ">
                             <div class="btn btn-outline-danger minus d-flex align-items-center justify-content-center">−
                             </div>
@@ -79,7 +82,8 @@
                             </div>
                         </div><br>
                         <p>
-                            <button class="btn btn-outline-success btn-sm" type="submit">Mua ngay</button>
+                            <button id="button_pay" class="btn btn-outline-success btn-sm" type="submit">Mua
+                                ngay</button>
                         </p>
                     </div>
                 </form>
@@ -111,6 +115,17 @@
         input_qty.value = quality + 1;
 
     });
+
+    /* kiểm tra số lượng nếu nhỏ hơn 1 thì không cho mua*/
+    const check_slSP = document.getElementById('amount_item').innerText;
+    const form_immediately = document.getElementById('form_immediately');
+
+    form_immediately.addEventListener('submit', (e) => {
+        if (check_slSP < parseInt(input_qty.value)) {
+            e.preventDefault();
+            alert('sản phẩm hiện tại đã hết hàng, xin vui lòng quay lại sau.');
+        }
+    })
 </script>
 <!-- form review của giang -->
 @include('component.header.admin.keThua.review-form')

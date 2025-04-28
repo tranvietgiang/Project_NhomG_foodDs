@@ -165,7 +165,7 @@ class PTTTController extends Controller
 
 
         $product_id = $req->input('product_id');
-
+        $sl_client = $req->input('product_quantity');
 
         try {
             /** là khi client click mua đơn hàng tạo bên cart một cái id xong qua bên này add
@@ -197,6 +197,16 @@ class PTTTController extends Controller
 
             /** sau khi thanh toán thành công thì xóa đi cart của client */
             Cart::where('user_id', Auth::id())->where('cart_id', $cartbuyed->cart_id,)->delete();
+
+            /** trừ đi số lượng sản phẩm đã bán */
+            $sl_items = Product::Where('product_id', $product_id)->value('quantity_store');
+
+            $sl_store = $sl_items - $sl_client;
+
+
+            Product::where('product_id', $product_id)->update([
+                'quantity_store' => $sl_store
+            ]);
 
             // 4. Trả về kết quả qua form bill
             return redirect()->route('bill.show_bill_product', ['cart_id' => $bill->cart_id]);

@@ -123,9 +123,10 @@ Route::get('/cart/show_checkout/{product_id}', [ViewController::class, 'show_car
 
 /** cart and review  giang*/
 Route::get('/cart/{product_id}', [ViewController::class, 'show_cart'])->name('show_cart');
-Route::get('/client/review/cart/bought', [ProductController::class, 'review']);
+Route::post('/client/review/cart/bought', [ProductController::class, 'review']);
 Route::get('/delete/client_comment/{review_id}', [ProductController::class, 'delete_review'])->name('client.comment.delete');
 Route::get('/update/review/{review_id}', [ProductController::class, 'update_review'])->name('client.comment.update');
+Route::get('/getAvatar/hi', [ProductController::class, 'getAvatar']); // get avatar
 
 /** categories hung crud */
 Route::resource('categories', CategoryController::class);

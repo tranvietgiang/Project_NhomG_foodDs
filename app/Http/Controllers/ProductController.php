@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\bill_product;
 use App\Models\Cart;
+use App\Models\Client;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\User;
@@ -25,6 +26,7 @@ class ProductController extends Controller
 
 
 
+
         $user = Auth::user();
 
         $review = User::select('users.*')
@@ -33,27 +35,43 @@ class ProductController extends Controller
             ->where('bill_products.product_id', $product_id)
             ->where('users.id', $user->id)->exists();
 
-
-        // dd($client_comment, $product_id, $client_rating, $user->id, $product_id, $review);
-
         if ($review) {
-            $client_reviews = Review::create([
-                'review_rating' => $client_rating,
-                'review_comment' => $client_comment,
-                'product_id' => $product_id,
-                'user_id' => $user->id,
-            ]);
+            /** lưu ý nếu dùng upload của là laravel form phải là post */
+            if ($req->hasFile('image_attached')) {
+                $image_attached = $req->file('image_attached');
+                // Lấy tên file gốc
+                $image_name_only = time() . '_' . $image_attached->getClientOriginalName();
+                // Di chuyển file đến thư mục lưu trữ
+                $image_attached->move(public_path('image-store'), $image_name_only);
 
-            // dd($client_reviews);
-
-            $client_reviews->save();
+                Review::create([
+                    'review_rating' => $client_rating,
+                    'review_comment' => $client_comment,
+                    'product_id' => $product_id,
+                    'user_id' => $user->id,
+                    'review_image' => $image_name_only
+                ]);
+            } else {
+                Review::create([
+                    'review_rating' => $client_rating,
+                    'review_comment' => $client_comment,
+                    'product_id' => $product_id,
+                    'user_id' => $user->id,
+                ]);
+            }
         } else {
             return redirect()->back()->with('client-not-buy', '× Vui lòng mua và trải nghiệm sản phẩm trước khi để lại đánh giá cho FOODMAP bạn nhé!');
         }
 
-
         return redirect()->back();
     }
+
+    // public function getAvatar()
+    // {
+
+
+    //     return view('component.header.dathang.cartGiang', compact('client_Avatar'));
+    // }
 
     public function delete_review($review_id)
     {

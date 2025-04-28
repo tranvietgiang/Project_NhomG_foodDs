@@ -20,6 +20,7 @@ class Review extends Model
         'review_comment',
         'product_id',
         'user_id',
+        'review_image'
     ];
 
 

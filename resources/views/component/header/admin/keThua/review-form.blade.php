@@ -177,6 +177,41 @@
     .star-color {
         color: gold;
     }
+
+
+
+    /* Overlay nền mờ */
+    .lightbox {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.8);
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Ảnh phóng to */
+    .lightbox img {
+        max-width: 90%;
+        max-height: 90%;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    }
+
+    /* Nút đóng */
+    .lightbox::after {
+        content: "✖";
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        color: white;
+        font-size: 32px;
+        cursor: pointer;
+    }
 </style>
 <div class="review-container">
     @if (session('client-not-buy'))
@@ -228,8 +263,9 @@
         </div>
     </div>
 
-    <!-- form -->
-    <form id="review-form" action="{{ url('/client/review/cart/bought') }}" method="get">
+    <!-- form create review -->
+    <form id="review-form" action="{{ url('/client/review/cart/bought') }}" method="post"
+        enctype="multipart/form-data">
         <input type="text" name="product_id" value="{{ $product_id = $cart->first()->product_id }}">
 
         @csrf
@@ -250,8 +286,14 @@
             <span class="text-danger fw-bold" id="errorMessage"></span>
         </div>
         <div>
-            <input id="image-review" hidden type="file">
-            <label for="image-review">Đính kèm hình ảnh</label>
+            <input onchange="show_imageAttached()" class="d-none" name="image_attached" id="image-review"
+                type="file">
+            <label for="image-review">Đích kèm <i class="fa-solid fa-image"></i></label>
+            <div id="show_image_attached"></div>
+            <!-- phần click vào to ảnh -->
+            <div class="lightbox" id="lightbox" onclick="hideLightbox()">
+                <img id="lightbox-img" />
+            </div>
         </div>
     </form>
 
@@ -292,13 +334,20 @@
                 <!-- mỗi comment -->
                 <p>
                     <strong>{{ $comment->users->name }}:</strong> {{ $comment->review_comment }}
-                    <span id="" style="cursor: pointer" class="btn-sm fw-bold edit_span">sửa</span>
 
+                    <!-- click để sửa comment -->
+                    @if ($comment->user_id == Auth::id())
+                        <span id="" style="cursor: pointer" class="btn-sm fw-bold edit_span"><i
+                                class="fa-solid fa-pencil icon_hidden"></i></span>
+                    @endif
 
                 <div style="margin: 0; padding: 0;"><img width="70px" height="70px" class=" object-fit-cover"
-                        src="{{ asset('component/image-product/tra-moc-thao-green.png') }}" alt=""></div>
+                        src="{{ asset('image-store/' . $client_Avatar ?? 'avatar_default.png') }}" alt="ảnh comment">
+                </div>
+
+
                 <br>
-                <span class="d-flex gap-3">
+                <span class="">
                     <!-- để lấy để cho mỗi lần mình click mỗi comment để chỉnh sửa thì nó sẽ có những cái id khác,
                          để cái hiện lỗi sẽ không bị trùng id nhau tại vì trùng id sẽ gây ra lỗi và form sẽ không hoạt động
                          "form_edit_review" -->
@@ -307,34 +356,43 @@
                         $inputId = 'icon_submit_' . $comment->review_id;
                     @endphp
 
-                    <!-- form chỉnh sửa comment -->
-                    <form class="form_edit_review" action="{{ route('client.comment.update', $comment->review_id) }}"
-                        method="GET">
-                        @csrf
-                        <!-- input edit -->
-                        <p style="margin: 0; padding: 0;">
-                            <input class="form-control mb-3 input_review-comment" style="display: none"
-                                name="edit_comment_input" placeholder="Nhập chỉnh sủa comment của bạn... "
-                                type="text">
-                        </p>
+                    <label for="">ảnh đính kèm</label>
+                    <p>
+                        <img id="" style="border: 1px solid red;" class="object-fit-cover checkSrc"
+                            src="{{ asset('image-store/' . $comment->review_image ?? 'notImage') }}" alt="">
+                    </p>
+                    <!-- kiểm tra chỉ người nào mua hàng mới thấy nút sửa or xóa -->
+                    @if ($comment->user_id == Auth::id())
+                        <!-- form chỉnh sửa comment -->
+                        <form class="form_edit_review"
+                            action="{{ route('client.comment.update', $comment->review_id) }}" method="GET">
+                            @csrf
 
-                        <!-- CHUYỂN THẺ SPAN này VÀO TRONG FORM -->
-                        <span class="text-danger fw-bold errorMessage-edit"></span>
+                            <!-- input edit -->
+                            <p style="margin: 0; padding: 0;">
+                                <input class="form-control mb-3 input_review-comment" style="display: none"
+                                    name="edit_comment_input" placeholder="Nhập chỉnh sủa comment của bạn... "
+                                    type="text">
+                            </p>
 
-                        <!-- gửi form -->
-                        <div>
-                            <input class="d-none" id="{{ $inputId }}" type="submit">
-                            <label class="btn-sm btn btn-outline-warning icon_hidden_label"
-                                for="{{ $inputId }}">
-                                <i class="fa-solid fa-pencil icon_hidden"></i></label>
-                        </div>
+                            <!-- CHUYỂN THẺ SPAN này VÀO TRONG FORM -->
+                            <span class="text-danger fw-bold errorMessage-edit"></span>
 
-                    </form>
 
-                    <!-- delete -->
-                    <a class="btn-sm btn btn-outline-danger"
-                        href="{{ route('client.comment.delete', $comment->review_id) }}"><i
-                            class="fa-solid fa-eraser"></i></a>
+                            <!-- button edit -->
+                            <div>
+                                <input class="d-none" id="{{ $inputId }}" type="submit">
+                                <label class="btn-sm btn btn-outline-warning icon_hidden_label"
+                                    for="{{ $inputId }}">
+                                    <i class="fa-solid fa-pencil icon_hidden"></i></label>
+                            </div>
+
+                        </form>
+                        <!-- delete -->
+                        <a class="btn-sm btn btn-outline-danger"
+                            href="{{ route('client.comment.delete', $comment->review_id) }}"><i
+                                class="fa-solid fa-eraser"></i></a>
+                    @endif
                 </span>
                 </p>
             @endforeach
@@ -423,5 +481,53 @@
                 errorMessage_edit.textContent = "";
             }
         });
+    });
+
+    // ảnh đính kèm review
+    function show_imageAttached() {
+
+        const image_review = document.getElementById('image-review').files;
+
+        if (image_review.length > 0) {
+            const readImage = new FileReader()
+
+            readImage.onload = (e) => {
+                const src = e.target.result;
+                document.getElementById('show_image_attached').innerHTML =
+                    `<img src="${src}" with='200' height='200' onclick="showLightbox(this.src)" class='object-fit-cover' alt="">`;
+
+                sendImageToServer(src);
+            };
+            readImage.readAsDataURL(image_review[0])
+        }
+    }
+
+    // bấm vào ảnh xem cho rõ
+    function showLightbox(src) {
+        document.getElementById('lightbox-img').src = src;
+        document.getElementById('lightbox').style.display = "flex";
+    }
+
+    function hideLightbox() {
+        document.getElementById('lightbox').style.display = "none";
+    }
+
+
+
+
+    document.querySelectorAll(".checkSrc").forEach(img => {
+        img.onload = function() {
+            // Nếu ảnh load được, thì set css
+            Object.assign(img.style, {
+                width: '150px',
+                height: '150px',
+                objectFit: 'cover',
+                display: 'block'
+            });
+        };
+
+        img.onerror = function() {
+            img.style.display = 'none';
+        };
     });
 </script>
