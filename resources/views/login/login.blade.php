@@ -19,7 +19,6 @@
     @endif
 
 
-
     <!-- password or email  empty -->
     @if (session('email-password-empty'))
         <div class="alert alert-warning">
@@ -87,7 +86,8 @@
             <!-- Email input -->
             <div data-mdb-input-init class="form-outline mb-4">
                 <!-- có thể thay text thành email để không cần phải check email đúng định dạng -->
-                <input type="text" id="login-email" name="email" class="form-control" />
+                <input type="text" id="login-email" value="{{ old('email') }}" name="email"
+                    class="form-control" />
                 <label class="form-label" for="login-email">Email address</label>
             </div>
 

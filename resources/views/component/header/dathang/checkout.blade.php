@@ -108,7 +108,6 @@
             form.action = "{{ route('pptt.payment.cod') }}";
         }
 
-
         form.submit(); // Tiến hành submit theo action mới
     });
 </script>

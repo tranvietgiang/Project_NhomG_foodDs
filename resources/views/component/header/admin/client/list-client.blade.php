@@ -120,7 +120,15 @@
             <li><a href="#"><i class="fas fa-envelope"></i> Tin Nhắn</a></li>
             <li><a href="#"><i class="fas fa-cog"></i> Cài Đặt</a></li>
             <li><a href="#"><i class="fas fa-lock"></i> Mật Khẩu</a></li>
-            <li><a href="#"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a></li>
+            <li> <a><i class="fas fa-sign-out-alt"></i>
+                    @if (Auth::check())
+                        <form style="z-index: 1" class="" action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button style="border: none; background:#274d8f; color: #d1d8e0;" type="submit">Đăng
+                                Xuất</button>
+                        </form>
+                    @endif
+                </a></li>
         </ul>
     </div>
 

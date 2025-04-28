@@ -114,7 +114,7 @@ class ZaloPayController extends Controller
         $bill = bill::create([
             'user_id' => Auth::id(),
             'cart_id' => $cartbuyed->cart_id,
-            'method_payment_id' => 1 // vnpay
+            'method_payment_id' => 3 // zalopay
         ]);
 
         // 2. Tạo bill_product
@@ -144,9 +144,6 @@ class ZaloPayController extends Controller
     {
         // dd(session()->all());
 
-        // Giả sử bạn truyền mã giao dịch qua embeddata hoặc lưu session lúc tạo đơn
-        $orderId = $request->get('apptransid');
-
 
         // $client_name = session('client_name');
         // $product_name = session('product_name');
@@ -155,6 +152,8 @@ class ZaloPayController extends Controller
         // $product_quantity = session('product_quantity');
         // $status = 'success';
 
+        // Giả sử bạn truyền mã giao dịch qua embeddata hoặc lưu session lúc tạo đơn
+        $orderId = $request->get('apptransid');
         $client_name = $request->get('client_name');
         $product_name = $request->get('product_name');
         $product_image = $request->get('product_image');

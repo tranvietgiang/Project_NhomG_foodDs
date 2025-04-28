@@ -97,13 +97,25 @@
             <li><a href="#"><i class="fas fa-question-circle"></i> Hỗ Trợ</a></li>
             <li><a href="#"><i class="fas fa-cog"></i> Cài Đặt</a></li>
             <li><a href="#"><i class="fas fa-lock"></i> Mật Khẩu</a></li>
-            <li><a href="#"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a></li>
+            <li>
+                <a><i class="fas fa-sign-out-alt"></i>
+                    @if (Auth::check())
+                        <form style="z-index: 1" class="" action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button style="border: none;  color: #d1d8e0; background:#274d8f;" type="submit"
+                                class="text-white">Đăng
+                                Xuất</button>
+                        </form>
+                    @endif
+                </a>
+            </li>
         </ul>
     </div>
     <!--  -->
     <div class="table-container mt-4 col-9">
 
-        @include('component.header.admin.keThua.navbar-logout')
+        <!-- search employees -->
+        @include('component.header.admin.keThua.navbar-employees')
 
 
         <table class="table table-striped table-hover">
@@ -122,7 +134,7 @@
                     @endif
                 </tr>
             </thead>
-            <tbody id="customer-table-body">
+            <tbody id="customer-table-staff">
 
                 @foreach ($list_employees as $item)
                     <tr>
@@ -158,6 +170,7 @@
         <p>
             {{ $list_employees->links('pagination::bootstrap-4') }}
         </p>
+
 
         <!-- cách 2 hơi xấu -->
         {{-- <div>

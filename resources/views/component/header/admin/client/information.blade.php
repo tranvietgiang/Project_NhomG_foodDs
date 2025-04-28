@@ -590,8 +590,8 @@
     $("#province").change(function() {
         let province_id = $(this).val(); // Lấy giá trị province_id từ dropdown tỉnh/thành phố
         $.ajax({
-            url: "/get-districts", // Gửi yêu cầu đến đường dẫn "/get-districts" (server-side)
-            type: "POST", // Gửi yêu cầu POST
+            url: "/get-districts", // Gửi yêu cầu đến đường dẫn " route('/get-districts')
+            type: "POST",
             data: {
                 province_id: province_id, // Truyền province_id qua dữ liệu yêu cầu
                 _token: "{{ csrf_token() }}" // CSRF token để bảo vệ yêu cầu khỏi tấn công CSRF
@@ -601,8 +601,8 @@
                 $("#district").html('<option value="">Chọn quận/huyện</option>');
                 $.each(data, function(key, value) { // Duyệt qua danh sách quận huyện trả về
                     // Thêm các option mới vào dropdown quận huyện
-                    $("#district").append('<option value="' + value.district_id + '">' +
-                        value.name + '</option>');
+                    $("#district").append(
+                        `<option value="${value.district_id}">${value.name}</option>`);
                 });
             }
         });
@@ -614,7 +614,7 @@
     $("#district").change(function() {
         let district_id = $(this).val(); // Lấy giá trị district_id từ dropdown quận/huyện
         $.ajax({
-            url: "/get-wards", // Gửi yêu cầu đến đường dẫn route "/get-wards" (server-side)
+            url: "/get-wards", // Gửi yêu cầu đến đường dẫn route route('/get-wards')
             type: "POST", // Gửi yêu cầu POST
             data: {
                 district_id: district_id, // Truyền district_id qua dữ liệu yêu cầu
@@ -625,8 +625,8 @@
                 $("#wards").html('<option value="">Chọn phường/xã</option>');
                 $.each(data, function(key, value) { // Duyệt qua danh sách phường xã trả về
                     // Thêm các option mới vào dropdown phường xã
-                    $("#wards").append('<option value="' + value.wards_id + '">' +
-                        value.name + '</option>');
+                    $("#wards").append(
+                        `<option value="${value.wards_id}">${value.name}</option>`);
                 });
             }
         });

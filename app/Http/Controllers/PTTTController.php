@@ -52,7 +52,7 @@ class PTTTController extends Controller
             "vnp_Locale" => $vnp_Locale,
             "vnp_OrderInfo" => $vnp_OrderInfo,
             "vnp_OrderType" => $vnp_OrderType,
-            "vnp_ReturnUrl" => $vnp_Returnurl,
+            "vnp_ReturnUrl" => $vnp_Returnurl, // vnpay sẽ tra về route và sẽ tìm đến cái route vnp_Returnurl và xử lý tiếp
             "vnp_TxnRef" => $vnp_TxnRef
         ];
 
@@ -80,13 +80,6 @@ class PTTTController extends Controller
         $product_id = $request->input('product_id');
 
         $cart = Cart::where('user_id', Auth::id())->orderByDesc('cart_id')->first();
-        // $cart = Cart::create([
-        //     'product_id' => $product_id,
-        //     'user_id' => Auth::id(),
-        //     'quantity_sp' => $request->input('product_quantity'),
-        //     'total_price' => $request->input('product_price'),
-        // ]);
-
 
         // Lưu thông tin vào session (để hiển thị khi thanh toán thành công/thất bại)
         session([
@@ -136,7 +129,6 @@ class PTTTController extends Controller
     {
 
         $vnpData = session('vnpay', []);
-        $delete_cart = $vnpData['delete_cart'];
 
 
         // xau khi thanh toán thành công thì xóa đi cart

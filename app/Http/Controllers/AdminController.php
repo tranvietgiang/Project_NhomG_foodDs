@@ -61,7 +61,7 @@ class AdminController extends Controller
             ->where('users.role', 'user')
             ->orderByDesc('clients.login_count') // sắp xếp theo cột login_count trong bảng clients
             ->with('client') // load thêm quan hệ client nếu cần
-            ->paginate(5);
+            ->paginate(1);
 
 
         return view('component.header.admin.client.list-client', compact('list_client'));
@@ -86,37 +86,35 @@ class AdminController extends Controller
         $keyword = $reqName->input('search');
 
 
-        /**chỉ tìm một điều kiện closure */
-        // $list_client = User::where('role', 'user')
-        //     ->where('name', 'like', "%{$keyword}%")
-        //     ->orderByDesc('created_at')
-        //     ->paginate(4);
-
-        /**
-         *  lưu ý: closure , sử dụng từ khóa 'use' dể sử dụng varible keyword bên ngoài hàm
-         *  nếu dùng 2 điều kiện search thì nên dùng closure nếu chỉ dùng một name để tìm thì ko cần dùng closure
-         *  vd dùng name and email => closure
-         */
-
         $list_client = User::with('client')->where('role', 'user')
             ->where(function ($query) use ($keyword) {
                 $query->where('name', 'like', "%{$keyword}%")
                     ->orWhere('email', 'like', "%{$keyword}%");
             })
             ->orderByDesc('created_at')
-            ->paginate(4);
+            ->paginate(1)->appends(['search' => $keyword]);
 
         return view('component.header.admin.client.list-client', compact('list_client'));
     }
 
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy()
+    public function search_staff(Request $req)
     {
-        //
+        $keyword = $req->input('search_staff');
+
+        $list_employees = User::where('role', 'employees')
+            ->where(function ($query) use ($keyword) {
+                $query->where('name', 'like', '%' . $keyword . '%')
+                    ->orWhere('email', 'like', '%' . $keyword . '%');
+            })
+            ->orderByDesc('created_at')
+            ->paginate(1)
+            ->appends(['search_staff' => $keyword]);
+
+        return view('component.header.admin.employees.show', compact('list_employees'));
     }
+
+
 
 
     public function showVnPayCheckout()

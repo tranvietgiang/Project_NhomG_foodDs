@@ -104,7 +104,10 @@ class LoginController extends Controller
             }
         }
 
-        return redirect()->back()->with('login-failed', 'email hoặc mật khẩu sai');
+        return redirect()->back()->withErrors([
+            'login-failed' =>
+            'email hoặc mật khẩu sai',
+        ])->withInput();
     }
 
     /**

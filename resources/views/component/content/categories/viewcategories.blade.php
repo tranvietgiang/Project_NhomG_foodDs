@@ -103,7 +103,7 @@
     <!--  -->
     <div class="table-container mt-4 col-9">
 
-        @include('component.header.admin.keThua.navbar-logout')
+        {{-- @include('component.header.admin.keThua.navbar-logout') --}}
 
         <!-- nút thêm -->
         <div class="card">

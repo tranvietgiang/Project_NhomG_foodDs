@@ -1,20 +1,11 @@
 <!-- Navbar -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<!-- link dm bootstrap -->
-{{-- <link rel="stylesheet" href="{{ asset('component/css/mdb.min.css') }}"> --}}
-
 <nav style="" class="navbar navbar-expand-lg navbar-light bg-primary bg-body-tertiary mb-4 mt-3">
     <!-- Container wrapper -->
     <div style="background: #1e3c72 " class="container-fluid">
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <!-- Navbar shop -->
-            {{-- <a class="navbar-brand mt-2 mt-lg-0"
-                @if (Auth::check() && Auth::user()->role == 'admin') href="{{ route('manager') }}"
-                 @else 
-                href="{{ route('employees') }}" @endif>
-                <img src="{{ asset('logo-website/login.png') }}" height="15" alt="MDB Logo" loading="lazy" />
-            </a> --}}
-            <a class="navbar-brand mt-2 mt-lg-0" href="{{ route('manager') }}">
+
+            <a class="navbar-brand mt-2 mt-lg-0" href="{{ route('employees') }}">
                 <img src="{{ asset('logo-website/login.png') }}" height="15" alt="MDB Logo" loading="lazy" />
             </a>
 
@@ -61,11 +52,64 @@
 
 <!-- search -->
 <div>
-    <form action="{{ route('search_client') }}" method="get">
+    <form action="{{ route('staff.search_employees') }}" method="get">
         <div class="input-group">
-            <input type="search" class="form-control rounded" value="{{ request('search') }}" name="search"
-                placeholder="Search" aria-label="Search" aria-describedby="search-addon" required />
+            <input type="search" class="form-control rounded" value="{{ request('search_staff') }}" name="search_staff"
+                id="search_staff" placeholder="Search" aria-label="Search" aria-describedby="search-addon" required />
             <button type="submit" class="btn btn-primary" data-mdb-ripple-init> <i class="fas fa-search"></i></button>
         </div>
     </form>
 </div>
+
+{{-- <!-- link ajax không thể tối ưu việc tìm và crud employees -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('#ajax_submit').submit(function(e) {
+        e.preventDefault();
+        let name_search_staff = $('#search_staff').val();
+
+        $.ajax({
+            url: "/role/admin/search_employees",
+            type: "GET",
+            data: {
+                name_search_staff_backend: name_search_staff,
+            },
+            success: function(data) {
+                $('#customer-table-staff').empty();
+
+                if (data.data.length > 0) {
+                    $.each(data.data, function(key, value) {
+                        $('#customer-table-staff').append(`
+                            <tr>
+                                <td>${key + 1}</td>
+                                <td>${value.name}</td>       
+                                <td>${value.email}</td>       
+                                <td>${value.phone}</td>       
+                              <td>
+                    ${value.last_activity == "online" 
+                        ? '<span class="badge bg-success">Online</span>' 
+                        : '<span class="badge bg-danger">Offline</span>'}
+                </td>      
+                                <td>${formatDate(value.created_at)}</td>
+
+
+
+                                
+                            </tr>
+                        `);
+                    });
+                } else {
+                    $('#customer-table-staff').append(
+                        '<tr><td colspan="7">Không tìm thấy kết quả.</td></tr>'
+                    );
+                }
+            },
+        })
+    });
+
+
+    function formatDate(dateString) {
+        let date = new Date(dateString);
+        return date.toLocaleDateString('vi-VN');
+    }
+</script> --}}
