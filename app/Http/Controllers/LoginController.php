@@ -6,18 +6,21 @@ use App\Models\Product;
 use App\Http\Middleware\checkLogin;
 use App\Http\Middleware\LastActivity;
 use App\Mail\OTPMail;
+use App\Models\bill_product;
 use App\Models\Client;
 use App\Models\day;
 use App\Models\district;
 use App\Models\login;
 use App\Models\month;
 use App\Models\province;
+use App\Models\Review;
 use App\Models\User;
 use App\Models\ward;
 use App\Models\year;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Laravel\Socialite\Facades\Socialite;
@@ -157,7 +160,22 @@ class LoginController extends Controller
 
         /** ít bửa sửa lại thành desc! */
         $content_data = Product::orderBy('created_at', 'ASC')->paginate(5);
-        return view('layout.index', compact(['content_data', 'products']));
+
+        $content_data_hung = Product::orderBy('created_at', 'ASC')->paginate(8);
+
+        /** get amount client buyed */
+        $product_sold = DB::table('bill_products')
+            ->select('product_id', DB::raw('COUNT(*) as sold_count'))
+            ->groupBy('product_id')
+            ->pluck('sold_count', 'product_id'); // trả về kiểu: [product_id => sold_count]
+
+        $amount_star_5 = DB::table('reviews')
+            ->select('product_id', 'review_rating', DB::raw('COUNT(review_rating) as star_count'))
+            ->where('review_rating', 5)
+            ->groupBy('product_id', 'review_rating')
+            ->pluck('star_count', 'product_id');
+
+        return view('layout.index', compact(['content_data', 'products', 'content_data_hung', 'product_sold', 'amount_star_5']));
     }
 
 

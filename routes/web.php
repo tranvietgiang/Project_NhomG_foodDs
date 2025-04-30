@@ -10,6 +10,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PTTTController;
 use App\Http\Controllers\ViewController;
 use App\Http\Controllers\SDTController;
+use App\Http\Controllers\ThanhToanNhieuItemController;
 use App\Http\Controllers\ZaloPayController;
 use App\Http\Middleware\checkLogin;
 use App\Models\login;
@@ -151,3 +152,11 @@ Route::post('/cart/add', [ProductController::class, 'addtocart'])->name('cart.ad
 Route::get('/viewcart', [ProductController::class, 'viewcart'])->name('viewcart');
 Route::delete('/cart/removeCart/{id}', [ProductController::class, 'removeCart'])->name('cart.removeCart');
 Route::put('/cart/update/{id}', [ProductController::class, 'updateSL'])->name('cart.update');
+
+
+/** thanh toán nhiều đơn hàng */
+Route::get('/cart/update/{id}', [ProductController::class, 'updateSL'])->name('cart.update');
+Route::get('/shows_goods/cart', [ThanhToanNhieuItemController::class, 'cart_shows_goods'])->name('cart.shows_goods');
+Route::post('/shows_goods/handle_amount', [ThanhToanNhieuItemController::class, 'handle_amount'])->name('cartMany.amount.item');
+Route::get('/handle_amount/remove', [ThanhToanNhieuItemController::class, 'handle_remove_giang'])->name('remove.cartMany.giang');
+Route::get('/handle_amount/removeAll', [ThanhToanNhieuItemController::class, 'handle_remove_all_giang'])->name('goods.cartManyAll');

@@ -87,6 +87,7 @@ class ViewController extends Controller
 
         /** số lượng mà khách hàng đã chọn */
         $product_client_quantity = $req->input('cart_quantity');
+
         /** lấy ra sản phẩm mà client bấm mua ngay dựa vào id */
         $product_get = Product::where('product_id', $product_id)->first();
 

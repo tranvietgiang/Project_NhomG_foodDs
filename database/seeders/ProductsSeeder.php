@@ -21,7 +21,7 @@ class ProductsSeeder extends Seeder
                 'product_name' => $faker->sentence(3),
                 'product_image' => $faker->imageUrl(640, 480, 'movies', true, 'Faker'),
                 'categories_id' => $faker->numberBetween(1, 5),
-                'product_price' => 500000, // Giá ngẫu nhiên từ 100 đến 1000 với 2 chữ số thập phân
+                'product_price' => $faker->numberBetween(500000, 650000), // Giá ngẫu nhiên từ 100 đến 1000 với 2 chữ số thập phân
                 'quantity_store' => $faker->numberBetween(10, 15),
             ]);
         }

@@ -60,7 +60,7 @@
                     </li>
 
                     <li>
-                        <a href="#"><i class="fa-solid fa-cart-shopping"></i></a>
+                        <a href="{{ route('cart.shows_goods') }}"><i class="fa-solid fa-cart-shopping"></i></a>
                     </li>
                 </ul>
             </div>

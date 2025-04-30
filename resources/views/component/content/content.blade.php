@@ -25,19 +25,20 @@
                         <i class="fa-solid fa-star"></i>
                         <i class="fa-solid fa-star"></i>
                         <i class="fa-solid fa-star"></i>
-                        <span style="display: inline; color: #000">(0)</span>
+                        <span style="display: inline; color: #000">({{ $amount_star_5[$item->product_id] ?? 0 }})</span>
                     </span>
 
-                    <span style="font-size:14px " class="text-success">đã bán 103</span>
-                    <span class="new-price"><b> {{ $item->product_price }}</b><sub>đ</sub></span>
+                    <span style="font-size:14px " class="text-success">đã bán
+                        {{ $product_sold[$item->product_id] ?? 0 }}</span>
+                    @php
+                        $price_coupon = $item->product_price - ($item->product_price * 35) / 100;
+                    $price_discount = round($price_coupon, 0); @endphp
+                    <span class="new-price"><b> {{ $price_discount }}</b><sub>đ</sub></span>
                     <div class="d-flex justify-content-center align-items-center gap-3">
                         <span class="old-price">1500.0<sub>đ</sub></span>
                         <span class="discount">-35%</span>
                         <span class="btn btn-outline-success "><a class="text-danger" href="">Cart</a></span>
                     </div>
-                    <p>
-                        <a class="text-black" href="#">Review</a>
-                    </p>
                 </div>
             @endforeach
         </div>
@@ -55,7 +56,7 @@
         </div>
 
         <div class="row">
-            @for ($i = 1; $i <= 8; $i++)
+            @foreach ($content_data_hung as $product)
                 <div class="col-6 col-md-3 mb-3">
                     <div class="frame-image">
                         <div>
@@ -63,7 +64,7 @@
                                 src="{{ asset('component/image-product/mi-tron-cay.png') }}" alt="">
                         </div>
                         <h5 class="product_name text-center"><b>
-                                Cà phê muối thơm ngon đặc biệt đậm vị Việt Nam, hương vị độc đáo khó quên.
+                                {{ $product->product_name }}
                             </b></h5>
 
                         <span class="text-warning product_star">
@@ -72,21 +73,34 @@
                             <i class="fa-solid fa-star"></i>
                             <i class="fa-solid fa-star"></i>
                             <i class="fa-solid fa-star"></i>
-                            <span style="display: inline; color: #000; margin-left: 5px;">(0)</span>
+                            <span
+                                style="display: inline; color: #000; margin-left: 5px;">({{ $amount_star_5[$product->product_id] ?? 0 }})</span>
                         </span>
 
-                        <span style="font-size:14px" class="text-success">đã bán 103</span>
+                        <span style="font-size:14px" class="text-success">đã bán
+                            {{ $product_sold[$product->product_id] ?? 0 }}
+                        </span>
 
-                        <span class="new-price"><b>1000.0 </b><sub>đ</sub></span>
+                        <span class="new-price">
+                            <b class="price_new_giang" id="price-new">{{ number_format($price_discount) }}</b>
+                            <sub>đ</sub>
+                        </span>
 
-                        <div class="d-flex justify-content-center align-items-center gap-3">
-                            <span class="old-price">1500.0<sub>đ</sub></span>
-                            <span class="discount">-35%</span>
-                            <span class="btn btn-outline-success btn-sm">cart</span>
+                        <div class="d-flex justify-content-center align-items-center gap-5">
+
+                            <div class="d-flex justify-content-center align-items-center">
+                                <span id="price_old_giang" class="old-price">
+                                    {{ $product->product_price }}<sub>đ</sub></span>
+                                <span class="discount">-35%</span>
+                            </div>
+                            <div>
+                                <span class="btn btn-outline-success btn-sm">thêm cart</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            @endfor
+            @endforeach
+
         </div>
     </div>
 </section>
