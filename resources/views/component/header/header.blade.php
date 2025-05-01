@@ -60,7 +60,10 @@
                     </li>
 
                     <li>
-                        <a href="{{ route('cart.shows_goods') }}"><i class="fa-solid fa-cart-shopping"></i></a>
+                        <a style="display: inline-block; position: relative;" href="{{ route('cart.shows_goods') }}"><i
+                                class="fa-solid fa-cart-shopping"></i></a>
+                        <span id="cartCount" style="position: absolute; top: 10%; left:92%;"
+                            class="btn-sm btn btn-success">{{ $amount_cart_header ?? 0 }}</span>
                     </li>
                 </ul>
             </div>

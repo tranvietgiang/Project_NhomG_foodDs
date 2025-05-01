@@ -61,7 +61,7 @@
                     <div class="frame-image">
                         <div>
                             <img class="image-product-content-1 img-fluid"
-                                src="{{ asset('component/image-product/mi-tron-cay.png') }}" alt="">
+                                src="{{ asset('component/image-product/' . $item->product_image) }}" alt="">
                         </div>
                         <h5 class="product_name text-center"><b>
                                 {{ $product->product_name }}
@@ -94,7 +94,14 @@
                                 <span class="discount">-35%</span>
                             </div>
                             <div>
-                                <span class="btn btn-outline-success btn-sm">thêm cart</span>
+                                <a class="btn-sm btn btn-primary addCartMany"
+                                    data-url="{{ route('add.cartMany.giang', [
+                                        'product_id' => $product->product_id,
+                                        'price_goods' => $product->product_price,
+                                    ]) }}">
+                                    Thêm vào giỏ
+                                </a>
+
                             </div>
                         </div>
                     </div>
@@ -104,3 +111,25 @@
         </div>
     </div>
 </section>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $('.addCartMany').on('click', function(e) {
+        e.preventDefault();
+        let url = $(this).data('url'); // Lấy URL từ data-url
+
+        $.ajax({
+            url: url,
+            type: "POST", // Đảm bảo là POST
+            data: {
+                _token: "{{ csrf_token() }}" // Đảm bảo có token CSRF
+            },
+            success: function(value) {
+                $('#cartCount').text(value.cartCount);
+            },
+            error: function(xhr, status, error) {
+                console.log('Lỗi:', error); // In lỗi ra console để debug
+            }
+        });
+    });
+</script>

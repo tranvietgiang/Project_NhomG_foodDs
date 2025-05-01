@@ -7,6 +7,7 @@ use App\Http\Middleware\checkLogin;
 use App\Http\Middleware\LastActivity;
 use App\Mail\OTPMail;
 use App\Models\bill_product;
+use App\Models\Cart;
 use App\Models\Client;
 use App\Models\day;
 use App\Models\district;
@@ -174,8 +175,10 @@ class LoginController extends Controller
             ->where('review_rating', 5)
             ->groupBy('product_id', 'review_rating')
             ->pluck('star_count', 'product_id');
+        /** lấy ra số lượng sản phẩm */
 
-        return view('layout.index', compact(['content_data', 'products', 'content_data_hung', 'product_sold', 'amount_star_5']));
+        $amount_cart_header =  Cart::where('user_id', Auth::id())->count();
+        return view('layout.index', compact(['content_data', 'products', 'content_data_hung', 'product_sold', 'amount_star_5', 'amount_cart_header']));
     }
 
 

@@ -50,11 +50,13 @@ class ThanhToanNhieuItemController extends Controller
         }
 
 
-        // $total_price_final = 
+        /** get amount categories */
+        $amount_cart_header =  Cart::where('user_id', Auth::id())->count();
 
 
-        // session()->put('address_exists', '');
-        return view('component.header.dathang.cartAddNhieuG', compact('cartMany'));
+
+
+        return view('component.header.dathang.cartAddNhieuG', compact('cartMany', 'amount_cart_header'));
     }
 
 

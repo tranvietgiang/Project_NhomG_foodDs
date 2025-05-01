@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CartManyGController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\GithubController;
 use App\Http\Controllers\GoogleController;
@@ -160,3 +161,7 @@ Route::get('/shows_goods/cart', [ThanhToanNhieuItemController::class, 'cart_show
 Route::post('/shows_goods/handle_amount', [ThanhToanNhieuItemController::class, 'handle_amount'])->name('cartMany.amount.item');
 Route::get('/handle_amount/remove', [ThanhToanNhieuItemController::class, 'handle_remove_giang'])->name('remove.cartMany.giang');
 Route::get('/handle_amount/removeAll', [ThanhToanNhieuItemController::class, 'handle_remove_all_giang'])->name('goods.cartManyAll');
+
+/** thêm cart nhiều */
+Route::post('/add/cartMany/{product_id}/{price_goods}', [CartManyGController::class, 'add_cartMany'])
+    ->name('add.cartMany.giang');

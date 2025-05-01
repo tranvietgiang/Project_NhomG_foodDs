@@ -3,9 +3,6 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 
-<head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-</head>
 <style>
     .cart-item img {
         width: 80px;
@@ -53,21 +50,20 @@
                 <a href="{{ route('website-main') }}" class=" text-decoration-none btn btn-outline-success "><i
                         class="bi bi-arrow-left"></i> TIẾP TỤC
                     MUA SẮM</a>
-                <h4 class="mt-2">Loại (3 sản phẩm)</h4>
+                <h4 class="mt-2">Loại ({{ $amount_cart_header ?? 0 }} sản phẩm)</h4>
             </div>
             <button id="delete_goods_all" class="btn btn-outline-danger"><i class="bi bi-trash"></i> Xóa tất cả</button>
         </div>
 
         <!-- Danh sách sản phẩm -->
-        <!-- Sản phẩm 1 -->
         @php
             $tamTinh = 0;
         @endphp
         @foreach ($cartMany as $cart)
             <div class="cart-item d-flex align-items-center border-bottom py-3">
                 <input type="checkbox" class="me-3">
-                <img width="300" height="300" src="{{ asset('image-store/' . $cart->image) }}" alt=""
-                    class="me-3 object-fit-cover">
+                <img width="300" height="300" src="{{ asset('component/image-product/' . $cart->image) }}"
+                    alt="" class="me-3 object-fit-cover">
                 <div class="flex-grow-1">
                     <h5>{{ $cart->product_name }}</h5>
                     <p>Khối lượng (g): 250g</p>
@@ -109,6 +105,8 @@
         </div>
     </div>
 
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         $('.quantity-control').each(function() {
