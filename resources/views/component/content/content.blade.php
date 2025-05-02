@@ -94,7 +94,7 @@
                                 <span class="discount">-35%</span>
                             </div>
                             <div>
-                                <a class="btn-sm btn btn-primary addCartMany"
+                                <a class="btn-sm btn btn-success addCartMany"
                                     data-url="{{ route('add.cartMany.giang', [
                                         'product_id' => $product->product_id,
                                         'price_goods' => $product->product_price,
@@ -120,15 +120,12 @@
 
         $.ajax({
             url: url,
-            type: "POST", // Đảm bảo là POST
+            type: "POST",
             data: {
-                _token: "{{ csrf_token() }}" // Đảm bảo có token CSRF
+                _token: "{{ csrf_token() }}"
             },
             success: function(value) {
                 $('#cartCount').text(value.cartCount);
-            },
-            error: function(xhr, status, error) {
-                console.log('Lỗi:', error); // In lỗi ra console để debug
             }
         });
     });

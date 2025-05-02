@@ -288,7 +288,10 @@
                 </li>
 
                 <li>
-                    <a href="#"><i class="fa-solid fa-cart-shopping"></i></a>
+                    <a style="display: inline-block; position: relative;" href="{{ route('cart.shows_goods') }}"><i
+                            class="fa-solid fa-cart-shopping"></i></a>
+                    <span id="cartCount" style="position: absolute; top: 10%; left:92%;"
+                        class="btn-sm btn btn-success">{{ $amount_cart_header ?? 0 }}</span>
                 </li>
             </ul>
         </div>
@@ -304,7 +307,9 @@
                 <!-- Barre latérale -->
                 <div class="col-md-3">
                     <div class="sidebar">
-                        <h5 class="btn btn-success">Tài khoản</h5>
+                        <a href="{{ url('/information-client') }}">
+                            <h5 class="btn btn-success">Tài khoản</h5>
+                        </a>
 
                         <style>
                             .btn-save {
@@ -364,7 +369,7 @@
                         <a href="#">Đơn hàng </a>
                         <a href="#">My Farm</a>
                         <a href="#">Voucher </a>
-                        <a href="#">Sản phẩm yêu thích</a>
+                        <a href="{{ route('goods.heart.giang') }}">Sản phẩm yêu thích</a>
                         <a href="#">Nhật xét </a>
                         <a href="#">Thông báo </a>
                         <!-- logout  -->

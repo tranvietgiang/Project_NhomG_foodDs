@@ -6,6 +6,7 @@ use App\Http\Controllers\CartManyGController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\GithubController;
 use App\Http\Controllers\GoogleController;
+use App\Http\Controllers\HeartGController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PTTTController;
@@ -163,5 +164,12 @@ Route::get('/handle_amount/remove', [ThanhToanNhieuItemController::class, 'handl
 Route::get('/handle_amount/removeAll', [ThanhToanNhieuItemController::class, 'handle_remove_all_giang'])->name('goods.cartManyAll');
 
 /** thêm cart nhiều */
-Route::post('/add/cartMany/{product_id}/{price_goods}', [CartManyGController::class, 'add_cartMany'])
-    ->name('add.cartMany.giang');
+Route::post('/add/cartMany/{product_id}/{price_goods}', [CartManyGController::class, 'add_cartMany'])->name('add.cartMany.giang');
+Route::get('/list/heart', [CartManyGController::class, 'show_heart'])->name('goods.heart.giang');
+
+Route::post('/list/heart/add', [CartManyGController::class, 'addHeartClient'])->name('heart.list.client');
+
+
+Route::post('/amount/heart', [HeartGController::class, 'updateAmount'])->name('heart.amount.list');
+
+Route::get('/amount/heart/delete', [HeartGController::class, 'delete_heart'])->name('delete.heart.giang');

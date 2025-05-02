@@ -448,6 +448,7 @@ class LoginController extends Controller
 
         $client_image = Client::where('user_id', Auth::user()->id)->first(['client_avatar']);
 
-        return view('component.header.admin.client.information', compact('day', 'year', 'provinces', 'client_image'));
+        $amount_cart_header =  Cart::where('user_id', Auth::id())->count();
+        return view('component.header.admin.client.information', compact('day', 'year', 'provinces', 'client_image', 'amount_cart_header'));
     }
 }

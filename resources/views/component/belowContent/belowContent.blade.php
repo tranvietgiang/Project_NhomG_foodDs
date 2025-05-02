@@ -116,7 +116,7 @@
                                     <input type="hidden" name="quantity_sp" value="1">
                                     <!-- Thêm trường quantity_sp nếu cần -->
                                     <button type="submit" class="btn btn-outline-success btn-sm"
-                                        style="display: inline; font-size: 12px;">Thêm vào giỏ hàng</button>
+                                        style="display: inline; font-size: 12px;">Thêm vào giỏ </button>
                                 </form>
                             </div>
                         </div>

@@ -26,7 +26,7 @@ class ThanhToanNhieuItemController extends Controller
     {
 
         if (!Auth::check()) {
-            return redirect()->route('wayLogin');
+            return redirect()->route('wayLogin', ['page' => 'login']);
         }
 
         // Lấy user hiện tại

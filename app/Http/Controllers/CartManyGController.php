@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\list_heart;
+use App\Models\listHeart;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,7 +31,6 @@ class CartManyGController extends Controller
         if ($existingCart) {
             $existingCart->update([
                 'quantity_sp' => DB::raw('quantity_sp + 1'),
-                'total_price' => $goods_price,
             ]);
         } else {
             Cart::create([
@@ -41,9 +42,42 @@ class CartManyGController extends Controller
             ]);
         }
 
-
+        $cartCount =  Cart::where('user_id', Auth::id())->count();
         return response()->json([
-            'cartCount' => Cart::where('user_id', Auth::id())->count(),
+            'cartCount' => $cartCount
         ]);
+    }
+
+    public function show_heart(Request $req)
+    {
+        $amount_cart_header =  Cart::where('user_id', Auth::id())->count();
+        $list_heart = listHeart::orderByDesc('created_at')->get();
+        return view('component.header.dathang.listHeart', compact('amount_cart_header', 'list_heart'));
+    }
+
+
+    public function addHeartClient(Request $req)
+    {
+        // Lấy dữ liệu từ body request
+        $productID = $req->input('heartID');
+        $priceHeart = $req->input('priceHeart');
+
+
+        $getProduct = Product::where('product_id', $productID)->first(['product_image', 'product_name']);
+
+        $heartExists = listHeart::Where('user_id', Auth::id())
+            ->where('product_id', $productID)->first();
+
+
+        if (!$heartExists) {
+            listHeart::create([
+                'heart_name' => $getProduct->product_name,
+                'heart_price' => $priceHeart,
+                'heart_amount' => 1,
+                'product_id' => $productID,
+                'user_id' => Auth::id(),
+                'heart_image' => $getProduct->product_image
+            ]);
+        }
     }
 }

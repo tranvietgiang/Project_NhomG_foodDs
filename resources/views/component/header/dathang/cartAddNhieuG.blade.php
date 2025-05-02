@@ -2,7 +2,7 @@
 <title>Giỏ Hàng</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
     .cart-item img {
         width: 80px;
@@ -50,6 +50,8 @@
                 <a href="{{ route('website-main') }}" class=" text-decoration-none btn btn-outline-success "><i
                         class="bi bi-arrow-left"></i> TIẾP TỤC
                     MUA SẮM</a>
+                <a class="btn btn-outline-danger" href="{{ route('goods.heart.giang') }}">List Heart</a>
+
                 <h4 class="mt-2">Loại ({{ $amount_cart_header ?? 0 }} sản phẩm)</h4>
             </div>
             <button id="delete_goods_all" class="btn btn-outline-danger"><i class="bi bi-trash"></i> Xóa tất cả</button>
@@ -78,7 +80,11 @@
                         <span class="quantity_goods">{{ $cart->quantity_sp }}</span>
                         <button class="btn btn-outline-secondary quantity_asc">+</button>
                         <button class="btn btn-outline-danger ms-2 remove-goods"><i class="bi bi-trash"></i></button>
-                        <button class="btn btn-outline-success ms-2"><i class="bi bi-heart"></i></button>
+
+                        <!-- heart -->
+                        <button data-goods-id="{{ $cart->product_id }}" data-goods-price="{{ $cart->total_price }}"
+                            class="btn btn-outline-success ms-2 heart-choose"><i class="bi bi-heart"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -116,9 +122,6 @@
             const $quantityElem = $amountItem.find('.quantity_goods');
             const itemId = $amountItem.data('item-id');
 
-            // xóa
-            const remove_goods = $amountItem.find('.remove-goods');
-            /* xóa all item của client*/
 
 
             function updateQuantity(newQty) {
@@ -128,7 +131,7 @@
                     data: {
                         item_id: itemId,
                         quantity: newQty,
-                        _token: '{{ csrf_token() }}' // Đảm bảo CSRF token có trong request
+                        _token: '{{ csrf_token() }}'
                     },
 
 
@@ -138,7 +141,6 @@
                             $quantityElem.text(newQty);
                             $('#totalAmount').text(`Tạm tính ${value.totalAmount}`);
                             console.log(value.totalAmount)
-                            // location.reload();
                         }
                     }
                 });
@@ -161,6 +163,8 @@
             });
 
 
+            // xóa
+            const remove_goods = $amountItem.find('.remove-goods');
 
             remove_goods.on('click', function() {
                 const itemId = $amountItem.data('item-id');
@@ -173,19 +177,40 @@
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
-                        // Ví dụ: làm mới lại trang hoặc cập nhật DOM
                         location.reload();
                     },
 
                 });
             });
 
+            // heart
+            const heart_choose = $amountItem.find('.heart-choose');
+            heart_choose.on('click', function() {
+                const idProduct = $(this).data('goods-id');
+                const price = $(this).data('goods-price');
+                console.log([idProduct, price]);
+
+                $.ajax({
+                    url: "{{ route('heart.list.client') }}",
+                    type: "POST",
+                    data: {
+                        heartID: idProduct,
+                        priceHeart: price,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        console.log('Thành công:', response);
+                    },
+                });
+
+            });
+
+
+            // đóng
         });
 
+        /* xóa all item của client*/
         const remove_goods_all = document.getElementById('delete_goods_all');
-        console.log(remove_goods_all)
-
-
 
         $('#delete_goods_all').on('click', function() {
 

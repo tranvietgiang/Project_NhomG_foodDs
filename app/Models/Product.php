@@ -48,4 +48,9 @@ class Product extends Model
     {
         return $this->belongsToMany(Bill::class, 'bill_product', 'product_id', 'bill_id');
     }
+
+    public function heart()
+    {
+        return $this->hasMany(listHeart::class, 'product_id', 'product_id');
+    }
 }
