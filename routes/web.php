@@ -173,3 +173,18 @@ Route::post('/list/heart/add', [CartManyGController::class, 'addHeartClient'])->
 Route::post('/amount/heart', [HeartGController::class, 'updateAmount'])->name('heart.amount.list');
 
 Route::get('/amount/heart/delete', [HeartGController::class, 'delete_heart'])->name('delete.heart.giang');
+
+/** thanh toán nhiều đơn hàng tùy ý khách hàng */
+Route::get('/show/cartMany/bill', [ThanhToanNhieuItemController::class, 'show_billCartMany'])->name('show.bill.cartMany');
+Route::post('/show/url/cartMany', [ThanhToanNhieuItemController::class, 'routeBill']);
+
+Route::post('/get/money/select', [ThanhToanNhieuItemController::class, 'priceSelect'])->name('priceSelect.money');
+
+
+Route::post('/show/cartMany/bill/check', [ThanhToanNhieuItemController::class, 'priceSelect'])->name('show.bill.cartMany.bill');
+
+//==============================================================================================================
+/** thanh toán khi nhận hàn cod */
+Route::get('/ttknh/cod', [ThanhToanNhieuItemController::class, 'cod'])->name('cod.ttknh.cartMany');
+
+Route::get('/payment/show/success', [ThanhToanNhieuItemController::class, 'BillSuccsess'])->name('payment.show.cartMany.success');

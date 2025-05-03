@@ -52,6 +52,10 @@
                     MUA SẮM</a>
                 <a class="btn btn-outline-danger" href="{{ route('goods.heart.giang') }}">List Heart</a>
 
+                <div>
+                    <input type="checkbox" id="all-checked" class="me-3 check-tamTinh-all">
+                    <label for="all-checked">All</label>
+                </div>
                 <h4 class="mt-2">Loại ({{ $amount_cart_header ?? 0 }} sản phẩm)</h4>
             </div>
             <button id="delete_goods_all" class="btn btn-outline-danger"><i class="bi bi-trash"></i> Xóa tất cả</button>
@@ -63,7 +67,11 @@
         @endphp
         @foreach ($cartMany as $cart)
             <div class="cart-item d-flex align-items-center border-bottom py-3">
-                <input type="checkbox" class="me-3">
+                <!-- checked -->
+                <input data-client-image="{{ $cart->image }}" data-carted-id="{{ $cart->cart_id }}"
+                    data-product-id="{{ $cart->product_id }}" data-client-amount="{{ $cart->quantity_sp }}"
+                    data-client-price="{{ $cart->total_price }}" type="checkbox" class="me-3 check-tamTinh">
+
                 <img width="300" height="300" src="{{ asset('component/image-product/' . $cart->image) }}"
                     alt="" class="me-3 object-fit-cover">
                 <div class="flex-grow-1">
@@ -91,23 +99,34 @@
             @php
                 $price = $cart->product_price * $cart->quantity_sp;
                 $tamTinh += $price;
+
+                $cartSl = $cart->quantity_sp;
+                $cartPrice = $cart->total_price;
             @endphp
         @endforeach
         <!-- Tổng tiền -->
         <div class="subtotal-section mt-4 text-end">
             <h5>Thông tin đơn hàng</h5>
-            <p><input type="text" value="" id="coupon_price" placeholder="nhập mã giảm giá(nếu có)"
-                    name="coupon_price"></p>
             @php
-                $price_final = $tamTinh - 0;
+                $price_final = $tamTinh;
             @endphp
-            <p id="totalAmount">Tạm tính: {{ number_format($price_final) ?? 0 }} đ</p>
+
+            <p id="totalItemSelect">Tiền đơn hàng bạn chọn(?): 0 đ</p>
+
+            <p id="totalAmount">Tổng tiền đơn hàng: {{ number_format($price_final) ?? 0 }} đ</p>
             <p class="text-danger">
                 @if (session('address_exists'))
                     {{ session('address_exists') }} <a href="{{ url('/information-client') }}">điền</a>
                 @endif
             </p>
-            <button class="btn btn-success">XÁC NHẬN GIỎ HÀNG</button>
+
+            <!-- form confirm payment -->
+            <form id="confirm-payment" style="padding: 0; margin: 0;" method="get">
+                {{-- @csrf --}}
+                <button type="submit" class="btn btn-secondary btn-payment">XÁC
+                    NHẬN GIỎ HÀNG
+                </button>
+            </form>
         </div>
     </div>
 
@@ -115,6 +134,86 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        /* handle button payment*/
+        $(document).ready(function() {
+            const $btn = $('.btn-payment');
+            const $form = $('#confirm-payment');
+            const $all_checked = $('#all-checked');
+
+
+            $('.check-tamTinh').on('change', function() {
+                if ($('.check-tamTinh:checked').length > 0) {
+                    $btn.addClass("btn-success").removeClass("btn-secondary");
+                    $btn.prop('disabled', false);
+
+
+                    let total = 0;
+                    $('.check-tamTinh:checked').each(function() {
+                        const amount = Number($(this).data('client-amount'));
+                        const price = Number($(this).data('client-price'));
+                        total += amount * price;
+                    });
+
+                    $.ajax({
+                        url: "/get/money/select",
+                        type: "POST",
+                        data: {
+                            amount: 1,
+                            priceClient: total,
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            $('#totalItemSelect').text(
+                                `Tiền đơn hàng bạn chọn: ${response.totalItemSelect} đ`
+                            );
+                        }
+                    });
+
+                } else {
+                    $btn.removeClass("btn-success").addClass("btn-secondary");
+                    $btn.prop('disabled', true);
+                    $('#totalItemSelect').text(
+                        `Tiền đơn hàng bạn chọn: 0 đ`);
+                }
+            });
+
+            /* qua trang bill*/
+            $form.on('submit', function(e) {
+                e.preventDefault(); // Ngăn submit mặc định
+
+                let items = [];
+                $('.check-tamTinh:checked').each(function() {
+                    items.push({
+                        cart_id: $(this).data('carted-id'),
+                        product_id: $(this).data('product-id'),
+                        amount: $(this).data('client-amount'),
+                        price: $(this).data('client-price'),
+                        image: $(this).data('client-image'),
+                    });
+                });
+
+                $.ajax({
+                    url: "/show/url/cartMany",
+                    type: "post",
+                    data: {
+                        arrItems: JSON.stringify(items),
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        window.location.href = response.redirect_url;
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+
+        });
+
+
+
+
+        /*xử lý tăng giảm*/
         $('.quantity-control').each(function() {
             const $amountItem = $(this);
             const $btnAsc = $amountItem.find('.quantity_asc');

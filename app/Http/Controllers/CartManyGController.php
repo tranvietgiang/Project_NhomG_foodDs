@@ -51,7 +51,7 @@ class CartManyGController extends Controller
     public function show_heart(Request $req)
     {
         $amount_cart_header =  Cart::where('user_id', Auth::id())->count();
-        $list_heart = listHeart::orderByDesc('created_at')->get();
+        $list_heart = listHeart::orderByDesc('created_at')->where('user_id', Auth::id())->get();
         return view('component.header.dathang.listHeart', compact('amount_cart_header', 'list_heart'));
     }
 
@@ -77,6 +77,11 @@ class CartManyGController extends Controller
                 'product_id' => $productID,
                 'user_id' => Auth::id(),
                 'heart_image' => $getProduct->product_image
+            ]);
+        } else {
+            $heartExists->update([
+                $heartExists->heart_amount += 1,
+                $heartExists->save()
             ]);
         }
     }

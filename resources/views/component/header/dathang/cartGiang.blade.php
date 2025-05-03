@@ -36,7 +36,9 @@
         padding: 0;
     }
 </style>
-
+<a href="{{ route('website-main') }}" class=" text-decoration-none btn btn-outline-success "><i
+        class="bi bi-arrow-left"></i> TIẾP TỤC
+    MUA SẮM</a>
 <h1>Product Details</h1>
 <!-- show_cart -->
 @foreach ($cart as $item)

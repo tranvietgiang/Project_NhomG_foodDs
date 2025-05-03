@@ -60,8 +60,10 @@
                 <div class="col-6 col-md-3 mb-3">
                     <div class="frame-image">
                         <div>
-                            <img class="image-product-content-1 img-fluid"
-                                src="{{ asset('component/image-product/' . $item->product_image) }}" alt="">
+                            <a href="{{ route('show_cart', ['product_id' => $item->product_id]) }}">
+                                <img class="image-product-content-1 img-fluid"
+                                    src="{{ asset('component/image-product/' . $item->product_image) }}" alt="">
+                            </a>
                         </div>
                         <h5 class="product_name text-center"><b>
                                 {{ $product->product_name }}

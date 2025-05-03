@@ -476,7 +476,6 @@
                                                 </button>
                                             </div>
 
-
                                             <!-- Xóa sản phẩm -->
                                             <form style="padding: 0; margin: 0;"
                                                 action="{{ route('delete.heart.giang') }}" method="get">
