@@ -70,7 +70,8 @@
 
             <!-- page product -->
             @if (Auth::check() && Auth::user()->role == 'admin')
-                <li class=""><a href="#"><i class="fas fa-box"></i> Quản Lý Sản Phẩm</a></li>
+                <li class=""><a href="{{ route('admin.view.product') }}"><i class="fas fa-box"></i> Quản Lý Sản
+                        Phẩm</a></li>
             @else
                 <li><a href="#"><i class="fas fa-box"></i> DS Sản Phẩm</a></li>
             @endif
@@ -117,6 +118,31 @@
         <!-- search employees -->
         @include('component.header.admin.keThua.navbar-employees')
 
+        @if (session('success'))
+            <div class="alert alert-primary">{{ session('success') }}</div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-primary">{{ session('error') }}</div>
+        @endif
+
+        <!-- show error -->
+        @if ($errors->any())
+            <!-- Kiểm tra nếu có lỗi validation nào không -->
+            <div class="alert alert-danger">
+                <ul style="list-style: none;">
+                    <!-- Lấy tất cả lỗi validation hiện tại -->
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+
+        <div>
+            <a class="btn btn-primary  m-3" href="{{ route('staff.add.view') }}">Thêm nhân viên</a>
+        </div>
 
         <table class="table table-striped table-hover">
             <thead>
@@ -159,8 +185,11 @@
                         <!-- check có role crud ko -->
                         @if (Auth::check() && Auth::user()->role == 'admin')
                             <td>
-                                <button class="btn btn-sm btn-warning edit-btn">Sửa</button>
-                                <button class="btn btn-sm btn-danger delete-btn">Xóa</button>
+                                <a href="{{ route('staff.view.edit', ['employees_id' => $item->id]) }}"
+                                    class="btn btn-sm btn-warning edit-btn">Sửa</a>
+                                <a onclick="confirmDelete(event)"
+                                    href="{{ route('staff.remove', ['employees_id' => $item->id]) }}"
+                                    class="btn btn-sm btn-danger delete-btn">Xóa</a>
                             </td>
                         @endif
                     </tr>
@@ -187,3 +216,12 @@
             @endif
         </div> --}}
 </section>
+<script>
+    function confirmDelete(event) {
+        var result = confirm('Bạn có muốn xóa nhân viên này không?');
+
+        if (!result) {
+            event.preventDefault();
+        }
+    }
+</script>

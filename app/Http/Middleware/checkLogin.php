@@ -22,10 +22,6 @@ class checkLogin
             return redirect()->route('wayLogin', ['page' => 'login']);
         }
 
-
-
-        // dd(Auth::check());
-
         return $next($request);
     }
 }

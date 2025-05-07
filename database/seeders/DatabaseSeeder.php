@@ -25,6 +25,8 @@ class DatabaseSeeder extends Seeder
 
             // UserSeeders::class,
             // DiscountSeeder::class
+
+
         ]);
     }
 }

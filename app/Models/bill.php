@@ -37,6 +37,8 @@ class bill extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Product::class, 'bill_product', 'bill_id', 'product_id');
+        return $this->belongsToMany(Product::class, 'bill_products', 'bill_id', 'product_id')
+            ->withPivot('quantity') // dùng để truy cập các cột phụ như quantity
+            ->withTimestamps();
     }
 }

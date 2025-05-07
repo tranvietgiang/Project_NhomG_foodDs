@@ -24,6 +24,7 @@ return new class extends Migration
             $table->double('product_price')->default(0);
             $table->integer('quantity_store')->default(0)->comment('số lượng con trong kho');
             $table->timestamps();
+            $table->string('description')->nullable();
         });
     }
 

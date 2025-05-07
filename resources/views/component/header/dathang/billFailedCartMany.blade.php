@@ -45,7 +45,7 @@
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
 </style>
-<div class="payment-success">Thanh toán thành công</div>
+<div class="payment-success">Thanh toán không thành công</div>
 <div class="home-link">
     <a href="{{ route('website-main') }}">Home</a>
 </div>

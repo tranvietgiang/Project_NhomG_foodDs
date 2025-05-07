@@ -25,6 +25,19 @@ class ViewController extends Controller
         /** lấy ra sản phẩm nè */
         $cart = Product::where('product_id', $req->product_id)->orderByDesc('created_at')->get();
 
+        /** nếu id product ko có trong table products thì quay về main */
+
+        $check_cart = false;
+        foreach ($cart as $i) {
+            $check_cart =  Product::whereIn('product_id', $i)->exists();
+        }
+
+        // dd($check_cart);
+        if (!$check_cart) {
+            return redirect()->route('website-main');
+        }
+
+
         /** số lượt đánh giá */
         $review_count_rating = Review::where('product_id', $product_id)->count();
 

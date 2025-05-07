@@ -4,11 +4,13 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartManyGController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\GithubController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\HeartGController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductTuyenController;
 use App\Http\Controllers\PTTTController;
 use App\Http\Controllers\ViewController;
 use App\Http\Controllers\SDTController;
@@ -62,7 +64,24 @@ Route::prefix('/role/admin')->group(function () {
     Route::get('/search_client', [AdminController::class, 'search_client'])->name('search_client');
     Route::get('/employees', [AdminController::class, 'showEmployees'])->name('employees');
     Route::get('/search_employees', [AdminController::class, 'search_staff'])->name('staff.search_employees');
-});
+    Route::get('/search_employees/edit/view/{employees_id}', [AdminController::class, 'edit_view_staff'])->name('staff.view.edit');
+    Route::put('/search_employees/edit/{staff}', [AdminController::class, 'edit_staff'])->name('staff.edit');
+    Route::get('/search_employees/remove/{employees_id}', [AdminController::class, 'remove_staff'])->name('staff.remove');
+    Route::get('/search_employees/add', [AdminController::class, 'add_view_staff'])->name('staff.add.view');
+    Route::get('/search_employees/add/{employees_id}', [AdminController::class, 'add_staff'])->name('staff.add');
+
+    /** product */
+    Route::get('/ui/view', [ProductTuyenController::class, 'view_admin_product'])->name('admin.view.product');
+    Route::get('/ui/product/add/view', [ProductTuyenController::class, 'add_view_product'])->name('admin.view.product-add');
+    Route::get('/ui/product/search', [ProductTuyenController::class, 'search_client_product'])->name('search.client.product');
+    Route::get('/ui/product/quantityStore', [ProductTuyenController::class, 'quantityStore'])->name('search.client.quantityStore');
+    Route::get('/ui/product/quantityStoreDesc', [ProductTuyenController::class, 'quantityStoreDesc'])->name('search.client.quantityStoreDesc');
+    Route::get('/ui/product/viewUpdate', [ProductTuyenController::class, 'ViewProductUpdate'])->name('admin.view.product.new');
+    Route::post('/ui/product/add', [ProductTuyenController::class, 'add_product'])->name('admin.add.product');
+    Route::get('/ui/product/edit/view', [ProductTuyenController::class, 'edit_view_product'])->name('admin.edit.view.product');
+    Route::post('/ui/product/edit', [ProductTuyenController::class, 'edit_product'])->name('admin.edit.product');
+    Route::get('/ui/product/remove', [ProductTuyenController::class, 'remove_product'])->name('admin.remove.product');
+})->middleware(checkLogin::class);
 
 
 
@@ -126,9 +145,9 @@ Route::get('/cart/show_checkout/{product_id}', [ViewController::class, 'show_car
 
 /** cart and review  giang*/
 Route::get('/cart/{product_id}', [ViewController::class, 'show_cart'])->name('show_cart');
-Route::post('/client/review/cart/bought', [ProductController::class, 'review']);
-Route::get('/delete/client_comment/{review_id}', [ProductController::class, 'delete_review'])->name('client.comment.delete');
-Route::get('/update/review/{review_id}', [ProductController::class, 'update_review'])->name('client.comment.update');
+Route::post('/client/review/cart/bought', [ProductController::class, 'review'])->middleware(checkLogin::class);
+Route::get('/delete/client_comment/{review_id}', [ProductController::class, 'delete_review'])->name('client.comment.delete')->middleware(checkLogin::class);
+Route::get('/update/review/{review_id}', [ProductController::class, 'update_review'])->name('client.comment.update')->middleware(checkLogin::class);
 Route::get('/getAvatar/hi', [ProductController::class, 'getAvatar']); // get avatar
 
 /** categories hung crud */
@@ -137,6 +156,10 @@ Route::resource('categories', CategoryController::class);
 /** zaloPay */
 Route::post('/zaloPay/payment', [ZaloPayController::class, 'zalopay'])->name('zalo.payment');
 Route::get('/zaloPay/callback', [ZaloPayController::class, 'callback_zalopay'])->name('zalo.callback');
+
+/** zaloPay thanh toán nhiều đơn hàng */
+Route::post('/zaloPay/payment/Many', [ThanhToanNhieuItemController::class, 'zalopay'])->name('zalo.many.payment');
+Route::get('/zaloPay/callback/many', [ThanhToanNhieuItemController::class, 'callback_many_zalopay'])->name('zalo.many.callback');
 
 
 /** xem thông tin chi tiết */
@@ -169,7 +192,6 @@ Route::get('/list/heart', [CartManyGController::class, 'show_heart'])->name('goo
 
 Route::post('/list/heart/add', [CartManyGController::class, 'addHeartClient'])->name('heart.list.client');
 
-
 Route::post('/amount/heart', [HeartGController::class, 'updateAmount'])->name('heart.amount.list');
 
 Route::get('/amount/heart/delete', [HeartGController::class, 'delete_heart'])->name('delete.heart.giang');
@@ -188,3 +210,28 @@ Route::post('/show/cartMany/bill/check', [ThanhToanNhieuItemController::class, '
 Route::get('/ttknh/cod', [ThanhToanNhieuItemController::class, 'cod'])->name('cod.ttknh.cartMany');
 
 Route::get('/payment/show/success', [ThanhToanNhieuItemController::class, 'BillSuccsess'])->name('payment.show.cartMany.success');
+
+
+
+// tìm kiếm sản phẩm 
+Route::get('/seach', [ProductController::class, 'seach'])->name('seach');
+
+// xóa giỏ hàng khi thanh toán thành công  
+Route::post('payment/success', [CheckoutController::class, 'handlePaymentSuccess'])->name('thanhtoanthanhcong');
+
+// sắp xếp sản phẩm theo giá cao xuống thấp 
+Route::get('/caoxuongthap', [ProductController::class, 'sapxepgiacaoxuongthap'])->name('caoxuongthap');
+
+// sắp xếp sản phẩm theo giá thấp đến cao 
+Route::get('/thaplencao', [ProductController::class, 'sapxepgiathapdencao'])->name('thaplencao');
+
+//thêm sản phẩm yêu  thích 
+Route::post('/addspyeuthich', [FavoriteController::class, 'addFavorite'])->name('addspyeuthich');
+
+// form view thanh toán success or failed
+Route::get('/payment/view/many', [ThanhToanNhieuItemController::class, 'payment_success'])->name('payment.many.payment.success');
+Route::get('/payment/view/many', [ThanhToanNhieuItemController::class, 'payment_failed'])->name('payment.many.payment.failed');
+
+
+/** order */
+Route::get('/payment/view/many', [ThanhToanNhieuItemController::class, 'MyOrder'])->name('MyOrder.information');

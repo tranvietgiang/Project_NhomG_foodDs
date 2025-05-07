@@ -59,29 +59,32 @@
             <li class="d-flex justify-content-center m-4">
                 <h3>Dashboard</h3>
             </li>
-            <!-- nếu admin đổi thành quản lý -->
-            @if (Auth::check() && Auth::user()->role == 'admin')
-                <li class="active"><a href="{{ route('employees') }}"><i class="fas fa-users"></i> Quản Lý Nhân Viên</a>
-                </li>
-            @else
-                <li class="active"><a href="{{ route('employees') }}"><i class="fas fa-users"></i> DS Nhân Viên</a></li>
-            @endif
-
-
-            <!-- page product -->
-            @if (Auth::check() && Auth::user()->role == 'admin')
-                <li class=""><a href="#"><i class="fas fa-box"></i> Quản Lý Sản Phẩm</a></li>
-            @else
-                <li><a href="#"><i class="fas fa-box"></i> DS Sản Phẩm</a></li>
-            @endif
 
             <!-- page categories -->
             @if (Auth::check() && Auth::user()->role == 'admin')
-                <li class=""><a href="{{ url('categories') }}"><i class="fas fa-box"></i> Quản Lý Phân loại</a>
+                <li class="active"><a href="{{ url('categories') }}"><i class="fas fa-box"></i> Quản Lý Phân loại</a>
                 </li>
             @else
                 <li><a href="#"><i class="fas fa-box"></i> Quản Lý Phân loại</a></li>
             @endif
+
+            <!-- nếu admin đổi thành quản lý -->
+            @if (Auth::check() && Auth::user()->role == 'admin')
+                <li class=""><a href="{{ route('employees') }}"><i class="fas fa-users"></i> Quản Lý Nhân Viên</a>
+                </li>
+            @else
+                <li class=""><a href="{{ route('employees') }}"><i class="fas fa-users"></i> DS Nhân Viên</a></li>
+            @endif
+
+            <!-- page product -->
+            @if (Auth::check() && Auth::user()->role == 'admin')
+                <li class=""><a href="{{ route('admin.view.product') }}"><i class="fas fa-box"></i> Quản Lý Sản
+                        Phẩm</a></li>
+            @else
+                <li><a href="#"><i class="fas fa-box"></i> DS Sản Phẩm</a></li>
+            @endif
+
+
 
             <!-- page client -->
             @if (Auth::check() && Auth::user()->role == 'admin')

@@ -302,6 +302,23 @@
     .remove-goods:hover {
         color: #e74c3c;
     }
+
+    .pagination {
+        background-color: transparent !important;
+        color: white;
+        padding: 10px;
+    }
+
+    .pagination .page-link {
+        background-color: transparent !important;
+        color: white;
+        border: 1px solid #dee2e6;
+    }
+
+    .page-item.active .page-link {
+        background-color: #007bff !important;
+        border-color: #007bff !important;
+    }
 </style>
 
 
@@ -404,10 +421,10 @@
                         <strong>{{ Auth::user()->name }}</strong><br>{{ Auth::user()->email }}
                     </p>
                     <a href="#">Số dư </a>
-                    <a href="{{ route('MyOrder.information') }}">Đơn hàng </a>
+                    <a href="#">Đơn hàng </a>
                     <a href="#">My Farm</a>
                     <a href="#">Voucher </a>
-                    <a href="#">Sản phẩm yêu thích</a>
+                    <a href="{{ route('goods.heart.giang') }}">Sản phẩm yêu thích</a>
                     <a href="#">Nhật xét </a>
                     <a href="#">Thông báo </a>
                     <!-- logout  -->
@@ -427,72 +444,51 @@
 
             <!-- danh sách yêu thích -->
             <div class="col-md-9">
-                <h3 class="btn btn-success"> danh sách yêu thích</h3>
-                @if ($list_heart->isEmpty())
+                <h3 class="btn btn-success"> danh sách đơn hàng</h3>
+                @if ($my_order->isEmpty())
                     <div class="alert alert-info text-center" role="alert">
                         Chưa có sản phẩm nào trong danh sách yêu thích!
                     </div>
                 @else
+                    <div class="bg-success p-2">
+                        {{ $my_order->links('pagination::bootstrap-4') }}
+                    </div>
+
                     <div class="heart-list">
-                        @foreach ($list_heart as $heart)
+                        @foreach ($my_order as $order)
                             <div class="heart-item card mb-3 shadow-sm">
-                                <div class="row g-0">
-                                    <!-- Hình ảnh sản phẩm -->
-                                    <div class="col-md-3">
-                                        <img src="{{ asset('component/image-product/' . $heart->heart_image) }}"
-                                            class="img-fluid rounded-start heart-image" alt="{{ $heart->heart_name }}">
-                                    </div>
-                                    <!-- Thông tin sản phẩm -->
-                                    <div class="col-md-6">
-                                        <div class="card-body">
-                                            <h5 class="card-title heart-name">{{ $heart->heart_name }}</h5>
-                                            <p class="card-text heart-description text-muted">
-                                                Theo giỏ Đà Lạt - Túi 250g - Độc sản Ngọt Lành - Màu Cam Vàng
-                                            </p>
-                                            <div class="heart-price">
-                                                <span class="current-price price-display text-success fw-bold">
-                                                    {{ number_format($heart->heart_price * $heart->heart_amount) }} đ
-                                                </span>
+                                @foreach ($order->products as $product)
+                                    <div class="row g-0">
+                                        <h5 class="btn btn-primary">Đơn hàng #{{ $order->bill_id }}</h5>
+                                        <!-- Hình ảnh sản phẩm -->
+                                        <div class="col-md-3">
+                                            <img src="{{ asset('component/image-product/' . $product->product_image) }}"
+                                                class="img-fluid rounded-start heart-image"
+                                                alt="{{ $product->product_name }}">
+                                        </div>
+                                        <!-- Thông tin sản phẩm -->
+                                        <div class="col-md-6">
+                                            <div class="card-body">
+                                                <h5 class="card-title heart-name">{{ $product->product_name }}</h5>
+                                                <p class="card-text heart-description text-muted">
+                                                    Theo giỏ Đà Lạt - Túi 250g - Độc sản Ngọt Lành - Màu Cam Vàng
+                                                </p>
+                                                <p class="card-text heart-description text-muted">
+                                                    {{ $product->pivot->quantity }}
+                                                </p>
+                                                <div class="heart-price">
+                                                    <span class="current-price price-display text-success fw-bold">
+                                                        {{ number_format($product->product_price) }} đ
+                                                    </span>
+                                                </div>
+                                                <p>Ngày đặt: {{ $order->created_at->format('d/m/Y H:i') }}</p>
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- Hành động -->
-                                    <div class="col-md-3 d-flex align-items-center justify-content-end p-3">
-                                        <div class="heart-actions d-flex align-items-center gap-3">
-
-                                            <!-- Tăng/giảm số lượng -->
-                                            <div data-heart-id="{{ $heart->heart_id }}"
-                                                class="quantity-control d-flex align-items-center control-amount">
-                                                <button class="btn btn-outline-secondary btn-sm amount-desc"
-                                                    title="Giảm số lượng">
-                                                    <i class="fas fa-minus"></i>
-                                                </button>
-                                                <input type="text" class="amount-input text-center mx-2" readonly
-                                                    value="{{ $heart->heart_amount }}" name="amount_item"
-                                                    style="width: 50px;">
-                                                <button class="btn btn-outline-success btn-sm amount-asc"
-                                                    title="Tăng số lượng">
-                                                    <i class="fas fa-plus"></i>
-                                                </button>
-                                            </div>
-
-                                            <!-- Xóa sản phẩm -->
-                                            <form style="padding: 0; margin: 0;"
-                                                action="{{ route('delete.heart.giang') }}" method="get">
-                                                @csrf
-                                                <input class="d-none" value="{{ $heart->heart_id }}"
-                                                    name="idHeartDelete" type="text">
-                                                <button type="submit"
-                                                    class="btn btn-outline-danger btn-sm remove-heart"
-                                                    title="Xóa sản phẩm">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
+                                @endforeach
                             </div>
                         @endforeach
+
                     </div>
                 @endif
             </div>
@@ -540,55 +536,3 @@
 <script src="{{ asset('component/js/mdb.umd.min.js') }}"></script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script>
-    /* này có chứ năng là lấy ra các thẻ nằm trong nó*/
-    $('.control-amount').each(function() {
-        const $amount = $(this);
-        const $click_asc = $amount.find('.amount-asc');
-        const $current_amount = $amount.find('.amount-input');
-        const $click_desc = $amount.find('.amount-desc');
-        const id = $amount.data('heart-id');
-
-        function UpdateAmount(amount) {
-            $.ajax({
-                url: "{{ route('heart.amount.list') }}",
-                type: "POST",
-                data: {
-                    idHeart: id,
-                    change_amount: amount,
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(response) { // Cập nhật giá mới trong DOM
-                    // Tìm phần tử .price-display với đúng heart-id
-                    $(`.control-amount[data-heart-id="${id}"]`)
-                        .closest('.heart-item') // đi lên đến block lớn của sản phẩm
-                        .find('.price-display') // tìm xuống đến chỗ hiển thị giá tiền
-                        .text(response.price_new + ' đ'); // gán giá mới
-                    console.log(response.price_new);
-                },
-                error: function(xhr, status, error) {
-                    console.error("Lỗi:", xhr.responseText);
-                }
-            });
-        }
-
-        $click_asc.on('click', function() {
-            let current = parseInt($current_amount.val())
-            let amount = current + 1;
-            $current_amount.val(amount);
-            UpdateAmount(amount)
-        })
-
-        $click_desc.on('click', function() {
-            let current = parseInt($current_amount.val())
-            if (current > 1) {
-                let amount = current - 1;
-                $current_amount.val(amount);
-                UpdateAmount(amount)
-            }
-        })
-
-
-    }) // đóng
-</script>

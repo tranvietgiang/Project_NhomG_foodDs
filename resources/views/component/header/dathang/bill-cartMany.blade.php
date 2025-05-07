@@ -29,6 +29,9 @@
             background-color: #e6f0ff;
         }
     </style>
+    @php
+        $tongTien = 0;
+    @endphp
     <div class="row">
         @foreach ($cartShow as $item)
             <div class="col-md-6 mb-4">
@@ -52,8 +55,16 @@
                     </div>
                 </div>
             </div>
+            @php
+                $totalPrice = $item->quantity_sp * $item->total_price;
+                $tongTien += $totalPrice;
+            @endphp
         @endforeach
     </div>
+
+    @if (session('addressNotExists'))
+        <div>{{ session('addressNotExists') }} <a href="{{ url('/information-client') }}">click</a></div>
+    @endif
 
     <div class="card p-3 mt-3 shadow-sm">
         <h4 class="text-end text-danger">
@@ -65,6 +76,7 @@
             @csrf
             <div class="payment-option">
                 <input type="text" class="d-none" name="arrShow" value="{{ $cartShow }}">
+                <input type="text" class="d-none" name="total_price_payment" value="{{ $tongTien ?? 0 }}">
                 <input type="radio" id="cod" name="payment_method" checked value="cod">
                 <label for="cod">Thanh toán khi nhận hàng (COD)</label>
 
@@ -92,10 +104,11 @@
 
         const form = Element.target;
 
+        form.method = "POST";
         if (selected == "vnpay") {
 
         } else if (selected == "zalopay") {
-
+            form.action = "{{ route('zalo.many.payment') }}";
         } else if (selected == "momo") {
 
         } else {

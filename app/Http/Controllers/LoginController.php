@@ -42,6 +42,7 @@ class LoginController extends Controller
             abort(404);
         }
 
+        //Thêm một lớp bảo vệ nữa nếu file resources/views/login/{page}.blade.php không tồn tại thực sự.
         if (!view()->exists("login.$page")) {
             abort(404, "Page not found"); // Hoặc redirect, tùy ý
         }
@@ -210,10 +211,12 @@ class LoginController extends Controller
         // laravel sẽ tự động kiểm tra xem có trường nào ko đúng request sẽ gửi thông báo error
         $req->validate([
             'username' => 'required|max:50',
+            'username' => 'required|min:6',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:4|confirmed'
         ], [
             'username.max' => 'Username không được vượt quá 50 ký tự.',
+            'username.min' => 'Username không được nhỏ hơn 6 ký tự.',
             'email.unique' => 'Email đã tồn tại, vui lòng sử dụng email khác!',
             'password.min' => 'Trường mật khẩu phải có ít nhất 4 ký tự.',
             'password.confirmed' => 'Mật khẩu không trùng nhau' //dùng confirmed khi có một field xác nhận tương ứng, ví dụ
@@ -408,11 +411,11 @@ class LoginController extends Controller
                 'provider_id' => ''
             ]);
 
-            /** khi mà đăng ký thì client sẽ được information client */
-            Client::create([
-                'user_id' => $user->id,
-                'client_name' => $userData['name']
-            ]);
+            // /** khi mà đăng ký thì client sẽ được information client */
+            // Client::create([
+            //     'user_id' => $user->id,
+            //     'client_name' => $userData['name']
+            // ]);
 
             Auth::login($user);
             Session::forget(['otp', 'email', 'user_account_otp']); // Xóa session sau khi thành công

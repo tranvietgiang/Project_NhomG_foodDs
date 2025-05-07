@@ -22,6 +22,12 @@ class ThanhToanNhieuItemController extends Controller
 
     public function cod(Request $request)
     {
+
+        $checkAddress = Client::where('user_id', Auth::id())->exists();
+        if (!$checkAddress) {
+            return redirect()->back()->with('addressNotExists', 'Bạn chưa có thông tin nhận hàng, vui lòng điền thông tin để nhận hàng tại đây');
+        }
+
         $cartShow = json_decode($request->input('arrShow')); // giờ mới là array of object
 
         foreach ($cartShow as $item) {
@@ -57,9 +63,6 @@ class ThanhToanNhieuItemController extends Controller
         return view('component.header.dathang.billSuccessCartMany');
     }
 
-    // public function BillSuccsess() {
-    //     return view('')
-    // }
     // ==================================================================================================
     public function cart_shows_goods(Request $request)
     {
@@ -91,9 +94,6 @@ class ThanhToanNhieuItemController extends Controller
 
         /** get amount categories */
         $amount_cart_header =  Cart::where('user_id', Auth::id())->count();
-
-
-
 
         return view('component.header.dathang.cartAddNhieuG', compact('cartMany', 'amount_cart_header'));
     }
@@ -159,17 +159,20 @@ class ThanhToanNhieuItemController extends Controller
         /**
          * json_decode() là hàm PHP dùng để chuyển đổi chuỗi JSON thành mảng hoặc object. 
          */
-
         $json = session('cart_many_selected', '[]');
         $arr = json_decode($json, true); // trả về kiểu arr kết hợp <=> không có 'true' sẽ thành mảng các object
 
-        $tongTien = 0;
+
         $productIds = [];
 
         foreach ($arr as $item) {
-            $aaa = $item['price'] * $item['amount'];
-            $tongTien += $aaa;
-            $productIds[] = $item['product_id'];
+            try {
+                $decryptedId = decrypt($item['product_id']);
+                $productIds[] = $decryptedId;
+            } catch (\Exception $e) {
+                // Nếu decrypt thất bại => người dùng sửa dữ liệu => chuyển về trang chính
+                return redirect()->route('website-main');
+            }
         }
 
 
@@ -178,7 +181,7 @@ class ThanhToanNhieuItemController extends Controller
             ->whereIn('product_id', $productIds)
             ->get();
 
-        return view('component.header.dathang.bill-cartMany', compact('cartShow', 'tongTien'));
+        return view('component.header.dathang.bill-cartMany', compact('cartShow'));
     }
 
 
@@ -189,5 +192,137 @@ class ThanhToanNhieuItemController extends Controller
         return response()->json([
             'totalItemSelect' => number_format($tongTien)
         ]);
+    }
+
+    public function zalopay(Request $request)
+    {
+        // Lấy cấu hình từ .env
+        $config = [
+            "appid" => 553,
+            "key1" => "9phuAOYhan4urywHTh0ndEXiV3pKHr5Q",
+            "key2" => "Iyz2habzyr7AG8SgvoBCbKwKi3UzlLi3",
+            "endpoint" => "https://sandbox.zalopay.com.vn/v001/tpe/createorder"
+        ];
+
+
+        $temp = $request->input('arrShow');
+        $arr = json_decode($temp);
+
+        $count_arr = count($arr);
+
+        $totalPrice = (int) $request->input('total_price_payment');
+
+        $embeddata = [
+            "merchantinfo" => "embeddata123",
+
+            "redirecturl" => route('zalo.many.callback'),
+        ];
+
+
+        // Tính tổng số tiền từ các items
+
+        $order = [
+            "appid" => $config["appid"],
+            "apptime" => round(microtime(true) * 1000), // milliseconds
+            "apptransid" => date("ymd") . "_" . uniqid(), // mã giao dịch
+            "appuser" => Auth::id(),
+            "item" => json_encode($arr, JSON_UNESCAPED_UNICODE),
+            "embeddata" => json_encode($embeddata, JSON_UNESCAPED_UNICODE),
+            "amount" => $totalPrice,
+            "description" => "ZaloPay Integration Demo",
+            // Thay đổi hoặc bỏ qua bankcode để hiển thị trang chọn ngân hàng
+            // "bankcode" => "zalopayapp"
+        ];
+
+
+        // Tạo chuỗi dữ liệu để tính MAC
+        $data = $order["appid"] . "|" . $order["apptransid"] . "|" . $order["appuser"] . "|" . $order["amount"]
+            . "|" . $order["apptime"] . "|" . $order["embeddata"] . "|" . $order["item"];
+
+        $order["mac"] = hash_hmac("sha256", $data, $config["key1"]);
+
+        // Gửi yêu cầu tới ZaloPay API
+        $context = stream_context_create([
+            "http" => [
+                "header" => "Content-type: application/x-www-form-urlencoded\r\n",
+                "method" => "POST",
+                "content" => http_build_query($order)
+            ]
+        ]);
+
+
+
+        foreach ($arr as $item) {
+            Cart_buyed::create([
+                'cart_id' => $request->input('cart_id_payment'),
+                'user_id' => Auth::id(),
+                'product_id' => $item->product_id,
+                'quantity_sp' => $item->quantity_sp,
+                'total_price' => $item->total_price,
+                'image' =>  $item->image,
+            ]);
+
+            // 1. Tạo bill
+            $bill = bill::create([
+                'user_id' => Auth::id(),
+                'cart_id' => $item->cart_id,
+                'method_payment_id' => 3 // zalopay
+            ]);
+
+            // 2. Tạo bill_product
+            bill_product::create([
+                'bill_id' => $bill->bill_id,
+                'product_id' =>  $item->product_id,
+                'quantity' => $count_arr
+            ]);
+
+            /** sau khi thanh toán thành công thì xóa đi cart của client */
+            Cart::where('user_id', Auth::id())->where('cart_id', $item->cart_id,)->delete();
+        }
+
+        $resp = file_get_contents($config["endpoint"], false, $context);
+        $result = json_decode($resp, true);
+
+        // Kiểm tra kết quả trả về từ ZaloPay
+        if (isset($result['orderurl'])) {
+            header("Location: " . $result['orderurl']);
+            exit();
+        } else {
+            echo "error-khong-gui-dc";
+        }
+    }
+
+    public function callback_many_zalopay(Request $request)
+    {
+        // Xử lý kết quả thanh toán từ ZaloPay
+        $result = $request->all(); // Lấy tất cả dữ liệu trả về từ ZaloPay
+
+        // Kiểm tra xem thanh toán có thành công không
+        if (isset($result['error_code']) && $result['error_code'] == 0) {
+            return redirect()->route('payment.many.payment.success');
+        } else {
+            return redirect()->route('payment.many.payment.failed');
+        }
+    }
+
+    public function payment_failed()
+    {
+        return view('component.header.dathang.billFailedCartMany');
+    }
+    public function payment_success()
+    {
+        return view('component.header.dathang.billSuccessCartMany');
+    }
+
+
+    public function MyOrder(Request $request)
+    {
+        $my_order = bill::with(['products'])
+            ->where("user_id", Auth::id())
+            ->orderByDesc('created_at')
+            ->paginate(4);
+
+        // dd($my_order);
+        return view('component.header.dathang.my-order', compact('my_order'));
     }
 }

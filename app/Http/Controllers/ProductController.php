@@ -20,9 +20,11 @@ class ProductController extends Controller
     /** kiểm tra xem client đã mua hàng chưa rồi mới cho đánh giá */
     public function review(Request $req)
     {
+
+        $product_id = $req->input('product_id');
+
         $client_comment = $req->input('review_content');
         $client_rating = $req->input('client_rating');
-        $product_id = $req->input('product_id');
 
 
 
@@ -185,6 +187,32 @@ class ProductController extends Controller
     public function showallproduct()
     {
         $products = $products = Product::paginate(12);
+        return view('component.belowContent.allproduct', compact('products'));
+    }
+
+
+    //tìm kiếm phân trang
+    public function seach(Request $request)
+    {
+        $query = $request->input('query');
+
+        // tìm kiếm sản phẩm theo tên 
+        $products = Product::where('product_name', 'LIKE', "%{$query}%")->paginate(6)->appends(['query' => $query]);
+
+        return view('component.belowContent.allproduct', compact('products'));
+    }
+
+    // sắp xếp giá từ cao xuông thấp 
+    public function sapxepgiacaoxuongthap(Request $request)
+    {
+        $products = Product::orderBy('product_price', 'desc')->paginate(12);
+        return view('component.belowContent.allproduct', compact('products'));
+    }
+
+    // sắp xếp giá từ thấp đến cao
+    public function sapxepgiathapdencao(Request $request)
+    {
+        $products = Product::orderBy('product_price', 'asc')->paginate(12);
         return view('component.belowContent.allproduct', compact('products'));
     }
 }

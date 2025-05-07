@@ -63,13 +63,17 @@
 
         <!-- Danh sách sản phẩm -->
         @php
+            //
             $tamTinh = 0;
         @endphp
         @foreach ($cartMany as $cart)
+            @php
+                $encryptedProductId = encrypt($cart->product_id);
+            @endphp
             <div class="cart-item d-flex align-items-center border-bottom py-3">
                 <!-- checked -->
                 <input data-client-image="{{ $cart->image }}" data-carted-id="{{ $cart->cart_id }}"
-                    data-product-id="{{ $cart->product_id }}" data-client-amount="{{ $cart->quantity_sp }}"
+                    data-product-id="{{ $encryptedProductId }}" data-client-amount="{{ $cart->quantity_sp }}"
                     data-client-price="{{ $cart->total_price }}" type="checkbox" class="me-3 check-tamTinh">
 
                 <img width="300" height="300" src="{{ asset('component/image-product/' . $cart->image) }}"
@@ -85,7 +89,7 @@
                     <div class="quantity-control" data-item-id="{{ $cart->product_id }}">
                         <button class="btn
                         btn-outline-secondary quantity_desc">-</button>
-                        <span class="quantity_goods">{{ $cart->quantity_sp }}</span>
+                        <span class="quantity_goods">{{ $cart->quantity_sp ?? 0 }}</span>
                         <button class="btn btn-outline-secondary quantity_asc">+</button>
                         <button class="btn btn-outline-danger ms-2 remove-goods"><i class="bi bi-trash"></i></button>
 

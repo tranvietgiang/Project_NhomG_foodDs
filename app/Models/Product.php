@@ -19,9 +19,10 @@ class Product extends Model
     protected $fillable = [
         'product_name',
         'product_image',
-        'category_id',
+        'categories_id',
         'product_price',
-        'quantity_store'
+        'quantity_store',
+        'description'
     ];
 
 
@@ -44,9 +45,16 @@ class Product extends Model
         return $this->hasMany(Cart::class, 'product_id', 'product_id');
     }
 
+    public function cartbuyed(): HasMany
+    {
+        return $this->hasMany(Cart::class, 'product_id', 'product_id');
+    }
+
     public function bills()
     {
-        return $this->belongsToMany(Bill::class, 'bill_product', 'product_id', 'bill_id');
+        return $this->belongsToMany(Bill::class, 'bill_products', 'product_id', 'bill_id')
+            ->withPivot('quantity') // dùng để truy cập các cột phụ như quantity
+            ->withTimestamps();
     }
 
     public function heart()

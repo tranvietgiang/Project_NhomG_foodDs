@@ -108,7 +108,7 @@ class AdminController extends Controller
                     ->orWhere('email', 'like', '%' . $keyword . '%');
             })
             ->orderByDesc('created_at')
-            ->paginate(1)
+            ->paginate(5)
             ->appends(['search_staff' => $keyword]);
 
         return view('component.header.admin.employees.show', compact('list_employees'));
@@ -232,5 +232,67 @@ class AdminController extends Controller
         $client->save();
 
         return redirect()->back();
+    }
+
+    public function edit_view_staff(Request $req)
+    {
+        $id = $req->route('employees_id');
+        $employee = User::where('id', $id)->first();
+
+        $getRole = User::all();
+
+        return view('component.header.admin.employees.edit-show', compact('employee', 'getRole'));
+    }
+
+    public function edit_staff(Request $req)
+    {
+        $id = $req->route('staff');
+        $employees = User::where('id', $id)->first();
+        $email = $req->input('staff_email');
+        $phone = $req->input('staff_phone');
+        $role = $req->input('staff_role');
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return redirect()->back()->with('error', "email không hợp lệ");
+        }
+
+        $req->validate([
+            "staff_name" => "max:100",
+            "staff_email" => "max:255",
+            "staff_email" => "min:5"
+        ], [
+            "staff_name.max" => "Tên nhân viên quá dài",
+            "staff_email.max" => "email quá dài (lớn hơn 5 or nhỏ hơn 255)",
+            "staff_email.min" => "email quá ngắn email quá dài (lớn hơn 5 or nhỏ hơn 255)"
+        ]);
+
+        $roleEdit = $role ? "employees" : $role;
+        if ($employees) {
+            $employees->update([
+                'name' => $req->input('staff_name'),
+                'email' => $email,
+                "phone" => $phone,
+                "role" => $roleEdit
+            ]);
+        }
+
+        $getname = User::where('id', $id)->value('name');
+        return redirect()->route('employees')->with('success', 'Sửa thông tin nhân viên thành công ' . $getname);
+    }
+
+    public function remove_staff(Request $req)
+    {
+
+        $id = $req->route('employees_id');
+        $getname = User::where('id', $id)->value('name');
+        User::where('id', $id)->delete();
+
+        return redirect()->route('employees')->with('success', 'Xóa thành công nhân viên ' . $getname);
+    }
+
+
+    public function add_view_staff()
+    {
+        return view('component.header.admin.employees.add-show');
     }
 }

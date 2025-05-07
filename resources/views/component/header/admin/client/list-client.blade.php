@@ -99,7 +99,8 @@
 
             <!-- page product -->
             @if (Auth::check() && Auth::user()->role == 'admin')
-                <li class=""><a href="#"><i class="fas fa-box"></i> Quản Lý Sản Phẩm</a></li>
+                <li class=""><a href="{{ route('admin.view.product') }}"><i class="fas fa-box"></i> Quản Lý Sản
+                        Phẩm</a></li>
             @else
                 <li><a href="#"><i class="fas fa-box"></i> DS Sản Phẩm</a></li>
             @endif
