@@ -106,7 +106,7 @@
 
         form.method = "POST";
         if (selected == "vnpay") {
-
+            form.action = "{{ route('vnpay.payment.many') }}";
         } else if (selected == "zalopay") {
             form.action = "{{ route('zalo.many.payment') }}";
         } else if (selected == "momo") {

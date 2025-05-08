@@ -206,11 +206,8 @@ Route::post('/get/money/select', [ThanhToanNhieuItemController::class, 'priceSel
 Route::post('/show/cartMany/bill/check', [ThanhToanNhieuItemController::class, 'priceSelect'])->name('show.bill.cartMany.bill');
 
 //==============================================================================================================
-/** thanh toán khi nhận hàn cod */
-Route::get('/ttknh/cod', [ThanhToanNhieuItemController::class, 'cod'])->name('cod.ttknh.cartMany');
-
-Route::get('/payment/show/success', [ThanhToanNhieuItemController::class, 'BillSuccsess'])->name('payment.show.cartMany.success');
-
+/** thanh toán khi nhận hàng cod */
+Route::post('/ttknh/cod', [ThanhToanNhieuItemController::class, 'cod'])->name('cod.ttknh.cartMany');
 
 
 // tìm kiếm sản phẩm 
@@ -229,9 +226,14 @@ Route::get('/thaplencao', [ProductController::class, 'sapxepgiathapdencao'])->na
 Route::post('/addspyeuthich', [FavoriteController::class, 'addFavorite'])->name('addspyeuthich');
 
 // form view thanh toán success or failed
-Route::get('/payment/view/many', [ThanhToanNhieuItemController::class, 'payment_success'])->name('payment.many.payment.success');
-Route::get('/payment/view/many', [ThanhToanNhieuItemController::class, 'payment_failed'])->name('payment.many.payment.failed');
+Route::get('/payment/view/success', [ThanhToanNhieuItemController::class, 'payment_success'])->name('payment.many.payment.success');
+Route::get('/payment/view/failed', [ThanhToanNhieuItemController::class, 'payment_failed'])->name('payment.many.payment.failed');
 
 
 /** order */
 Route::get('/payment/view/many', [ThanhToanNhieuItemController::class, 'MyOrder'])->name('MyOrder.information');
+
+
+/** thanh toán nhiều đơn hàng vnpay*/
+Route::post('/showVnPay/many', [ThanhToanNhieuItemController::class, 'vnpay'])->name('vnpay.payment.many') /*->middleware(checkLogin::class)*/;
+Route::get('/vnpay_payment/many', [ThanhToanNhieuItemController::class, 'call_vnpay_back'])->name('vnpay.payment.many.callback')/*->middleware(checkLogin::class)*/;

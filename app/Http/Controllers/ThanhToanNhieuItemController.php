@@ -60,7 +60,7 @@ class ThanhToanNhieuItemController extends Controller
             }
         }
 
-        return view('component.header.dathang.billSuccessCartMany');
+        return redirect()->route('payment.many.payment.success');
     }
 
     // ==================================================================================================
@@ -204,11 +204,10 @@ class ThanhToanNhieuItemController extends Controller
             "endpoint" => "https://sandbox.zalopay.com.vn/v001/tpe/createorder"
         ];
 
-
         $temp = $request->input('arrShow');
-        $arr = json_decode($temp);
+        $arr = session()->put('arr', $temp);
+        // dd($temp);
 
-        $count_arr = count($arr);
 
         $totalPrice = (int) $request->input('total_price_payment');
 
@@ -252,33 +251,6 @@ class ThanhToanNhieuItemController extends Controller
 
 
 
-        foreach ($arr as $item) {
-            Cart_buyed::create([
-                'cart_id' => $request->input('cart_id_payment'),
-                'user_id' => Auth::id(),
-                'product_id' => $item->product_id,
-                'quantity_sp' => $item->quantity_sp,
-                'total_price' => $item->total_price,
-                'image' =>  $item->image,
-            ]);
-
-            // 1. Tạo bill
-            $bill = bill::create([
-                'user_id' => Auth::id(),
-                'cart_id' => $item->cart_id,
-                'method_payment_id' => 3 // zalopay
-            ]);
-
-            // 2. Tạo bill_product
-            bill_product::create([
-                'bill_id' => $bill->bill_id,
-                'product_id' =>  $item->product_id,
-                'quantity' => $count_arr
-            ]);
-
-            /** sau khi thanh toán thành công thì xóa đi cart của client */
-            Cart::where('user_id', Auth::id())->where('cart_id', $item->cart_id,)->delete();
-        }
 
         $resp = file_get_contents($config["endpoint"], false, $context);
         $result = json_decode($resp, true);
@@ -297,8 +269,159 @@ class ThanhToanNhieuItemController extends Controller
         // Xử lý kết quả thanh toán từ ZaloPay
         $result = $request->all(); // Lấy tất cả dữ liệu trả về từ ZaloPay
 
-        // Kiểm tra xem thanh toán có thành công không
-        if (isset($result['error_code']) && $result['error_code'] == 0) {
+        $temp = session('arr', []);
+        $arr = json_decode($temp);
+        $count_arr = count($arr);
+        // dd($temp, $count_arr);
+
+
+        if (isset($result['status']) && $result['status'] == 1) {
+
+            foreach ($arr as $item) {
+                Cart_buyed::create([
+                    'cart_id' => $item->cart_id,
+                    'user_id' => Auth::id(),
+                    'product_id' => $item->product_id,
+                    'quantity_sp' => $item->quantity_sp,
+                    'total_price' => $item->total_price,
+                    'image' =>  $item->image,
+                ]);
+
+                // 1. Tạo bill
+                $bill = bill::create([
+                    'user_id' => Auth::id(),
+                    'cart_id' => $item->cart_id,
+                    'method_payment_id' => 3 // zalopay
+                ]);
+
+                // 2. Tạo bill_product
+                bill_product::create([
+                    'bill_id' => $bill->bill_id,
+                    'product_id' =>  $item->product_id,
+                    'quantity' => $count_arr
+                ]);
+
+                /** sau khi thanh toán thành công thì xóa đi cart của client */
+                Cart::where('user_id', Auth::id())->where('cart_id', $item->cart_id,)->delete();
+            }
+
+            return redirect()->route('payment.many.payment.success');
+        } else {
+            return redirect()->route('payment.many.payment.failed');
+        }
+    }
+
+
+    public function vnpay(Request $request)
+    {
+
+        $temp = $request->input('arrShow');
+        session()->put('arr', $temp);
+        $totalPrice = $request->input('total_price_payment');
+
+
+
+        $vnp_TmnCode = "PR7H47SW"; // Mã website của bạn tại VNPAY
+        $vnp_HashSecret = "WGUPUW7FBTFZHEF52ZPMDZ7IMFWT1Z7K"; // Chuỗi bí mật
+        $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+
+        $vnp_Returnurl = route('vnpay.payment.many.callback'); // URL nhận kết quả trả về
+        $vnp_TxnRef =  time(); // Mã đơn hàng duy nhất
+        $vnp_OrderInfo = "Thanh toán hóa đơn";
+        $vnp_OrderType = "billpayment";
+        $vnp_Amount = $totalPrice * 100; // Số tiền phải nhân 100 (VNPAY yêu cầu)
+        $vnp_Locale = "vn";
+        $vnp_BankCode = "NCB"; // Có thể đổi thành ngân hàng khác nếu cần
+        // $vnp_IpAddr = $request->ip(); // IP khách hàng
+        $vnp_IpAddr = Auth::id(); // IP khách hàng
+
+        // Tạo dữ liệu gửi đi
+        $inputData = [
+            "vnp_Version" => "2.1.0",
+            "vnp_TmnCode" => $vnp_TmnCode,
+            "vnp_Amount" => $vnp_Amount,
+            "vnp_Command" => "pay",
+            "vnp_CreateDate" => date('YmdHis'),
+            "vnp_CurrCode" => "VND",
+            "vnp_IpAddr" => $vnp_IpAddr,
+            "vnp_Locale" => $vnp_Locale,
+            "vnp_OrderInfo" => $vnp_OrderInfo,
+            "vnp_OrderType" => $vnp_OrderType,
+            "vnp_ReturnUrl" => $vnp_Returnurl, // vnpay sẽ tra về route và sẽ tìm đến cái route vnp_Returnurl và xử lý tiếp
+            "vnp_TxnRef" => $vnp_TxnRef
+        ];
+
+        // Tạo chữ ký bảo mật (checksum)
+        ksort($inputData);
+        $query = "";
+        $i = 0;
+        $hashdata = "";
+        foreach ($inputData as $key => $value) {
+            if ($i == 1) {
+                $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
+            } else {
+                $hashdata .= urlencode($key) . "=" . urlencode($value);
+                $i = 1;
+            }
+            $query .= urlencode($key) . "=" . urlencode($value) . '&';
+        }
+
+        $vnp_Url = $vnp_Url . "?" . $query;
+        $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret); // Tạo mã bảo mật
+        $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
+
+
+        // Chuyển hướng (redirect) đến trang thanh toán VNPAY
+        return redirect($vnp_Url);
+    }
+    public function call_vnpay_back(Request $request)
+    {
+        $result = $request->all();
+
+        $temp = session('arr', []);
+
+        $arr = json_decode($temp);
+        $count_arr = count($arr);
+
+        if (isset($result['vnp_ResponseCode']) && $result['vnp_ResponseCode'] == "00") {
+
+            foreach ($arr as $item) {
+
+                Cart_buyed::create([
+                    'cart_id' => $item->cart_id,
+                    'user_id' => Auth::id(),
+                    'product_id' => $item->product_id,
+                    'quantity_sp' => $item->quantity_sp,
+                    'total_price' => $item->total_price,
+                    'image' =>  $item->image
+                ]);
+
+                // 1. Tạo bill
+                $bill = bill::create([
+                    'user_id' => Auth::id(),
+                    'cart_id' => $item->cart_id,
+                    'method_payment_id' => 1 // là vnpay default trong db
+                ]);
+
+                // 2. Tạo bill_product
+                bill_product::create([
+                    'bill_id' => $bill->bill_id, // nếu là bill_id thì sửa thành $bill->bill_id
+                    'product_id' =>  $item->product_id,
+                    'quantity' => $count_arr // là số lượng mà khách hàng mua các loại sản phẩm
+                ]);
+
+                /** sau khi thanh toán thành công thì xóa đi cart của client */
+                Cart::where('user_id', Auth::id())->where('cart_id', $item->cart_id,)->delete();
+            }
+
+            //❌ 1. vnp_ResponseCode khác "00"
+            // vnp_ResponseCode	Ý nghĩa lỗi
+            // "01"	Giao dịch bị từ chối – thông tin không hợp lệ
+            // "02"	Giao dịch thất bại – tài khoản không đủ tiền
+            // "03"	Không xác định được người dùng
+            // "04"	Ngân hàng từ chối giao dịch
+            // "24"	Giao dịch bị hủy bởi người dùng
+            // "99"	Lỗi không xác định
             return redirect()->route('payment.many.payment.success');
         } else {
             return redirect()->route('payment.many.payment.failed');
@@ -317,7 +440,7 @@ class ThanhToanNhieuItemController extends Controller
 
     public function MyOrder(Request $request)
     {
-        $my_order = bill::with(['products'])
+        $my_order = bill::with('products')
             ->where("user_id", Auth::id())
             ->orderByDesc('created_at')
             ->paginate(4);
