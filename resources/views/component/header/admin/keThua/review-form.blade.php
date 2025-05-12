@@ -292,7 +292,7 @@
             <div id="show_image_attached"></div>
             <!-- phần click vào to ảnh -->
             <div class="lightbox" id="lightbox" onclick="hideLightbox()">
-                <img id="lightbox-img" />
+                <img class="lightbox-img" />
             </div>
         </div>
     </form>
@@ -357,8 +357,9 @@
                     @endphp
 
                     <label for="">ảnh đính kèm</label>
+                    <!-- cần handle click image to ra -->
                     <p>
-                        <img id="" style="border: 1px solid red;" class="object-fit-cover checkSrc"
+                        <img style="border: 1px solid red;" class="object-fit-cover checkSrc  lightbox-img"
                             src="{{ asset('image-store/' . $comment->review_image ?? 'notImage') }}" alt="">
                     </p>
                     <!-- kiểm tra chỉ người nào mua hàng mới thấy nút sửa or xóa -->
@@ -504,12 +505,12 @@
 
     // bấm vào ảnh xem cho rõ
     function showLightbox(src) {
-        document.getElementById('lightbox-img').src = src;
-        document.getElementById('lightbox').style.display = "flex";
+        document.querySelector('.lightbox-img').src = src;
+        document.querySelector('.lightbox').style.display = "flex";
     }
 
     function hideLightbox() {
-        document.getElementById('lightbox').style.display = "none";
+        document.querySelector('.lightbox').style.display = "none";
     }
 
 

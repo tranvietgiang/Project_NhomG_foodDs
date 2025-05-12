@@ -298,7 +298,7 @@ class ThanhToanNhieuItemController extends Controller
                 bill_product::create([
                     'bill_id' => $bill->bill_id,
                     'product_id' =>  $item->product_id,
-                    'quantity' => $count_arr
+                    'quantity' => $item->quantity_sp,
                 ]);
 
                 /** sau khi thanh toán thành công thì xóa đi cart của client */
@@ -407,7 +407,7 @@ class ThanhToanNhieuItemController extends Controller
                 bill_product::create([
                     'bill_id' => $bill->bill_id, // nếu là bill_id thì sửa thành $bill->bill_id
                     'product_id' =>  $item->product_id,
-                    'quantity' => $count_arr // là số lượng mà khách hàng mua các loại sản phẩm
+                    'quantity' => $item->quantity_sp, // là số lượng mà khách hàng mua các loại sản phẩm
                 ]);
 
                 /** sau khi thanh toán thành công thì xóa đi cart của client */

@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use App\Models\Favorite;
 use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
@@ -114,19 +115,20 @@ class ProductController extends Controller
             [
                 'user_id' => Auth::id(),
                 'product_id' => $request->product_id,
+
             ],
             [
+                'image' => $request->input('product_image') ?? "0",
+                'total_price' => $request->input('product_price'),
                 'quantity_sp' => DB::raw('IFNULL(quantity_sp, 0) + ' . $request->quantity_sp),
                 'updated_at' => now(),
             ]
 
         );
 
-
         // hiển thị sản phẩm trong  giỏ hàng
-
         $cartItems = Cart::select('carts.*', 'products.product_name', 'products.product_image', 'products.product_price')
-            ->join('products', 'carts.product_id', '=', 'products.product_id') // Đảm bảo sử dụng đúng cột khoá chính
+            ->join('products', 'carts.product_id', '=', 'products.product_id')
             ->where('carts.user_id', Auth::id())
             ->get();
 
@@ -184,11 +186,20 @@ class ProductController extends Controller
 
 
     // hiển thị tất cả sản phẩm
+
     public function showallproduct()
     {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
         $products = $products = Product::paginate(12);
+        $userFavorites = Auth::check() ? $user->favorites()->pluck('product_id')->toArray() : [];
+
+        foreach ($products as $product) {
+            $product->isFavorited = in_array($product->product_id, $userFavorites);
+        }
         return view('component.belowContent.allproduct', compact('products'));
     }
+
 
 
     //tìm kiếm phân trang
@@ -205,14 +216,52 @@ class ProductController extends Controller
     // sắp xếp giá từ cao xuông thấp 
     public function sapxepgiacaoxuongthap(Request $request)
     {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
         $products = Product::orderBy('product_price', 'desc')->paginate(12);
+        $userFavorites = Auth::check() ? $user->favorites()->pluck('product_id')->toArray() : [];
+
+        foreach ($products as $product) {
+            $product->isFavorited = in_array($product->product_id, $userFavorites);
+        }
         return view('component.belowContent.allproduct', compact('products'));
     }
 
     // sắp xếp giá từ thấp đến cao
     public function sapxepgiathapdencao(Request $request)
     {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
         $products = Product::orderBy('product_price', 'asc')->paginate(12);
+        $userFavorites = Auth::check() ? $user->favorites()->pluck('product_id')->toArray() : [];
+
+        foreach ($products as $product) {
+            $product->isFavorited = in_array($product->product_id, $userFavorites);
+        }
         return view('component.belowContent.allproduct', compact('products'));
+    }
+
+
+    public function sanphamyeuthich(Request $request)
+    {
+        if (Auth::check()) {
+            /** @var \App\Models\User $user */
+            // Lấy danh sách sản phẩm yêu thích
+            $user = Auth::user();
+            $favorites = $user->favorites()->pluck('product_id')->toArray();
+
+            // Lấy thông tin sản phẩm từ bảng products
+            $products = Product::whereIn('product_id', $favorites)->paginate(12);
+
+            $userFavorites = Auth::check() ? $user->favorites()->pluck('product_id')->toArray() : [];
+
+            foreach ($products as $product) {
+                $product->isFavorited = in_array($product->product_id, $userFavorites);
+            }
+            // Trả về view cùng với danh sách sản phẩm yêu thích
+            return view('component.belowContent.allproduct', compact('products'));
+        }
+
+        return redirect()->route('login')->with('message', 'Vui lòng đăng nhập để xem sản phẩm yêu thích.');
     }
 }

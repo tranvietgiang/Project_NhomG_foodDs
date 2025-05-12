@@ -135,6 +135,13 @@
     </div>
 
 
+    @if (session('success'))
+        <div id ="alertMessage" class = "alert alert-success" role = "alert">
+            {{ session('success') }}
+        </div>
+    @endif
+
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -330,4 +337,14 @@
                 })
             }
         })
+
+        /* hiển thị alert client đã thêm vào dánh yêu thích*/
+        document.addEventListener("DOMContentLoaded", function() {
+            var alertMessage = document.getElementById('alertMessage');
+            if (alertMessage) {
+                setTimeout(function() {
+                    alertMessage.style.display = 'none';
+                }, 2000); // 2000 milliseconds = 2 seconds
+            }
+        });
     </script>

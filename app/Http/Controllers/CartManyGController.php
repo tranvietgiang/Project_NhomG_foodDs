@@ -43,8 +43,10 @@ class CartManyGController extends Controller
         }
 
         $cartCount =  Cart::where('user_id', Auth::id())->count();
+        $alert_add = "alert-add-cart";
         return response()->json([
-            'cartCount' => $cartCount
+            'cartCount' => $cartCount,
+            'alert_add_cart' => $alert_add
         ]);
     }
 

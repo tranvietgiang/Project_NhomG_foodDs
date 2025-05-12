@@ -43,7 +43,7 @@
 <!-- show_cart -->
 @foreach ($cart as $item)
     <div class="frame-image">
-        <span>{{ $item->product_id }}</span>
+        {{-- <span>{{ $item->product_id }}</span> --}}
         <div>
             <img width="200" height="200" class=""
                 src="{{ asset('component/image-product/' . $item->product_image) }}" alt="">
@@ -129,5 +129,6 @@
         }
     })
 </script>
+
 <!-- form review của giang -->
 @include('component.header.admin.keThua.review-form')

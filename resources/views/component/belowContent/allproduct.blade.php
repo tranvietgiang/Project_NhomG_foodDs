@@ -8,111 +8,166 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         .product {
             display: flex;
             flex-wrap: wrap;
-            /* Cho phép sản phẩm xuống dòng */
-            justify-content: space-around;
-            margin-top: 20px;
-            /* Căn giữa các sản phẩm */
+            justify-content: center;
+            margin-top: 30px;
         }
 
         .item {
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin: 15px;
             padding: 15px;
-            margin: 10px;
-            text-align: center;
-            transition: box-shadow 0.3s;
-            /* Hiệu ứng chuyển tiếp */
+            width: 300px;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .item:hover {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            /* Hiệu ứng khi hover */
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
         }
 
         .product-image {
-            max-width: 100%;
-            height: auto;
-            border-radius: 5px;
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 10px;
         }
 
-        .price {
+        .name-product a {
+            color: #333;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            display: block;
             margin-top: 10px;
         }
 
+        .giatien {
+            margin-top: 10px;
+        }
+
+        .giatien strong {
+            font-size: 20px;
+            color: #e74c3c;
+        }
+
+        .giatien p {
+            margin: 0;
+            font-size: 14px;
+            color: #888;
+        }
+
         .btn a {
-            border: 1px solid black;
-            padding: 10px;
-            margin-left: 10px;
-            text-decoration: none;
-            background-color: green;
+            display: inline-block;
+            margin-right: 10px;
+            padding: 10px 15px;
+            background-color: #28a745;
             color: white;
-
-        }
-
-        .hethang {
-            opacity: 0.5;
-            /* Giảm độ mờ của sản phẩm */
-            pointer-events: none;
-            /* Ngăn không cho nhấn vào sản phẩm */
-            position: relative;
-            /* Để sử dụng cho out-of-stock-message */
-        }
-
-        .out-of-stock-message {
-            position: absolute;
-            /* Đặt vị trí tuyệt đối */
-            top: 50%;
-            /* Đưa vào giữa */
-            left: 50%;
-            transform: translate(-50%, -50%);
-            /* Căn giữa */
-            background-color: rgba(0, 0, 0, 0.9);
-            /* Nền mờ */
-            color: white;
-            /* Màu chữ */
-            padding: 10px;
-            /* Khoảng cách bên trong */
             border-radius: 5px;
-            /* Bo góc */
-            z-index: 1;
-            /* Để đảm bảo nó nằm trên cùng */
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .btn a:hover {
+            background-color: #218838;
         }
 
         .yeuthich {
             position: absolute;
-            left: 20%;
-            top: 83%;
-            font-size: 20px;
+            top: 10px;
+            right: 10px;
+            font-size: 22px;
+            z-index: 2;
+        }
+
+        .yeuthich button {
+            background: transparent;
+            border: none;
+            outline: none;
+            cursor: pointer;
         }
 
         .fa-heart {
-            color: green;
-            /* Màu mặc định */
+            transition: color 0.3s;
         }
 
         .fa-heart.fa-solid {
             color: red;
-            /* Màu khi yêu thích */
+        }
+
+        .fa-heart.fa-regular {
+            color: #aaa;
+        }
+
+        .out-of-stock-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.75);
+            color: white;
+            padding: 12px 20px;
+            font-weight: bold;
+            border-radius: 6px;
+            z-index: 2;
+        }
+
+        .hethang {
+            opacity: 0.6;
+            pointer-events: none;
+            position: relative;
+        }
+
+        .btn-outline-success.btn-sm {
+            margin-top: 10px;
+            width: 100%;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .btn-outline-success.btn-sm:hover {
+            background-color: #28a745;
+            color: white;
         }
 
         .alert {
-            margin-top: 20px;
-            /* Khoảng cách trên thông báo */
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 999;
+            width: auto;
+            max-width: 400px;
+        }
+
+        @media (max-width: 768px) {
+            .item {
+                width: 90%;
+            }
         }
     </style>
+
 </head>
 
 <body>
+    <button class="btn btn-primary" id="goHome">Home</button>
+
     <div class="container mt-5">
         <h1 class="text-center mb-4">Tất cả sản phẩm</h1>
 
         <!-- Thanh tìm kiếm -->
         <form action="{{ route('seach') }}" method="GET" class="mb-4">
             <div class="input-group">
-                <input type="text" value="{{ request('query') }}" name="query" class="form-control"
+                <input type="text" name="query" class="form-control" value="{{ request('query') }}"
                     placeholder="Tìm kiếm sản phẩm..." required>
                 <div class="input-group-append">
                     <button class="btn btn-primary" type="submit">Tìm kiếm</button>
@@ -124,14 +179,17 @@
             <a href="{{ route('allproduct') }}">Tất cả sản phẩm </a>
             <a href="{{ route('thaplencao') }}">Giá từ thấp đến cao </a>
             <a href="{{ route('caoxuongthap') }}">Giá từ cao đến thấp </a>
+            <a href="{{ route('sanphamyeuthich') }}">sản phẩm Yêu thích </a>
         </div>
         <div class="product" id="productContainer">
             <!-- Sản phẩm -->
             @foreach ($products as $product)
                 <div class="owl-item col-md-4">
                     <div class="item {{ $product->quantity_store > 0 ? '' : 'hethang' }}">
-                        <a href="#"><img src="{{ asset('component/image-product/' . $product->product_image) }}"
-                                alt="Sản phẩm" class="product-image"></a>
+                        <a href="{{ route('show_cart', ['product_id' => $product->product_id]) }}">
+                            <img src="{{ asset('component/image-product/' . $product->product_image) }}" alt="Sản phẩm"
+                                class="product-image">
+                        </a>
                         <div class="divtext">
                             <h3 class="name-product"><a href="#">{{ $product->product_name }}</a></h3>
                             <div class="price">
@@ -146,7 +204,7 @@
                                         <input type="hidden" name="product_id" value="{{ $product->product_id }}">
                                         <button type="submit">
                                             <i
-                                                class="fa-regular fa-heart {{ $product->isFavorited ? 'fa-solid' : '' }}"></i>
+                                                class=" fa-heart {{ $product->isFavorited ? 'fa-solid' : 'fa-regular' }}"></i>
                                         </button>
                                     </form>
 
@@ -155,6 +213,10 @@
                                     <form action="{{ route('cart.add') }}" method="POST" style="display:inline;">
                                         @csrf
                                         <input type="hidden" name="product_id" value="{{ $product->product_id }}">
+                                        <input type="hidden" name="product_price"
+                                            value="{{ $product->product_price }}">
+                                        <input type="hidden" name="product_image"
+                                            value="{{ $product->product_image }}">
                                         <input type="hidden" name="quantity_sp" value="1">
                                         <button type="submit" class="btn btn-outline-success btn-sm">Add</button>
                                     </form>
@@ -175,6 +237,16 @@
         </div>
     </div>
 </body>
+
+</html>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@if (session('success'))
+    <div id="alertMessage" class="alert alert-success" role="alert">
+        {{ session('success') }}
+    </div>
+@endif
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         var alertMessage = document.getElementById('alertMessage');
@@ -184,11 +256,8 @@
             }, 2000); // 2000 milliseconds = 2 seconds
         }
     });
-</script>
-@if (session('success'))
-    <div id="alertMessage" class="alert alert-success" role="alert">
-        {{ session('success') }}
-    </div>
-@endif
 
-</html>
+    $("#goHome").on('click', function() {
+        window.location.href = "{{ route('website-main') }}";
+    })
+</script>

@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Carbon\Carbon;
 use App\Models\Client;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Favorite;  // Đảm bảo có import này
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -86,5 +87,11 @@ class User extends Authenticatable
     public function heart(): HasMany
     {
         return $this->hasMany(listHeart::class, 'user_id');
+    }
+
+
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class, 'user_id');
     }
 }

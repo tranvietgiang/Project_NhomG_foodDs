@@ -126,25 +126,32 @@
             <!-- hiển thị sản phẩm-->
             <div class="product" id="productContainer">
                 <!-- Sản phẩm -->
-                @foreach($products as $product)
+                @foreach ($products as $product)
                     <div class="owl-item">
                         <div class="item">
-                            <a href="#"><img src="{{ asset('images/'. $product->product_image) }}"
-                                    alt="Sản phẩm 2"></a>
+                            <a href="{{ route('show_cart', ['product_id' => $product->product_id]) }}">
+                                <img src="{{ asset('component/image-product/' . $product->product_image) }}"
+                                    alt="Sản phẩm 2">
+                            </a>
                             <div class="divtext">
-                                <h3 class="name-product"><a href="#">{{$product->product_name}}</a></h3>
+                                <h3 class="name-product"><a href="#">{{ $product->product_name }}</a></h3>
                                 <div class="price">
                                     <div class="giatien">
-                                        <strong>{{$product->product_price}} đ</strong>
+                                        <strong>{{ $product->product_price }} đ</strong>
                                         <p><span style="text-decoration: line-through;">50,000 ₫</span><span
                                                 style="color: #e00;">-20%</span></p>
                                     </div>
                                     <form action="{{ route('cart.add') }}" method="POST" style="display:inline;">
-                    @csrf
-                    <input type="hidden" name="product_id" value="{{ $product->product_id }}">
-                    <input type="hidden" name="quantity_sp" value="1"> <!-- Thêm trường quantity_sp nếu cần -->
-                    <button type="submit" class="btn btn-outline-success btn-sm" style="display: inline;">Add</button>
-                </form>
+                                        @csrf
+                                        <input type="hidden" name="product_id" value="{{ $product->product_id }}">
+                                        <input type="hidden" name="quantity_sp" value="1">
+                                        <input type="hidden" name="product_price"
+                                            value="{{ $product->product_price }}">
+                                        <input type="hidden" name="product_image"
+                                            value="{{ $product->product_image }}">
+                                        <button type="submit" class="btn btn-outline-success btn-sm"
+                                            style="display: inline;">Add</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -154,8 +161,8 @@
 
             <!-- nut di chuyen -->
             <div class="below-nut">
-                <div class="btn_left" onclick="scrollLeftFunc()">a</div>
-                <div class="btn_right" onclick="scrollRightFunc()">b</div>
+                <div class="btn_left" onclick="scrollLeftFunc()"><i class="fa-solid fa-arrow-left"></i></div>
+                <div class="btn_right" onclick="scrollRightFunc()"><i class="fa-solid fa-arrow-right"></i></div>
             </div>
 
         </div>

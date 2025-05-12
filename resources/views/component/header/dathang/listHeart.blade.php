@@ -426,6 +426,7 @@
             </div>
 
             <!-- danh sách yêu thích -->
+            <!-- show_heart tên hàm route -->
             <div class="col-md-9">
                 <h3 class="btn btn-success"> danh sách yêu thích</h3>
                 @if ($list_heart->isEmpty())
@@ -501,8 +502,6 @@
 </section>
 
 
-
-
 <!-- Footer -->
 <section class="footer ">
     <div class="container">
@@ -536,12 +535,32 @@
         </div>
     </div>
 </section>
+
+
+
+
+
 <!-- js header -->
 <script src="{{ asset('component/js/mdb.umd.min.js') }}"></script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+@if (session('success-heart'))
+    <div id="alertMessage" class="alert alert-success" role="alert">
+        {{ session('success-heart') }}
+    </div>
+@endif
 <script>
+    /* hiển thị notify sản phẩm yêu thich*/
+    document.addEventListener("DOMContentLoaded", function() {
+        var alertMessage = document.getElementById('alertMessage');
+        if (alertMessage) {
+            setTimeout(function() {
+                alertMessage.style.display = 'none';
+            }, 2000); // 2000 milliseconds = 2 seconds
+        }
+    });
+
     /* này có chứ năng là lấy ra các thẻ nằm trong nó*/
     $('.control-amount').each(function() {
         const $amount = $(this);

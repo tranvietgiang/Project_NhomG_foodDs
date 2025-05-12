@@ -33,6 +33,7 @@ use Illuminate\View\View as ViewView;
  * tên domain default website
  */
 Route::get('/food_ds.com', [LoginController::class, 'showIndex'])->name('website-main');
+Route::get('/sale-item', [LoginController::class, 'OrderBestSale'])->name('sale.item.index');
 
 
 
@@ -173,7 +174,7 @@ Route::get('/allproduct', [ProductController::class, 'showallproduct'])->name('a
 
 /** cart cả */
 Route::get('/cart', [ProductController::class, 'show_cartCa'])->name('cart');
-Route::post('/cart/add', [ProductController::class, 'addtocart'])->name('cart.add');
+Route::post('/cart/add', [ProductController::class, 'addtocart'])->name('cart.add')->middleware(checkLogin::class);;
 Route::get('/viewcart', [ProductController::class, 'viewcart'])->name('viewcart');
 Route::delete('/cart/removeCart/{id}', [ProductController::class, 'removeCart'])->name('cart.removeCart');
 Route::put('/cart/update/{id}', [ProductController::class, 'updateSL'])->name('cart.update');
@@ -195,6 +196,10 @@ Route::post('/list/heart/add', [CartManyGController::class, 'addHeartClient'])->
 Route::post('/amount/heart', [HeartGController::class, 'updateAmount'])->name('heart.amount.list');
 
 Route::get('/amount/heart/delete', [HeartGController::class, 'delete_heart'])->name('delete.heart.giang');
+
+// hiện thị  sản phẩm yêu thích
+Route::get('/sanphamyeuthich', [ProductController::class, 'sanphamyeuthich'])->name('sanphamyeuthich');
+
 
 /** thanh toán nhiều đơn hàng tùy ý khách hàng */
 Route::get('/show/cartMany/bill', [ThanhToanNhieuItemController::class, 'show_billCartMany'])->name('show.bill.cartMany');

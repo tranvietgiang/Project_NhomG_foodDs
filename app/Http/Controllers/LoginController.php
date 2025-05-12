@@ -176,10 +176,45 @@ class LoginController extends Controller
             ->where('review_rating', 5)
             ->groupBy('product_id', 'review_rating')
             ->pluck('star_count', 'product_id');
-        /** lấy ra số lượng sản phẩm */
 
+        /** lấy ra số lượng sản phẩm trong cart my client */
         $amount_cart_header =  Cart::where('user_id', Auth::id())->count();
+
         return view('layout.index', compact(['content_data', 'products', 'content_data_hung', 'product_sold', 'amount_star_5', 'amount_cart_header']));
+    }
+
+    /** những sản phẩm bán chạy nhất */
+    public function OrderBestSale()
+    {
+        $content_data = DB::table('products as item')
+            ->join('bill_products as a', 'item.product_id', '=', 'a.product_id')
+            ->select(
+                'item.product_id',
+                'item.product_name',
+                'item.product_image',
+                'item.product_price',
+                DB::raw('SUM(a.quantity) as SOLUONG')
+            )
+            ->groupBy('item.product_id', 'item.product_name', 'item.product_image', 'item.product_price')
+            ->orderByDesc('SOLUONG')
+            ->limit(5)
+            ->get();
+
+        // dd($content_data);
+
+        $amount_star_5 = DB::table('reviews')
+            ->select('product_id', 'review_rating', DB::raw('COUNT(review_rating) as star_count'))
+            ->where('review_rating', 5)
+            ->groupBy('product_id', 'review_rating')
+            ->pluck('star_count', 'product_id');
+        /* pluck('value_column', 'key_column') */
+
+        return response()->json(
+            [
+                "data" => $content_data,
+                'amount_star_5' => $amount_star_5
+            ]
+        );
     }
 
 
