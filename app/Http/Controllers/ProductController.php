@@ -264,4 +264,16 @@ class ProductController extends Controller
 
         return redirect()->route('login')->with('message', 'Vui lòng đăng nhập để xem sản phẩm yêu thích.');
     }
+
+
+    /** fun this have featured whe clien only input search thì will show recommnet */
+    public function header_show_render(Request $req)
+    {
+        $value = $req->get('valueSearch');
+
+        $temp = Product::where('product_name', 'like', "%$value%")->limit(6)->get();
+        return response()->json([
+            'data' => $temp
+        ]);
+    }
 }
