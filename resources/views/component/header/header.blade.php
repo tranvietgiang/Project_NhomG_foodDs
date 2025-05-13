@@ -17,8 +17,9 @@
                 </div>
 
                 <ul class="nav-1 d-flex align-items-center">
+
                     <li class="search-bar">
-                        <form action="#" method="get">
+                        <form id="form-search" accept="#" method="get">
                             <div class="form-outline input-group mb-0 " data-mdb-input-init>
                                 <input type="text" id="key-word" value="" name="search" class="form-control"
                                     required>
@@ -28,7 +29,52 @@
                                 </button>
                             </div>
                         </form>
+                        <div id="search-suggestions"
+                            style="position: absolute; background: white; width: 100%; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 999;">
+                        </div>
+
                     </li>
+
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <script>
+                        $(document).on('input', '#key-word', function() {
+                            let search = $(this).val().trim();
+
+                            if (search.length === 0) {
+                                $('#search-suggestions').hide(); // ẩn nếu không có chữ
+                                return;
+                            }
+
+                            $.ajax({
+                                url: "{{ route('header.show.render') }}",
+                                type: "GET",
+                                data: {
+                                    valueSearch: search,
+                                    _token: "{{ csrf_token() }}"
+                                },
+                                success: function(response) {
+                                    const products = response.data;
+                                    let html = '<ul style="list-style: none; padding: 10px; margin: 0;">';
+
+                                    products.forEach(item => {
+                                        html += `
+                                <li style="display: flex; align-items: center; padding: 5px 0; border-bottom: 1px solid #eee;">
+                                    <img src="component/image-product/${item.product_image}" alt="" width="40" height="40" style="margin-right: 10px;">
+                                    <div>
+                                        <div style="font-weight: bold;">${item.product_name}</div>
+                                        <div style="color: red;">${item.product_price ? item.product_price + ' ₫' : 'Liên hệ'}</div>
+                                    </div>
+                                </li>`;
+                                    });
+                                    html += '</ul>';
+                                    $('#search-suggestions').html(html).show();
+                                },
+                                error: function(xhr) {
+                                    console.error(xhr.responseText);
+                                }
+                            });
+                        });
+                    </script>
 
                     <li>
                         <a href="#"><i class="fa-solid fa-bell px-2"></i><span>Thông báo nội dung</span></a>

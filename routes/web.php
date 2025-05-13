@@ -242,3 +242,5 @@ Route::get('/payment/view/many', [ThanhToanNhieuItemController::class, 'MyOrder'
 /** thanh toán nhiều đơn hàng vnpay*/
 Route::post('/showVnPay/many', [ThanhToanNhieuItemController::class, 'vnpay'])->name('vnpay.payment.many') /*->middleware(checkLogin::class)*/;
 Route::get('/vnpay_payment/many', [ThanhToanNhieuItemController::class, 'call_vnpay_back'])->name('vnpay.payment.many.callback')/*->middleware(checkLogin::class)*/;
+
+Route::get('header/show/render', [ProductController::class, 'header_show_render'])->name('header.show.render');
