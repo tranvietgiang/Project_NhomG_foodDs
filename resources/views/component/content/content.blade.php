@@ -1,4 +1,6 @@
 <link rel="stylesheet" href="{{ asset('component/content/content.css') }}">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 <section class="container">
     <div class="content-part-1">
         <div class="title-part-1">
@@ -128,6 +130,7 @@
     </div>
 </section>
 
+
 <div id="alert-add-cart" class="alert alert-success d-none" role="alert"></div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -200,10 +203,13 @@
                         <span class="old-price">${item.product_price}<sub>đ</sub></span>
                         <span class="discount">-35%</span>
                         <span>
-                            <a style="font-size: 10px" class="btn-sm btn btn-success addCartMany"
-                               href="/add-to-cart-many/${item.product_id}/${item.product_price}">
-                               Thêm vào giỏ
-                            </a>
+                            <div style="font-size: 10px" 
+                    class="btn-sm btn btn-success renDeraddCartMany"
+                    data-render-id="${item.product_id}"
+                    data-render-price="${item.product_price}">
+                    Thêm vào giỏ
+                            </div>
+
                         </span>
                     </div>
                 </div>`;
@@ -216,6 +222,31 @@
             }
         });
     });
+
+
+    $(document).on('click', '.renDeraddCartMany', function(e) {
+        e.preventDefault();
+
+        const product_id = $(this).data('render-id');
+        const price_goods = $(this).data('render-price');
+
+        $.ajax({
+            url: `/add/cartMany/${product_id}/${price_goods}`,
+            type: "POST",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                $('#cartCount').text(response.cartCount);
+                showCartAlert('Thêm sản phẩm vào giỏ hàng thành công!');
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
+            }
+        });
+    });
+
+
 
     // Hàm hiển thị thông báo
     function showCartAlert(message) {

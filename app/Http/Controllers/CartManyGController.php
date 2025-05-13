@@ -24,6 +24,8 @@ class CartManyGController extends Controller
         $productID = $req->route('product_id');
         $goods_price = $req->route('price_goods');
 
+        // dd([$productID, $goods_price]);
+
         $existingCart = Cart::where('user_id', Auth::id())->where('product_id', $productID)->first();
         $image = Product::where('product_id', $productID)->value('product_image');
 
