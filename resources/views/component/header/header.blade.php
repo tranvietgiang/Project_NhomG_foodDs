@@ -1,6 +1,16 @@
 <!-- link css -->
 <link rel="stylesheet" href="{{ asset('component/header/header.css') }}">
 
+<style>
+    li.li-suggest {
+        transition: all 0.25s linear;
+        cursor: pointer;
+    }
+
+    li.li-suggest:hover {
+        background-color: #eeeeee;
+    }
+</style>
 <section class="header-container">
     <!-- nav header -->
     <nav class="navbar">
@@ -18,11 +28,11 @@
 
                 <ul class="nav-1 d-flex align-items-center">
 
+                    <!-- handle event input search -->
                     <li class="search-bar">
-                        <form id="form-search" accept="#" method="get">
+                        <form id="form-search" action="{{ route('seach') }}" method="get">
                             <div class="form-outline input-group mb-0 " data-mdb-input-init>
-                                <input type="text" id="key-word" value="" name="search" class="form-control"
-                                    required>
+                                <input type="text" id="key-word" name="query" class="form-control" required>
                                 <label class="form-label text-white" for="key-word">Nhập nội dung tìm kiếm</label>
                                 <button class="btn btn-secondary" type="submit">
                                     <i class="fa-solid fa-magnifying-glass"></i>
@@ -34,47 +44,6 @@
                         </div>
 
                     </li>
-
-                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                    <script>
-                        $(document).on('input', '#key-word', function() {
-                            let search = $(this).val().trim();
-
-                            if (search.length === 0) {
-                                $('#search-suggestions').hide(); // ẩn nếu không có chữ
-                                return;
-                            }
-
-                            $.ajax({
-                                url: "{{ route('header.show.render') }}",
-                                type: "GET",
-                                data: {
-                                    valueSearch: search,
-                                    _token: "{{ csrf_token() }}"
-                                },
-                                success: function(response) {
-                                    const products = response.data;
-                                    let html = '<ul style="list-style: none; padding: 10px; margin: 0;">';
-
-                                    products.forEach(item => {
-                                        html += `
-                                <li style="display: flex; align-items: center; padding: 5px 0; border-bottom: 1px solid #eee;">
-                                    <img src="component/image-product/${item.product_image}" alt="" width="40" height="40" style="margin-right: 10px;">
-                                    <div>
-                                        <div style="font-weight: bold;">${item.product_name}</div>
-                                        <div style="color: red;">${item.product_price ? item.product_price + ' ₫' : 'Liên hệ'}</div>
-                                    </div>
-                                </li>`;
-                                    });
-                                    html += '</ul>';
-                                    $('#search-suggestions').html(html).show();
-                                },
-                                error: function(xhr) {
-                                    console.error(xhr.responseText);
-                                }
-                            });
-                        });
-                    </script>
 
                     <li>
                         <a href="#"><i class="fa-solid fa-bell px-2"></i><span>Thông báo nội dung</span></a>
@@ -323,9 +292,7 @@
             </div>
         </div>
     </div>
-    <style>
 
-    </style>
     <!-- Zalo Official Chat Widget -->
     <div class="zalo-chat">
         <a href="https://zalo.me/0336833827" target="_blank">
@@ -333,7 +300,99 @@
         </a>
     </div>
 
+    <!-- run on top -->
     <button id="go-to-top" onclick="scrollToTop()">↑</button>
 </section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $("#key-word").on("input", function() {
+        let search = $(this).val().trim().toLowerCase();
+
+        if (search.length === 0) {
+            $("#search-suggestions").hide();
+            return;
+        }
+
+        $.ajax({
+            url: "{{ route('header.show.render') }}",
+            type: "GET",
+            data: {
+                valueSearch: search,
+                _token: "{{ csrf_token() }}",
+            },
+            success: function(response) {
+                /* reason(lý do) why attached variable currentInput = search on top
+                                            Vì search được gán trước khi gọi Ajax, còn success là callback bất đồng bộ, nó được chạy sau khi nhận phản hồi từ server.
+                                            Trong thời gian chờ server trả kết quả, người dùng có thể đã gõ hoặc xóa thêm ⇒ giá trị ô input đã thay đổi, nhưng biến search thì vẫn là giá trị cũ.*/
+                let currentInput = $("#key-word").val().trim().toLowerCase();
+
+                console.log(currentInput);
+                if (currentInput == "") {
+                    $("#search-suggestions").hide();
+                    return;
+                }
+
+                const products = response.data;
+                let html = "";
+
+                // Gợi ý tìm kiếm (hiển thị phía trên)
+                let htmlSuggest =
+                    `<div><h5>Gợi ý tìm kiếm</h5><ul style="all:unset; padding: 0; margin: 0">`;
+                products.forEach((item) => {
+                    htmlSuggest += ` 
+                    <li class="li-suggest">
+                        <form method="GET" action="{{ route('seach') }}">
+                            @csrf
+                            <input type="hidden" value="${item.product_name}" name="query">
+                            <button type="submit" style="background: none; border: none; cursor: pointer;">
+                                <p style="margin: 0;">${item.product_name}</p>
+                            </button>
+                        </form> 
+                    </li>`;
+                });
+                htmlSuggest += `</ul></div>`;
+
+                // Danh sách sản phẩm
+                let htmlItem = `<div><h4>Kết quả</h4><ul style="all:unset; padding: 0; margin: 0">`;
+                const showCartBaseUrl = "{{ route('show_cart', ['product_id' => '__ID__']) }}";
+
+                products.forEach((item) => {
+                    const url = showCartBaseUrl.replace('__ID__', item.product_id);
+
+                    const highlightedName = item.product_name.replace(
+                        new RegExp(search, "gi"),
+                        (match) => `<mark>${match}</mark>`
+                    );
+
+                    htmlItem += `
+                    <li style="border-bottom: 1px solid #eeeeee; padding: 5px 0" class="d-block li-suggest">
+                        <a href="${url}" class="d-block" style="all: unset;">
+                            <div class="d-flex gap-4">
+                                <img src="component/image-product/${item.product_image}" alt="" width="40" height="40">
+                                <div class="">
+                                    <div class="fw-bold">${highlightedName}</div>
+                                    <div style="color: #000;">${item.product_price} ₫</div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>`;
+                });
+                htmlItem += "</ul></div>";
+
+                // Gộp lại toàn bộ
+                html = htmlSuggest + htmlItem;
+
+                // Gắn vào DOM
+                $("#search-suggestions").html(html).show();
+
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
+            },
+        });
+    });
+</script>
 <!-- js header -->
 <script src="{{ asset('component/header/header.js') }}"></script>
