@@ -203,7 +203,7 @@ class ProductController extends Controller
 
 
     //tìm kiếm phân trang
-    public function seach(Request $request)
+    public function search(Request $request)
     {
         $query = $request->input('query');
 
@@ -271,7 +271,7 @@ class ProductController extends Controller
     {
         $value = $req->get('valueSearch');
 
-        $temp = Product::where('product_name', 'like', "%$value%")->limit(6)->get();
+        $temp = Product::where('product_name', 'like', "%$value%")->limit(5)->get();
         return response()->json([
             'data' => $temp
         ]);

@@ -216,7 +216,7 @@ Route::post('/ttknh/cod', [ThanhToanNhieuItemController::class, 'cod'])->name('c
 
 
 // tìm kiếm sản phẩm 
-Route::get('/seach', [ProductController::class, 'seach'])->name('seach');
+Route::get('/seach', [ProductController::class, 'search'])->name('seach');
 
 // xóa giỏ hàng khi thanh toán thành công  
 Route::post('payment/success', [CheckoutController::class, 'handlePaymentSuccess'])->name('thanhtoanthanhcong');
@@ -228,7 +228,7 @@ Route::get('/caoxuongthap', [ProductController::class, 'sapxepgiacaoxuongthap'])
 Route::get('/thaplencao', [ProductController::class, 'sapxepgiathapdencao'])->name('thaplencao');
 
 //thêm sản phẩm yêu  thích 
-Route::post('/addspyeuthich', [FavoriteController::class, 'addFavorite'])->name('addspyeuthich');
+Route::post('/addspyeuthich', [FavoriteController::class, 'addFavorite'])->name('addspyeuthich')->middleware(checkLogin::class);
 
 // form view thanh toán success or failed
 Route::get('/payment/view/success', [ThanhToanNhieuItemController::class, 'payment_success'])->name('payment.many.payment.success');
