@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <style>
     /* Phần chứa toàn bộ sản phẩm */
     .belowcontent {
@@ -86,6 +88,26 @@
         z-index: 1;
         /* Để đảm bảo nó nằm trên cùng */
     }
+
+    .add-cart-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: var(--transition);
+        font-size: 16px;
+    }
+
+    .add-cart-btn:hover {
+        background-color: var(--primary-dark);
+        transform: scale(1.1);
+    }
 </style>
 
 
@@ -104,13 +126,15 @@
                     }
                 </style>
                 <div style="margin: 10px 0;">
-                    <span class="btn btn-success"><a class="abc " href="{{ route('allproduct') }}">Xem tất
-                            cả</a>
-                    </span>
-                    <span class="btn btn-success"><a class="abc" href="#">Miền Trung </a></span>
-                    <span class="btn btn-success"><a class="abc" href="">Miền Nam</a></span>
-                    <span class="btn btn-success"><a class="abc" href="#">
-                            Miền Bắc</a></span>
+                    <div class="section-header">
+                        <div class="categories">
+                            <a href="{{ route('allproduct') }}" class="category-btn category-sub">XEM TẤT CẢ
+                            </a>
+                            <a href="#" class="category-btn category-sub">Loại đồ ăn</a>
+                            <a href="#" class="category-btn category-sub">Loại thức uống</a>
+                            <a href="#" class="category-btn category-sub"> Hoa quả</a>
+                        </div>
+                    </div>
 
                 </div>
                 @foreach ($products as $product)
@@ -153,8 +177,10 @@
                                         <input type="hidden" name="quantity_sp" value="1">
                                         <input type="hidden" name="product_image"
                                             value="{{ $product->product_image }}">
-                                        <button type="submit" class="btn btn-success btn-sm"
-                                            style="display: inline; font-size: 15px">Thêm </button>
+                                        <button type="submit" class="add-cart-btn"
+                                            style="display: inline; font-size: 15px">
+                                            <i class="fas fa-cart-plus"></i>
+                                        </button>
                                     </form>
                                 @else
                                     <div class="out-of-stock-message">HẾT HÀNG</div>

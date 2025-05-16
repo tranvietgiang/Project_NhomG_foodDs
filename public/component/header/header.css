@@ -235,10 +235,10 @@ img-animation
     transition: all 0.25s linear;
 }
 
-.col-9 i {
+/* .col-9 i {
     opacity: 0;
     transition: all 0.25s ease-in-out;
-}
+} */
 .img-animation:hover i {
     opacity: 1;
 }

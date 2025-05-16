@@ -9,7 +9,8 @@
                 nhất
             </span>
         </div>
-        <div id="bestSaleContainer" class="d-flex justify-content-center align-items-center gap-2">
+        <div id="bestSaleContainer" class="d-flex justify-contet-center align-items-center gap-2">
+
             @foreach ($content_data as $item)
                 <div class="frame-image">
                     {{-- <span>{{ $item->product_id }}</span> --}}
@@ -33,22 +34,22 @@
                         <span style="display: inline; color: #000">({{ $amount_star_5[$item->product_id] ?? 0 }})</span>
                     </span>
 
-                    <span style="font-size:14px " class="text-success">đã bán
+                    <span style="font-size:14px " class="text-success"> <i class="bi bi-bag-check"></i> đã bán
                         {{ $product_sold[$item->product_id] ?? 0 }}</span>
                     @php
                         $price_coupon = $item->product_price - ($item->product_price * 35) / 100;
                     $price_discount = round($price_coupon, 0); @endphp
-                    <span class="new-price"><b> {{ $price_discount }}</b><sub>đ</sub></span>
-                    <div class="d-flex justify-content-center align-items-center gap-3">
+                    <span class="new-price"><b> {{ number_format($price_discount) }}</b><sub>đ</sub></span>
+                    <div class="d-flex justify-content-center align-items-center gap-5">
                         <span class="old-price">1500.0<sub>đ</sub></span>
-                        <span class="discount">-35%</span>
+                        <span style="margin-left: -10px" class="discount">-35%</span>
                         <span>
-                            <a style="font-size: 10px" class="btn-sm btn btn-success addCartMany"
+                            <a class="add-cart-btn addCartMany"
                                 data-url="{{ route('add.cartMany.giang', [
                                     'product_id' => $item->product_id,
                                     'price_goods' => $item->product_price,
                                 ]) }}">
-                                Thêm vào giỏ
+                                <i class="fas fa-cart-plus"></i>
                             </a>
                         </span>
                     </div>
@@ -61,11 +62,14 @@
 <!-- part-2 -->
 <section class="container pt-5">
     <div class="content-part-1">
-        <div class="title-part-1 d-flex gap-3">
-            <span>TINH HOA QUÀ VIỆT</span>
-            <span>aaaaaaaat</span>
-            <span>aaaaaaaat</span>
-            <span>aaaaaaaat</span>
+        <div class="section-header">
+            <h2 class="section-title text-uppercase">Tinh hoa đất việt</h2>
+            <div class="categories">
+                <a href="#" class="category-btn category-main">SẢN PHẨM MỚI</a>
+                <a href="#" class="category-btn category-sub">?????????</a>
+                <a href="#" class="category-btn category-sub">?????????</a>
+                <a href="#" class="category-btn category-sub">?????????</a>
+            </div>
         </div>
 
         <div class="row">
@@ -96,7 +100,7 @@
                             </span>
                         </span>
 
-                        <span style="font-size:14px" class="text-success">đã bán
+                        <span style="font-size:14px" class="text-success"> <i class="bi bi-bag-check"></i> đã bán
                             {{ $product_sold[$product->product_id] ?? 0 }}
                         </span>
 
@@ -105,22 +109,19 @@
                             <sub>đ</sub>
                         </span>
 
-                        <div class="d-flex justify-content-center align-items-center gap-5">
-
-                            <div class="d-flex justify-content-center align-items-center">
-                                <span id="price_old_giang" class="old-price">
-                                    {{ $product->product_price }}<sub>đ</sub></span>
-                                <span class="discount">-35%</span>
-                            </div>
-                            <div>
-                                <a class="btn-sm btn btn-success addCartMany"
+                        <div class="d-flex align-items-center gap-5">
+                            <span id="price_old_giang" class="old-price">
+                                {{ $product->product_price }}<sub>đ</sub></span>
+                            <span class="discount">-35%</span>
+                            <span>
+                                <a class="add-cart-btn addCartMany"
                                     data-url="{{ route('add.cartMany.giang', [
                                         'product_id' => $product->product_id,
                                         'price_goods' => $product->product_price,
                                     ]) }}">
-                                    Thêm vào giỏ
+                                    <i class="fas fa-cart-plus"></i>
                                 </a>
-                            </div>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -149,7 +150,11 @@
             success: function(value) {
                 $('#cartCount').text(value.cartCount);
                 console.log(value.alert_add_cart)
-                showCartAlert('Thêm sản phẩm vào giỏ hàng thành công!');
+                if (value.alertCart) {
+                    showCartAlert('Thêm sản phẩm vào giỏ hàng thành công!');
+                } else {
+                    showCartAlert('Quý khách vui lòng đăng nhập');
+                }
             }
         });
     });
@@ -197,7 +202,7 @@
                         <i class="fa-solid fa-star"></i>
                         <span style="color:#000">(${numberStar[item.product_id] ?? 0})</span>
                     </span>
-                    <span style="font-size:14px" class="text-success">đã bán ${item.SOLUONG}</span>
+                    <span style="font-size:14px" class="text-success"> <i class="bi bi-bag-check"></i> đã bán ${item.SOLUONG}</span>
                     <span class="new-price"><b>${price_discount}</b><sub>đ</sub></span>
                     <div class="d-flex justify-content-center align-items-center gap-3">
                         <span class="old-price">${item.product_price}<sub>đ</sub></span>
@@ -238,7 +243,11 @@
             },
             success: function(response) {
                 $('#cartCount').text(response.cartCount);
-                showCartAlert('Thêm sản phẩm vào giỏ hàng thành công!');
+                if (response.alertCart) {
+                    showCartAlert('Thêm sản phẩm vào giỏ hàng thành công!');
+                } else {
+                    showCartAlert('Quý khách vui lòng đăng nhập');
+                }
             },
             error: function(xhr) {
                 console.error(xhr.responseText);

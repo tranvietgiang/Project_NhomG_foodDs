@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('discount_name')->nullable();
             $table->double('discount_price')->nullable();
             $table->timestamps();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
         });
     }
 

@@ -209,7 +209,7 @@
     <div class="row">
         <!-- Cột 1: Danh sách liên kết -->
         <div class="col-12 col-md-3 mb-4">
-            <h5 class="btn btn-success">AGRISHOW</h5>
+            <h5 class="text-white btn btn-success">AGRISHOW</h5>
             <ul class="list-unstyled">
                 <li>Nông Nghiệp 360</li>
                 <li>Câu Chuyện Và Nhân Vật</li>

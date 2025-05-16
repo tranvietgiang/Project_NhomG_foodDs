@@ -361,6 +361,12 @@
                 products.forEach((item) => {
                     const url = showCartBaseUrl.replace('__ID__', item.product_id);
 
+                    let price = item.product_price.toLocaleString('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    });
+
+                    // console.log(price)
                     const highlightedName = item.product_name.replace(
                         new RegExp(search, "gi"),
                         (match) => `<mark>${match}</mark>`
@@ -373,7 +379,7 @@
                                 <img src="component/image-product/${item.product_image}" alt="" width="40" height="40">
                                 <div class="">
                                     <div class="fw-bold">${highlightedName}</div>
-                                    <div style="color: #000;">${item.product_price} ₫</div>
+                                    <div style="color: #000;">${price}</div>
                                 </div>
                             </div>
                         </a>

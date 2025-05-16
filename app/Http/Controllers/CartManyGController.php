@@ -29,12 +29,14 @@ class CartManyGController extends Controller
         $existingCart = Cart::where('user_id', Auth::id())->where('product_id', $productID)->first();
         $image = Product::where('product_id', $productID)->value('product_image');
 
-
+        $alert_add = false;
         if ($existingCart) {
             $existingCart->update([
                 'quantity_sp' => DB::raw('quantity_sp + 1'),
             ]);
+            $alert_add = true;
         } else {
+            $alert_add = true;
             Cart::create([
                 'user_id' => Auth::id(),
                 'product_id' => $productID,
@@ -45,10 +47,9 @@ class CartManyGController extends Controller
         }
 
         $cartCount =  Cart::where('user_id', Auth::id())->count();
-        $alert_add = "alert-add-cart";
         return response()->json([
             'cartCount' => $cartCount,
-            'alert_add_cart' => $alert_add
+            'alertCart' => $alert_add
         ]);
     }
 

@@ -39,6 +39,37 @@
         padding: 15px;
         border-radius: 5px;
     }
+
+    #alert-add-cart {
+        position: fixed;
+        /* Cố định vị trí trên màn hình */
+        top: 50%;
+        /* Đặt ở giữa theo chiều dọc */
+        left: 50%;
+        /* Đặt ở giữa theo chiều ngang */
+        transform: translate(-50%, -50%);
+        /* Dịch chuyển để căn giữa chính xác */
+        z-index: 1050;
+        /* Đảm bảo thông báo nằm trên các phần tử khác */
+        width: 90%;
+        /* Chiều rộng linh hoạt */
+        max-width: 500px;
+        /* Giới hạn chiều rộng tối đa */
+        padding: 15px;
+        /* Khoảng cách bên trong */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        /* Thêm bóng để nổi bật */
+        opacity: 0;
+        /* Ban đầu ẩn (dùng cho hiệu ứng) */
+        transition: opacity 0.3s ease-in-out;
+        /* Hiệu ứng mượt mà */
+    }
+
+    /* Khi thông báo hiển thị */
+    #alert-add-cart:not(.d-none) {
+        opacity: 1;
+        /* Hiện thông báo */
+    }
 </style>
 </head>
 
@@ -141,7 +172,7 @@
         </div>
     @endif
 
-
+    <div id="alert-add-cart" class="alert alert-success d-none" role="alert"></div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -310,6 +341,7 @@
                     },
                     success: function(response) {
                         console.log('Thành công:', response);
+                        showCartAlert("Thêm sản phâm yêu thích thành công!");
                     },
                 });
 
@@ -347,4 +379,15 @@
                 }, 2000); // 2000 milliseconds = 2 seconds
             }
         });
+
+
+        // Hàm hiển thị thông báo
+        function showCartAlert(message) {
+            var alertMessage = $('#alert-add-cart');
+            alertMessage.text(message); // Đặt nội dung thông báo
+            alertMessage.removeClass('d-none'); // Hiện thông báo
+            setTimeout(function() {
+                alertMessage.addClass('d-none'); // Ẩn sau 8 giây
+            }, 3000);
+        }
     </script>

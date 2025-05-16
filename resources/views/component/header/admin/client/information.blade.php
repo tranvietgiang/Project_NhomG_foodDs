@@ -366,7 +366,7 @@
                             <strong>{{ Auth::user()->name }}</strong><br>{{ Auth::user()->email }}
                         </p>
                         <a href="#">Số dư </a>
-                        <a href="{{ route('MyOrder.information') }}">Đơn hàng </a>
+                        <a href="{{ route('MyOrder.information') }}">Lịch sử đơn hàng </a>
                         <a href="#">My Farm</a>
                         <a href="#">Voucher </a>
                         <a href="{{ route('goods.heart.giang') }}">Sản phẩm yêu thích</a>
