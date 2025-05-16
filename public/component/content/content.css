@@ -1,0 +1,97 @@
+.content-part-1 {
+    border: 1px solid #f2ebeb;
+    padding: 20px;
+    background: #ffffff !important;
+}
+
+.title-part-1 {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #f2ebeb;
+    padding-bottom: 10px;
+}
+
+.title-part-1 span {
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.image-product-content-1 {
+    background-size: cover;
+    width: 250px !important;
+    height: 300px !important;
+}
+
+.frame-image {
+    border: 1px solid #f2ebeb;
+    padding: 10px;
+    text-align: center;
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: #000;
+    opacity: 0.5;
+    margin-right: 5px;
+}
+
+.discount {
+    font-weight: bold;
+}
+
+.frame-image {
+    text-align: left !important;
+}
+
+.content-part-1 .frame-image span {
+    display: block;
+}
+
+.product_name_demo {
+    white-space: nowrap;
+    /* Ngăn xuống dòng */
+    overflow: hidden;
+    /* Ẩn phần văn bản vượt quá kích thước */
+    text-overflow: ellipsis;
+    /* Hiển thị dấu "..." khi nội dung bị cắt */
+    max-width: 200px;
+    /* Điều chỉnh độ rộng tối đa */
+}
+
+.product_name {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    /* Giới hạn tối đa 2 dòng */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    /* Ẩn nội dung dư thừa */
+    max-width: 200px;
+    /* Độ rộng tối đa */
+}
+
+.product_star {
+    display: inline;
+    font-size: 13px;
+}
+
+.new-price {
+    font-size: 19px;
+}
+
+#alert-add-cart {
+    position: fixed; /* Cố định vị trí trên màn hình */
+    top: 50%; /* Đặt ở giữa theo chiều dọc */
+    left: 50%; /* Đặt ở giữa theo chiều ngang */
+    transform: translate(-50%, -50%); /* Dịch chuyển để căn giữa chính xác */
+    z-index: 1050; /* Đảm bảo thông báo nằm trên các phần tử khác */
+    width: 90%; /* Chiều rộng linh hoạt */
+    max-width: 500px; /* Giới hạn chiều rộng tối đa */
+    padding: 15px; /* Khoảng cách bên trong */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Thêm bóng để nổi bật */
+    opacity: 0; /* Ban đầu ẩn (dùng cho hiệu ứng) */
+    transition: opacity 0.3s ease-in-out; /* Hiệu ứng mượt mà */
+}
+
+/* Khi thông báo hiển thị */
+#alert-add-cart:not(.d-none) {
+    opacity: 1; /* Hiện thông báo */
+}
