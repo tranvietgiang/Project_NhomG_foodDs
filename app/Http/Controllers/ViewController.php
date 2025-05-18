@@ -13,7 +13,9 @@ use Illuminate\Http\Request;
 use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use PhpParser\Node\Expr\Match_;
+use App\Mail\OrderConfirmationMail;
 
 class ViewController extends Controller
 {
@@ -144,6 +146,9 @@ class ViewController extends Controller
             ->get();
 
 
+
+        // Gửi email cho user hiện tại
+        Mail::to(Auth::user()->email)->send(new OrderConfirmationMail($cart));
 
         return view('component.header.dathang.checkout', compact(['cart', 'product_id']));
     }
