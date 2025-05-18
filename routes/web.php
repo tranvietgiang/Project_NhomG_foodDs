@@ -1,9 +1,12 @@
 <?php
 
+use App\Exports\CustomersExport;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartManyGController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\EmployessController;
+use App\Http\Controllers\ExcelClientController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\GithubController;
 use App\Http\Controllers\GoogleController;
@@ -244,3 +247,7 @@ Route::post('/showVnPay/many', [ThanhToanNhieuItemController::class, 'vnpay'])->
 Route::get('/vnpay_payment/many', [ThanhToanNhieuItemController::class, 'call_vnpay_back'])->name('vnpay.payment.many.callback')/*->middleware(checkLogin::class)*/;
 
 Route::get('header/show/render', [ProductController::class, 'header_show_render'])->name('header.show.render');
+
+/** excel laravel */
+Route::get('/export-users', [EmployessController::class, 'export']);
+Route::get('/export-customers', [ExcelClientController::class, 'export'])->name('export.customers');

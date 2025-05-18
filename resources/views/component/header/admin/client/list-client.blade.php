@@ -136,6 +136,10 @@
 
     <div class="table-container mt-4 col-9">
 
+        <div>
+            <a class="btn btn-primary m-3" href="{{ route('export.customers') }}">excel</a>
+        </div>
+
         @include('component.header.admin.keThua.navbar-logout')
         <!-- show list client -->
         <table class="table table-striped table-hover">
