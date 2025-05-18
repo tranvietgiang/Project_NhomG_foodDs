@@ -140,8 +140,9 @@
         @endif
 
 
-        <div>
-            <a class="btn btn-primary  m-3" href="{{ route('staff.add.view') }}">Thêm nhân viên</a>
+        <div class="d-flex">
+            <a class="btn btn-primary m-3" href="{{ route('staff.add.view') }}">Thêm nhân viên</a>
+            <a class="btn btn-primary m-3" href="/export-users">excel</a>
         </div>
 
         <table class="table table-striped table-hover">
