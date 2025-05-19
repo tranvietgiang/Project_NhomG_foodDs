@@ -6,7 +6,7 @@
         <h1 class="display-6">Register</h1>
     </div>
 
-    <!-- show error -->
+    <!-- git show error -->
     @if ($errors->any()) <!-- Kiểm tra nếu có lỗi validation nào không -->
         <div class="alert alert-danger">
             <ul style="list-style: none;">

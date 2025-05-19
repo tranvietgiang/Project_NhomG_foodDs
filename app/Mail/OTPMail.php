@@ -15,7 +15,7 @@ class OTPMail extends Mailable
     public $email;
 
     /**
-     * Create a new message instance.
+     * Create a new message instance. git
      */
     public function __construct($otp, $email)
     {
