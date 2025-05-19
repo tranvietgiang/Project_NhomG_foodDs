@@ -305,7 +305,7 @@ class LoginController extends Controller
 
 
 
-    // git Gửi lại OTP tới email , hàm này sẽ check xem user đang ở form nào mà di chuyển đúng đến form đó và gửi email
+    // git forget Gửi lại OTP tới email , hàm này sẽ check xem user đang ở form nào mà di chuyển đúng đến form đó và gửi email
     public function sendOtp()
     {
         $email = session('email'); // Lấy từ session thay vì request
@@ -336,7 +336,7 @@ class LoginController extends Controller
     }
 
 
-    /** check email have exists qua page update password */
+    /** check email have exists qua page update password git */
     public function forgot(Request $req)
     {
 
@@ -366,7 +366,7 @@ class LoginController extends Controller
     }
 
 
-    /** confirm otp send qua email forgot */
+    /** confirm otp send qua email forget */
     public function verifyOtpForgot(Request $request)
     {
         $request->validate([
@@ -383,7 +383,7 @@ class LoginController extends Controller
         return back()->with('error-forgot-otp', 'Mã OTP không chính xác, vui lòng thử lại.');
     }
 
-    /**update password for client */
+    /**update password for client forget */
     public function update_pw(Request $req)
     {
         $email = $req->input('email');

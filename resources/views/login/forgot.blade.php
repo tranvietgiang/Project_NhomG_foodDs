@@ -1,7 +1,7 @@
 <!-- import library MDBootstrap_CSS -->
 <link rel="stylesheet" href="{{ asset('component/css/mdb.min.css') }}">
 <section class="">
-
+    <!-- git forget -->
     <!-- check email have exists -->
     @if (session('email_not_exists_forgot'))
         <div class="alert alert-warning text-center">{{ session('email_not_exists_forgot') }}</div>

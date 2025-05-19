@@ -1,4 +1,4 @@
-<!-- git register -->
+<!-- git forget -->
 <!DOCTYPE html>
 <html>
 

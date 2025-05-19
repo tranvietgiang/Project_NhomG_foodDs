@@ -1,6 +1,7 @@
 <!-- import library MDBootstrap_CSS -->
 <link rel="stylesheet" href="{{ asset('component/css/mdb.min.css') }}">
 {{-- <link rel="icon" href=""> --}}
+<!-- git forget -->
 <section class="mt-5 text-center">
     <div>
         <h1 class="display-6 text-center">Update Password</h1>
