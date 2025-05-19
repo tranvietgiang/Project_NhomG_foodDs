@@ -458,7 +458,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- Hành động -->
+                                    <!-- Hành động chỉnh sửa số lượng and xóa heart -->
                                     <div class="col-md-3 d-flex align-items-center justify-content-end p-3">
                                         <div class="heart-actions d-flex align-items-center gap-3">
 
@@ -478,7 +478,7 @@
                                                 </button>
                                             </div>
 
-                                            <!-- Xóa sản phẩm -->
+                                            <!-- Xóa sản phẩm yêu thích  -->
                                             <form style="padding: 0; margin: 0;"
                                                 action="{{ route('delete.heart.giang') }}" method="get">
                                                 @csrf
@@ -562,7 +562,7 @@
         }
     });
 
-    /* này có chứ năng là lấy ra các thẻ nằm trong nó*/
+    /* này có chứ năng là lấy ra các thẻ nằm trong nó chỉnh sửa xóa lượng*/
     $('.control-amount').each(function() {
         const $amount = $(this);
         const $click_asc = $amount.find('.amount-asc');
