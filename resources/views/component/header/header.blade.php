@@ -75,6 +75,7 @@
                     </li>
 
                     <li>
+                        <!-- click để xem giỏ hàng -->
                         <a style="display: inline-block; position: relative;" href="{{ route('cart.shows_goods') }}"><i
                                 class="fa-solid fa-cart-shopping"></i></a>
                         <span id="cartCount" style="position: absolute; top: 10%; left:92%;"
