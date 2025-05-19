@@ -233,7 +233,7 @@ Route::post('/get/money/select', [ThanhToanNhieuItemController::class, 'priceSel
 Route::post('/show/cartMany/bill/check', [ThanhToanNhieuItemController::class, 'priceSelect'])->name('show.bill.cartMany.bill');
 
 //==============================================================================================================
-/** thanh toán khi nhận hàng cod */
+/** thanh toán khi nhận hàng cod git */
 Route::post('/ttknh/cod', [ThanhToanNhieuItemController::class, 'cod'])->name('cod.ttknh.cartMany');
 
 
