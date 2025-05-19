@@ -72,6 +72,7 @@
         </h4>
         <h3>Chọn phương thức thanh toán</h3>
 
+        <!-- các phương thức thanh toán -->
         <form id="paymentForm">
             @csrf
             <div class="payment-option">
