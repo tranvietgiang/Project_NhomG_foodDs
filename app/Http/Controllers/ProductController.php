@@ -76,6 +76,7 @@ class ProductController extends Controller
     //     return view('component.header.dathang.cartGiang', compact('client_Avatar'));
     // }
 
+    /** delete comment */
     public function delete_review($review_id)
     {
         Review::where('user_id', Auth::id())->where('review_id', $review_id)->delete();
