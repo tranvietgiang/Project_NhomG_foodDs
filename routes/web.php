@@ -127,13 +127,13 @@ Route::post('/verify-otp-forgot', [LoginController::class, 'verifyOtpForgot'])->
 /** show form */
 Route::get('/showVnPay', [AdminController::class, 'showVnPayCheckout'])->name('showVnPayCheckout') /*->middleware(checkLogin::class)*/;
 
-/** checkout toán vnpay */
+/** checkout toán vnpay1 */
 Route::post('/vnpay_payment', [PTTTController::class, 'vnpay_payment'])->name('vnpay.payment')/*->middleware(checkLogin::class)*/;
 
-/* result success or failed */
+/* result success or failed1 */
 Route::get('/vnpay_return', [PTTTController::class, 'vnpay_return'])->name('vnpay.return')/*->middleware(checkLogin::class)*/;
 
-/** kiểm tra xem client chọn pttt nào */
+/** kiểm tra xem client chọn pttt nào1 */
 Route::post('/pttt/payment/checkout', [PTTTController::class, 'select_payment_client'])->name('checkout.pptt.payment');
 
 /** thanh toán khi nhận hàng */
@@ -163,7 +163,7 @@ Route::get('login/github/callback', [GithubController::class, 'handleProviderCal
 
 
 /* cart đặt hàng */
-Route::get('/cart/show_checkout/{product_id}', [ViewController::class, 'show_cart_mua_ngay'])->middleware(checkLogin::class);
+Route::get('/cart/show_checkout/{product_id}', [ViewController::class, 'show_cart_mua_ngay'])->middleware(checkLogin::class); // router mua ngay sản phẩm
 // Route::get('/cart/dathang/{product_id}', [ProductController::class, 'cart_mua_ngay'])->name('cart.show_cart_mua_ngay');
 
 /** cart and review  giang*/

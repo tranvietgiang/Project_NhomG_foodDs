@@ -159,7 +159,7 @@
     </div>
 </div>
 
-<!-- JavaScript for form submission -->
+<!-- JavaScript for form submission chọn các phương thức thanh toán mua ngay -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Handle form submission based on payment method
