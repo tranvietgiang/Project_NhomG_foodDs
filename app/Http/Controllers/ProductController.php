@@ -18,7 +18,7 @@ class ProductController extends Controller
 {
     //
 
-    /** kiểm tra xem client đã mua hàng chưa rồi mới cho đánh giá */
+    /** kiểm tra xem client đã mua hàng chưa rồi mới cho đánh giá controller thêm comment */
     public function review(Request $req)
     {
 
