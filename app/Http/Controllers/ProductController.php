@@ -85,6 +85,7 @@ class ProductController extends Controller
 
     /** chỉnh sủa nếu client muốn sửa lại comment
      * cái review_id là lấy từ cái get mà khi client click vào cart
+     * git controller edit comment
      */
     public function update_review(Request $req, $review_id)
     {

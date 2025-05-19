@@ -335,7 +335,7 @@
                 <p>
                     <strong>{{ $comment->users->name }}:</strong> {{ $comment->review_comment }}
 
-                    <!-- click để sửa comment -->
+                    <!-- click để sửa comment git edit comment -->
                     @if ($comment->user_id == Auth::id())
                         <span id="" style="cursor: pointer" class="btn-sm fw-bold edit_span"><i
                                 class="fa-solid fa-pencil icon_hidden"></i></span>
@@ -364,7 +364,7 @@
                     </p>
                     <!-- kiểm tra chỉ người nào mua hàng mới thấy nút sửa or xóa -->
                     @if ($comment->user_id == Auth::id())
-                        <!-- form chỉnh sửa comment -->
+                        <!-- form chỉnh sửa comment git edit comment -->
                         <form class="form_edit_review"
                             action="{{ route('client.comment.update', $comment->review_id) }}" method="GET">
                             @csrf
