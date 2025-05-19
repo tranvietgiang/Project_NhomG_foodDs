@@ -169,8 +169,7 @@ Route::get('/cart/show_checkout/{product_id}', [ViewController::class, 'show_car
 /** cart and review  giang*/
 Route::get('/cart/{product_id}', [ViewController::class, 'show_cart'])->name('show_cart');
 Route::post('/client/review/cart/bought', [ProductController::class, 'review'])->middleware(checkLogin::class); // router thêm comment
-Route::get('/delete/client_comment/{review_id}', [ProductController::class, 'delete_review'])->name('client.comment.delete')->middleware(checkLogin::class); // router delete
- comment
+Route::get('/delete/client_comment/{review_id}', [ProductController::class, 'delete_review'])->name('client.comment.delete')->middleware(checkLogin::class); // router delete comment
 Route::get('/update/review/{review_id}', [ProductController::class, 'update_review'])->name('client.comment.update')->middleware(checkLogin::class); // router edit comment
 Route::get('/getAvatar/hi', [ProductController::class, 'getAvatar']); // get avatar
 
@@ -212,9 +211,9 @@ Route::get('/handle_amount/removeAll', [ThanhToanNhieuItemController::class, 'ha
 
 /** thêm cart nhiều */
 Route::post('/add/cartMany/{product_id}/{price_goods}', [CartManyGController::class, 'add_cartMany'])->name('add.cartMany.giang');
-Route::get('/list/heart', [CartManyGController::class, 'show_heart'])->name('goods.heart.giang');
+Route::get('/list/heart', [CartManyGController::class, 'show_heart'])->name('goods.heart.giang'); // qua ds heart
 
-Route::post('/list/heart/add', [CartManyGController::class, 'addHeartClient'])->name('heart.list.client');
+Route::post('/list/heart/add', [CartManyGController::class, 'addHeartClient'])->name('heart.list.client'); // router thêm heart
 
 Route::post('/amount/heart', [HeartGController::class, 'updateAmount'])->name('heart.amount.list');
 

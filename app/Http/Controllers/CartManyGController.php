@@ -61,6 +61,7 @@ class CartManyGController extends Controller
     }
 
 
+    /** handle thêm sản phẩm vào danh sách yêu thích */
     public function addHeartClient(Request $req)
     {
         // Lấy dữ liệu từ body request
