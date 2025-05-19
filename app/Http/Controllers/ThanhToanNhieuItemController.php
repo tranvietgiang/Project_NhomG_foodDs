@@ -20,9 +20,9 @@ class ThanhToanNhieuItemController extends Controller
 
 
 
+    /** controller thanh toán khi nhận hàng */
     public function cod(Request $request)
     {
-
         $checkAddress = Client::where('user_id', Auth::id())->exists();
         if (!$checkAddress) {
             return redirect()->back()->with('addressNotExists', 'Bạn chưa có thông tin nhận hàng, vui lòng điền thông tin để nhận hàng tại đây');

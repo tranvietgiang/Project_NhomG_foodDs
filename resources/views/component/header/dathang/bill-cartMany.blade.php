@@ -78,6 +78,8 @@
             <div class="payment-option">
                 <input type="text" class="d-none" name="arrShow" value="{{ $cartShow }}">
                 <input type="text" class="d-none" name="total_price_payment" value="{{ $tongTien ?? 0 }}">
+
+                <!-- Thanh toán khi nhận hàng -->
                 <input type="radio" id="cod" name="payment_method" checked value="cod">
                 <label for="cod">Thanh toán khi nhận hàng (COD)</label>
 
