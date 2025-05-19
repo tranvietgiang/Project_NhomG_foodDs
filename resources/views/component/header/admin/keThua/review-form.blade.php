@@ -389,7 +389,7 @@
                             </div>
 
                         </form>
-                        <!-- delete -->
+                        <!-- delete git delete comment -->
                         <a class="btn-sm btn btn-outline-danger"
                             href="{{ route('client.comment.delete', $comment->review_id) }}"><i
                                 class="fa-solid fa-eraser"></i></a>
