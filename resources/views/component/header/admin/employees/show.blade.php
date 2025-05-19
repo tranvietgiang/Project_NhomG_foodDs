@@ -73,7 +73,7 @@
                 <li class=""><a href="{{ route('admin.view.product') }}"><i class="fas fa-box"></i> Quản Lý Sản
                         Phẩm</a></li>
             @else
-                <li><a href="#"><i class="fas fa-box"></i> DS Sản Phẩm</a></li>
+                <li><a href="{{ route('admin.view.product') }}"><i class="fas fa-box"></i> DS Sản Phẩm</a></li>
             @endif
 
             <!-- page categories -->
@@ -81,7 +81,7 @@
                 <li class=""><a href="{{ url('categories') }}"><i class="fas fa-box"></i> Quản Lý Phân loại</a>
                 </li>
             @else
-                <li><a href="#"><i class="fas fa-box"></i> Quản Lý Phân loại</a></li>
+                <li><a href="{{ url('categories') }}"><i class="fas fa-box"></i> DS Phân loại</a></li>
             @endif
 
             <!-- page client -->
@@ -90,6 +90,12 @@
                 </li>
             @else
                 <li><a href="{{ route('manager') }}"><i class="fas fa-box"></i> DS khách hàng</a></li>
+            @endif
+
+            <!-- page client -->
+            @if (Auth::check() && Auth::user()->role == 'admin')
+                <li><a href="{{ route('manager') }}"><i class="fas fa-box"></i> Thống kê</a>
+                </li>
             @endif
 
             <li><a href="#"><i class="fas fa-envelope"></i> Tin Nhắn</a></li>
@@ -141,7 +147,9 @@
 
 
         <div class="d-flex">
-            <a class="btn btn-primary m-3" href="{{ route('staff.add.view') }}">Thêm nhân viên</a>
+            @if (Auth::check() && Auth::user()->role == 'admin')
+                <a class="btn btn-primary m-3" href="{{ route('staff.add.view') }}">Thêm nhân viên</a>
+            @endif
             <a class="btn btn-primary m-3" href="/export-users">excel</a>
         </div>
 

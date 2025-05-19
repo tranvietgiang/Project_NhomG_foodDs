@@ -146,8 +146,8 @@ class LoginController extends Controller
     {
         if (Auth::check()) {
 
-            if (Auth::user()->role == 'admin') {
-                Auth::logout(); // Đăng xuất user hiện tại
+            if (Auth::user()->role != 'user') {
+                // Auth::logout(); // Đăng xuất user hiện tại
                 return redirect()->route('wayLogin', ['page' => 'login']);
             }
 

@@ -21,11 +21,11 @@
                 <!-- name người đang sử dụng page chưa xong -->
                 @if (session('role_admin'))
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="#">{{ session('role_admin') }} </a>
+                        <a class="nav-link text-white" href="#">(QL) {{ session('role_admin') }} </a>
                     </li>
                 @elseif (session('role_employees'))
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="#">{{ session('role_employees') }} </a>
+                        <a class="nav-link text-white" href="#">(NV) {{ session('role_employees') }} </a>
                     </li>
                 @endif
             </ul>

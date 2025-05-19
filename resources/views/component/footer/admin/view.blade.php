@@ -113,7 +113,8 @@
                 <li class="active"><a href=""><i class="fas fa-box"></i> Quản Lý Sản
                         Phẩm</a></li>
             @else
-                <li><a href="#"><i class="fas fa-box"></i> DS Sản Phẩm</a></li>
+                <li class="active"><a href="{{ route('admin.view.product') }}"><i class="fas fa-box"></i> DS Sản
+                        Phẩm</a></li>
             @endif
 
 
@@ -122,7 +123,7 @@
                 <li class=""><a href="{{ route('employees') }}"><i class="fas fa-users"></i> Quản Lý Nhân Viên</a>
                 </li>
             @else
-                <li class="active"><a href="{{ route('employees') }}"><i class="fas fa-users"></i> DS Nhân Viên</a></li>
+                <li><a href="{{ route('employees') }}"><i class="fas fa-users"></i> DS Nhân Viên</a></li>
             @endif
 
             <!-- page categories -->
@@ -130,7 +131,7 @@
                 <li class=""><a href="{{ url('categories') }}"><i class="fas fa-box"></i> Quản Lý Phân loại</a>
                 </li>
             @else
-                <li><a href="#"><i class="fas fa-box"></i> Quản Lý Phân loại</a></li>
+                <li><a href="{{ url('categories') }}"><i class="fas fa-box"></i> DS Phân loại</a></li>
             @endif
 
             <!-- page client -->
@@ -181,10 +182,11 @@
         </div><br>
 
 
-        <div>
-            <a class="btn btn-success" href="{{ route('admin.view.product-add') }}">thêm sản phẩm</a>
-        </div><br>
-
+        @if (Auth::check() && Auth::user()->role == 'admin')
+            <div>
+                <a class="btn btn-success" href="{{ route('admin.view.product-add') }}">thêm sản phẩm</a>
+            </div><br>
+        @endif
 
         @if (session('success'))
             <div class="alert alert-primary">{{ session('success') }}</div>
@@ -208,7 +210,9 @@
                     <th>Loại</th>
                     <th>SL trong kho</th>
                     <th>Mô tả</th>
-                    <th>Thao tác</th>
+                    @if (Auth::check() && Auth::user()->role == 'admin')
+                        <th>Thao tác</th>
+                    @endif
                 </tr>
             </thead>
             <tbody>
@@ -223,14 +227,18 @@
                         <td>{{ $product->categories->categories_name }}</td>
                         <td>{{ $product->quantity_store ?? 0 }}</td>
                         <td>{{ $product->description ?? 'no' }}</td>
-                        <td class="d-flex gap-2">
-                            <a class="btn-sm btn-warning"
-                                href="{{ route('admin.edit.view.product') }}?product_id={{ $product->product_id }}">
-                                Edit
-                            </a>
-                            <a onclick="ConfirmDelete(event)" class="btn-sm btn-danger"
-                                href="{{ route('admin.remove.product') }}?product_id={{ $product->product_id }}">xóa</a>
-                        </td>
+
+                        @if (Auth::check() && Auth::user()->role == 'admin')
+                            <td class="d-flex gap-2">
+                                <a class="btn-sm btn-warning"
+                                    href="{{ route('admin.edit.view.product') }}?product_id={{ $product->product_id }}">
+                                    Edit
+                                </a>
+                                <a onclick="ConfirmDelete(event)" class="btn-sm btn-danger"
+                                    href="{{ route('admin.remove.product') }}?product_id={{ $product->product_id }}">xóa
+                                </a>
+                            </td>
+                        @endif
                     </tr>
                 @endforeach
             </tbody>

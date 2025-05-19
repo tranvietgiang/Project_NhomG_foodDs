@@ -17,7 +17,7 @@ class ProductTuyenController extends Controller
             return redirect()->route('wayLogin', ['page' => 'login']);
         } else {
             $user = User::where('id', Auth::id())->value('role');
-            if ($user == "admin") {
+            if ($user !== "user") {
                 $show_product_admin = Product::with('categories')->orderByDesc('created_at')->paginate(5);
                 return view('component.footer.admin.view', compact(['show_product_admin']));
             } else {

@@ -61,7 +61,7 @@ class AdminController extends Controller
             ->where('users.role', 'user')
             ->orderByDesc('clients.login_count') // sắp xếp theo cột login_count trong bảng clients
             ->with('client') // load thêm quan hệ client nếu cần
-            ->paginate(1);
+            ->paginate(5);
 
 
         return view('component.header.admin.client.list-client', compact('list_client'));

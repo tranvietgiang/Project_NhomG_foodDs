@@ -65,7 +65,7 @@
                 <li class="active"><a href="{{ url('categories') }}"><i class="fas fa-box"></i> Quản Lý Phân loại</a>
                 </li>
             @else
-                <li><a href="#"><i class="fas fa-box"></i> Quản Lý Phân loại</a></li>
+                <li class="active"><a href="{{ url('categories') }}"><i class="fas fa-box"></i> DS Phân loại</a></li>
             @endif
 
             <!-- nếu admin đổi thành quản lý -->
@@ -81,7 +81,7 @@
                 <li class=""><a href="{{ route('admin.view.product') }}"><i class="fas fa-box"></i> Quản Lý Sản
                         Phẩm</a></li>
             @else
-                <li><a href="#"><i class="fas fa-box"></i> DS Sản Phẩm</a></li>
+                <li><a href="{{ route('admin.view.product') }}"><i class="fas fa-box"></i> DS Sản Phẩm</a></li>
             @endif
 
 
@@ -100,7 +100,18 @@
             <li><a href="#"><i class="fas fa-question-circle"></i> Hỗ Trợ</a></li>
             <li><a href="#"><i class="fas fa-cog"></i> Cài Đặt</a></li>
             <li><a href="#"><i class="fas fa-lock"></i> Mật Khẩu</a></li>
-            <li><a href="#"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a></li>
+            <li>
+                <a><i class="fas fa-sign-out-alt"></i>
+                    @if (Auth::check())
+                        <form style="z-index: 1" class="" action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button style="border: none;  color: #d1d8e0; background:#274d8f;" type="submit"
+                                class="text-white">Đăng
+                                Xuất</button>
+                        </form>
+                    @endif
+                </a>
+            </li>
         </ul>
     </div>
     <!--  -->
@@ -110,12 +121,18 @@
 
         <!-- nút thêm -->
         <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h3 class="card-title mb-0">Quản Lý Loại Sản Phẩm</h3>
-                <button class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#addModal">
-                    <i class="fas fa-plus me-2"></i>Thêm Loại Sản Phẩm
-                </button>
-            </div>
+            @if (Auth::check() && Auth::user()->role == 'admin')
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">Quản Lý Loại Sản Phẩm</h3>
+                    <button class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#addModal">
+                        <i class="fas fa-plus me-2"></i>Thêm Loại Sản Phẩm
+                    </button>
+                </div>
+            @else
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">DS Loại Sản Phẩm</h3>
+                </div>
+            @endif
 
             <div class="card-body">
                 @if (session('destroy-categories-failed'))
@@ -143,31 +160,44 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Tên Loại</th>
-                                <th>Thao Tác</th>
+                                @if (Auth::check() && Auth::user()->role == 'admin')
+                                    <th>Thao Tác</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($categories as $category)
-                                <tr>
-                                    <td>{{ $category->categories_id }}</td>
-                                    <td>{{ $category->categories_name }}</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-warning" data-mdb-toggle="modal"
-                                            data-mdb-target="#editModal{{ $category->categories_id }}">
-                                            <i class="fas fa-edit"></i> Sửa
-                                        </button>
-                                        <form action="{{ route('categories.destroy', $category->categories_id) }}"
-                                            method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Bạn có chắc muốn xóa?')">
-                                                <i class="fas fa-trash"></i> Xóa
+                            @if (Auth::check() && Auth::user()->role == 'admin')
+
+                                @foreach ($categories as $category)
+                                    <tr>
+                                        <td>{{ $category->categories_id }}</td>
+                                        <td>{{ $category->categories_name }}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-warning" data-mdb-toggle="modal"
+                                                data-mdb-target="#editModal{{ $category->categories_id }}">
+                                                <i class="fas fa-edit"></i> Sửa
                                             </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
+                                            <form action="{{ route('categories.destroy', $category->categories_id) }}"
+                                                method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                    onclick="return confirm('Bạn có chắc muốn xóa?')">
+                                                    <i class="fas fa-trash"></i> Xóa
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                @foreach ($categories as $category)
+                                    <tr>
+                                        <td>{{ $category->categories_id }}</td>
+                                        <td>{{ $category->categories_name }}</td>
+                                    </tr>
+                                @endforeach
+                            @endif
+
                         </tbody>
                     </table>
                 </div>
