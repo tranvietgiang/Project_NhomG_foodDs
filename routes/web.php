@@ -204,7 +204,7 @@ Route::put('/cart/update/{id}', [ProductController::class, 'updateSL'])->name('c
 
 /** thanh toán nhiều đơn hàng */
 Route::get('/cart/update/{id}', [ProductController::class, 'updateSL'])->name('cart.update');
-Route::get('/shows_goods/cart', [ThanhToanNhieuItemController::class, 'cart_shows_goods'])->name('cart.shows_goods');
+Route::get('/shows_goods/cart', [ThanhToanNhieuItemController::class, 'cart_shows_goods'])->name('cart.shows_goods'); // route giỏ hàng
 Route::post('/shows_goods/handle_amount', [ThanhToanNhieuItemController::class, 'handle_amount'])->name('cartMany.amount.item');
 Route::get('/handle_amount/remove', [ThanhToanNhieuItemController::class, 'handle_remove_giang'])->name('remove.cartMany.giang');
 Route::get('/handle_amount/removeAll', [ThanhToanNhieuItemController::class, 'handle_remove_all_giang'])->name('goods.cartManyAll');

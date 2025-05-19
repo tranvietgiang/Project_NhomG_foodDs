@@ -1,3 +1,4 @@
+<!-- hiển thị giỏ hàng của khách hàng  -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Giỏ Hàng</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -98,6 +99,7 @@
             //
             $tamTinh = 0;
         @endphp
+        <!-- mã hóa id sản phẩm trách bị phá -->
         @foreach ($cartMany as $cart)
             @php
                 $encryptedProductId = encrypt($cart->product_id);
@@ -140,7 +142,7 @@
                 $cartPrice = $cart->total_price;
             @endphp
         @endforeach
-        <!-- Tổng tiền -->
+        <!-- Tổng tiền khách hàng phải chọn sản phẩm mới xác nhận được -->
         <div class="subtotal-section mt-4 text-end">
             <h5>Thông tin đơn hàng</h5>
             @php
@@ -186,6 +188,7 @@
             const $all_checked = $('#all-checked');
 
 
+            /* handle kiểm tra khách hàng có chọn sản phẩm chưa*/
             $('.check-tamTinh').on('change', function() {
                 if ($('.check-tamTinh:checked').length > 0) {
                     $btn.addClass("btn-success").removeClass("btn-secondary");

@@ -64,6 +64,7 @@ class ThanhToanNhieuItemController extends Controller
     }
 
     // ==================================================================================================
+    /** hiển thị giỏ hàng mua nhiều */
     public function cart_shows_goods(Request $request)
     {
 
