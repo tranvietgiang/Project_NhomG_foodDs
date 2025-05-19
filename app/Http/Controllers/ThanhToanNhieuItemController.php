@@ -194,6 +194,7 @@ class ThanhToanNhieuItemController extends Controller
         ]);
     }
 
+    /** git zalo mua nhiều */
     public function zalopay(Request $request)
     {
         // Lấy cấu hình từ .env
@@ -264,6 +265,7 @@ class ThanhToanNhieuItemController extends Controller
         }
     }
 
+    /* git zalopay mua nhiều*/
     public function callback_many_zalopay(Request $request)
     {
         // Xử lý kết quả thanh toán từ ZaloPay
@@ -311,7 +313,7 @@ class ThanhToanNhieuItemController extends Controller
         }
     }
 
-    /** khi click chọn zalopay sẽ qua đây */
+    /** khi click chọn vnpay sẽ qua đây */
     public function vnpay(Request $request)
     {
 
@@ -372,6 +374,7 @@ class ThanhToanNhieuItemController extends Controller
         // Chuyển hướng (redirect) đến trang thanh toán VNPAY
         return redirect($vnp_Url);
     }
+
     public function call_vnpay_back(Request $request)
     {
         $result = $request->all();
