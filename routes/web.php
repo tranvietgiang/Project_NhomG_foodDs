@@ -168,7 +168,7 @@ Route::get('/cart/show_checkout/{product_id}', [ViewController::class, 'show_car
 
 /** cart and review  giang*/
 Route::get('/cart/{product_id}', [ViewController::class, 'show_cart'])->name('show_cart');
-Route::post('/client/review/cart/bought', [ProductController::class, 'review'])->middleware(checkLogin::class);
+Route::post('/client/review/cart/bought', [ProductController::class, 'review'])->middleware(checkLogin::class); // router thêm comment
 Route::get('/delete/client_comment/{review_id}', [ProductController::class, 'delete_review'])->name('client.comment.delete')->middleware(checkLogin::class);
 Route::get('/update/review/{review_id}', [ProductController::class, 'update_review'])->name('client.comment.update')->middleware(checkLogin::class);
 Route::get('/getAvatar/hi', [ProductController::class, 'getAvatar']); // get avatar

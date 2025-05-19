@@ -263,7 +263,7 @@
         </div>
     </div>
 
-    <!-- form create review -->
+    <!-- form create review git add commit -->
     <form id="review-form" action="{{ url('/client/review/cart/bought') }}" method="post"
         enctype="multipart/form-data">
         <input type="text" name="product_id" value="{{ $product_id = $cart->first()->product_id }}">
