@@ -81,6 +81,7 @@
                 <a href="{{ route('website-main') }}" class=" text-decoration-none btn btn-outline-success "><i
                         class="bi bi-arrow-left"></i> TIẾP TỤC
                     MUA SẮM</a>
+                <!-- qua danh sách yêu thích -->
                 <a class="btn btn-outline-danger" href="{{ route('goods.heart.giang') }}">List Heart</a>
 
                 <div>
@@ -124,7 +125,7 @@
                         <button class="btn btn-outline-secondary quantity_asc">+</button>
                         <button class="btn btn-outline-danger ms-2 remove-goods"><i class="bi bi-trash"></i></button>
 
-                        <!-- heart -->
+                        <!-- heart git heart -->
                         <button data-goods-id="{{ $cart->product_id }}" data-goods-price="{{ $cart->total_price }}"
                             class="btn btn-outline-success ms-2 heart-choose"><i class="bi bi-heart"></i>
                         </button>
@@ -326,7 +327,7 @@
                 });
             });
 
-            // heart
+            // heart git
             const heart_choose = $amountItem.find('.heart-choose');
             heart_choose.on('click', function() {
                 const idProduct = $(this).data('goods-id');
