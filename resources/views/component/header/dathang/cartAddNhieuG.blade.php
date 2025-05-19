@@ -310,7 +310,7 @@
             });
 
 
-            // xóa
+            // xóa 1 sản phẩm
             const remove_goods = $amountItem.find('.remove-goods');
 
             remove_goods.on('click', function() {
@@ -357,7 +357,7 @@
             // đóng
         });
 
-        /* xóa all item của client*/
+        /* xóa all item của client git*/
         const remove_goods_all = document.getElementById('delete_goods_all');
 
         $('#delete_goods_all').on('click', function() {

@@ -128,7 +128,7 @@ class ThanhToanNhieuItemController extends Controller
     }
 
 
-    /** xóa goods client choose */
+    /** xóa goods client choose controller xóa một cart mua nhiều */
     public function handle_remove_giang(Request $request)
     {
         $goods_id = $request->get('goods_remove');
@@ -136,7 +136,7 @@ class ThanhToanNhieuItemController extends Controller
         Cart::where('user_id', Auth::id())->where('product_id', $goods_id)->delete();
     }
 
-    /** xóa goods */
+    /** xóa goods xóa tất cả cart mua nhiều */
     public function handle_remove_all_giang()
     {
         Cart::where('user_id', Auth::id())->delete();
