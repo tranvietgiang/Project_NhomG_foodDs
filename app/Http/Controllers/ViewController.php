@@ -20,7 +20,7 @@ use App\Mail\OrderConfirmationMail;
 class ViewController extends Controller
 {
 
-    /** form show_cart và review */
+    /** form show_cart và review info detail products */
     public function show_cart(Request $req, $product_id)
     {
 
@@ -95,7 +95,7 @@ class ViewController extends Controller
     }
 
 
-    /** show cart sản phẩm mà khách hàng đã bấm mua ngay zalopay mua ngay */
+    /** show cart sản phẩm mà khách hàng đã bấm mua ngay  */
     public function show_cart_mua_ngay(Request $req, $product_id)
     {
 

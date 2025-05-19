@@ -1,3 +1,4 @@
+<!-- hiển thị thông tin chi tiết đơn hàng -->
 <!DOCTYPE html>
 <html lang="vi">
 
