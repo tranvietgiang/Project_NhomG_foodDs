@@ -242,7 +242,7 @@ class LoginController extends Controller
 
 
 
-    /** register email otp */
+    /** register email otp git */
     public function Register(Request $req)
     {
         // laravel sẽ tự động kiểm tra xem có trường nào ko đúng request sẽ gửi thông báo error
@@ -305,7 +305,7 @@ class LoginController extends Controller
 
 
 
-    // Gửi lại OTP tới email , hàm này sẽ check xem user đang ở form nào mà di chuyển đúng đến form đó và gửi email
+    // git Gửi lại OTP tới email , hàm này sẽ check xem user đang ở form nào mà di chuyển đúng đến form đó và gửi email
     public function sendOtp()
     {
         $email = session('email'); // Lấy từ session thay vì request
@@ -414,7 +414,7 @@ class LoginController extends Controller
     }
 
 
-    // Xác minh OTP yêu cầu từ hàm(Register) rồi xuống đây mới create account
+    //git register Xác minh OTP yêu cầu từ hàm(Register) rồi xuống đây mới create account
     public function verifyOtp(Request $request)
     {
         $request->validate([
