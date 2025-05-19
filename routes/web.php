@@ -181,8 +181,8 @@ Route::post('/zaloPay/payment', [ZaloPayController::class, 'zalopay'])->name('za
 Route::get('/zaloPay/callback', [ZaloPayController::class, 'callback_zalopay'])->name('zalo.callback');
 
 /** zaloPay thanh toán nhiều đơn hàng */
-Route::post('/zaloPay/payment/Many', [ThanhToanNhieuItemController::class, 'zalopay'])->name('zalo.many.payment');
-Route::get('/zaloPay/callback/many', [ThanhToanNhieuItemController::class, 'callback_many_zalopay'])->name('zalo.many.callback');
+Route::post('/zaloPay/payment/Many', [ThanhToanNhieuItemController::class, 'zalopay'])->name('zalo.many.payment'); // router zalo mua nhiều
+Route::get('/zaloPay/callback/many', [ThanhToanNhieuItemController::class, 'callback_many_zalopay'])->name('zalo.many.callback'); // router callback zalo mua nhiều
 
 
 /** xem thông tin chi tiết */
@@ -252,7 +252,7 @@ Route::get('/thaplencao', [ProductController::class, 'sapxepgiathapdencao'])->na
 //thêm sản phẩm yêu  thích 
 Route::post('/addspyeuthich', [FavoriteController::class, 'addFavorite'])->name('addspyeuthich')->middleware(checkLogin::class);
 
-// form view thanh toán success or failed
+// form view thanh toán success or failed git
 Route::get('/payment/view/success', [ThanhToanNhieuItemController::class, 'payment_success'])->name('payment.many.payment.success');
 Route::get('/payment/view/failed', [ThanhToanNhieuItemController::class, 'payment_failed'])->name('payment.many.payment.failed');
 

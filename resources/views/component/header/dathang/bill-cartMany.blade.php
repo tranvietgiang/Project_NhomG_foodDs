@@ -84,6 +84,7 @@
                 <input type="radio" id="vnpay" name="payment_method" value="vnpay">
                 <label for="vnpay">VNPay</label>
 
+                <!-- mua nhiều zalo mua nhiều -->
                 <input type="radio" id="zalopay" name="payment_method" value="zalopay">
                 <label for="zalopay">ZaloPay</label>
 
