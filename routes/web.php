@@ -162,12 +162,12 @@ Route::get('login/github', [GithubController::class, 'redirectToProvider']);
 Route::get('login/github/callback', [GithubController::class, 'handleProviderCallback']);
 
 
-/* cart đặt hàng */
-Route::get('/cart/show_checkout/{product_id}', [ViewController::class, 'show_cart_mua_ngay'])->middleware(checkLogin::class); // router mua ngay sản phẩm
+/* cart đặt hàng  */
+Route::get('/cart/show_checkout/{product_id}', [ViewController::class, 'show_cart_mua_ngay'])->middleware(checkLogin::class); // 
 // Route::get('/cart/dathang/{product_id}', [ProductController::class, 'cart_mua_ngay'])->name('cart.show_cart_mua_ngay');
 
 /** cart and review  giang*/
-Route::get('/cart/{product_id}', [ViewController::class, 'show_cart'])->name('show_cart');
+Route::get('/cart/{product_id}', [ViewController::class, 'show_cart'])->name('show_cart'); // hiển thị thông tin chi tiết sản phẩm
 Route::post('/client/review/cart/bought', [ProductController::class, 'review'])->middleware(checkLogin::class); // router thêm comment
 Route::get('/delete/client_comment/{review_id}', [ProductController::class, 'delete_review'])->name('client.comment.delete')->middleware(checkLogin::class); // router delete comment
 Route::get('/update/review/{review_id}', [ProductController::class, 'update_review'])->name('client.comment.update')->middleware(checkLogin::class); // router edit comment
