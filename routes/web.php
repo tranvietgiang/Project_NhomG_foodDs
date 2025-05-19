@@ -150,7 +150,7 @@ Route::post('/get-wards', [LoginController::class, 'getWards']);
 
 /** show form information client */
 Route::get('/information-client', [LoginController::class, 'show_information'])->middleware(checkLogin::class);
-Route::post('/update-client', [AdminController::class, 'update_client'])->middleware(checkLogin::class)->name('update_client');
+Route::post('/update-client', [AdminController::class, 'update_client'])->middleware(checkLogin::class)->name('update_client'); // router
 Route::post('/client-avatar-image-update', [AdminController::class, 'client_avatar_update'])->middleware(checkLogin::class);
 
 /** login vs google */

@@ -463,20 +463,21 @@ class LoginController extends Controller
         return back()->with('email_verifyOtp_failed', 'Mã OTP không chính xác, vui lòng thử lại.');
     }
 
-    /** học json */
+    /** hiện thị tên huyện/quận */
     public function getDistricts(Request $request)
     {
         $districts = district::where('province_id', $request->province_id)->get();
         return response()->json($districts);
     }
 
+    /** hiện thị tên xã/phường */
     public function getWards(Request $request)
     {
         $wards = ward::where('district_id', $request->district_id)->get();
         return response()->json($wards);
     }
 
-    /** show form information client */
+    /** show form information client git */
     public function show_information(Request $req)
     {
 

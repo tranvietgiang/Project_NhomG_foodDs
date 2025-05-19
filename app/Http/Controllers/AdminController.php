@@ -124,7 +124,7 @@ class AdminController extends Controller
 
 
 
-    /** khách hàng cập nhật thông tin đầy đủ */
+    /** khách hàng cập nhật thông tin đầy đủ git */
     public function update_client(Request $req)
     {
         $req->validate([
@@ -200,6 +200,7 @@ class AdminController extends Controller
         return redirect()->back()->with('update_client_success', 'bạn dã cập nhật thông tin thành công');
     }
 
+    /** cập nhật avatar cho client git */
     public function client_avatar_update(Request $req)
     {
 
