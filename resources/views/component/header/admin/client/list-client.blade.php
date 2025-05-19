@@ -102,7 +102,7 @@
                 <li class=""><a href="{{ route('admin.view.product') }}"><i class="fas fa-box"></i> Quản Lý Sản
                         Phẩm</a></li>
             @else
-                <li><a href="#"><i class="fas fa-box"></i> DS Sản Phẩm</a></li>
+                <li><a href="{{ route('admin.view.product') }}"><i class="fas fa-box"></i> DS Sản Phẩm</a></li>
             @endif
 
             <!-- page categories -->
@@ -110,7 +110,7 @@
                 <li class=""><a href="{{ url('categories') }}"><i class="fas fa-box"></i> Quản Lý Phân
                         loại</a></li>
             @else
-                <li><a href="#"><i class="fas fa-box"></i> Quản Lý Phân loại</a></li>
+                <li><a href="{{ url('categories') }}"><i class="fas fa-box"></i>DS Phân loại</a></li>
             @endif
 
             <!-- page -->
@@ -141,7 +141,7 @@
         </div>
 
         @include('component.header.admin.keThua.navbar-logout')
-        <!-- show list client -->
+        <!-- show list client  ten fun listClient -->
         <table class="table table-striped table-hover">
             <thead>
                 <tr>

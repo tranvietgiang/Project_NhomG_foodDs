@@ -23,38 +23,38 @@ class UserSeeders extends Seeder
                 'name' => $faker->name(),
                 'email' => $faker->email(),
                 'password' => bcrypt('2005'),
-                'role' => 'employees',
+                'role' => 'client',
                 'phone' => $faker->numerify('03########')
             ]);
         }
 
-        User::create([
-            'name' => 'Tran Viet Giang',
-            'email' => 'admin@gmail.com',
-            'password' => bcrypt('2005'),
-            'role' => "admin",
-            'phone' => '99999999999'
-        ]);
+        // User::create([
+        //     'name' => 'Tran Viet Giang',
+        //     'email' => 'admin@gmail.com',
+        //     'password' => bcrypt('2005'),
+        //     'role' => "admin",
+        //     'phone' => '99999999999'
+        // ]);
 
-        User::create([
-            'name' => 'Ca pham',
-            'email' => 'capham02@gmail.com',
-            'password' => bcrypt('2005'),
-            'role' => "employees",
-        ]);
+        // User::create([
+        //     'name' => 'Ca pham',
+        //     'email' => 'capham02@gmail.com',
+        //     'password' => bcrypt('2005'),
+        //     'role' => "employees",
+        // ]);
 
-        User::create([
-            'name' => 'dHung',
-            'email' => 'dHung@gmail.com',
-            'password' => bcrypt('2005'),
-            'role' => "user",
-        ]);
+        // User::create([
+        //     'name' => 'dHung',
+        //     'email' => 'dHung@gmail.com',
+        //     'password' => bcrypt('2005'),
+        //     'role' => "user",
+        // ]);
 
-        User::create([
-            'name' => 'admin',
-            'email' => 'admin@gmail.com',
-            'password' => bcrypt('2005'),
-            'role' => "admin",
-        ]);
+        // User::create([
+        //     'name' => 'admin',
+        //     'email' => 'admin@gmail.com',
+        //     'password' => bcrypt('2005'),
+        //     'role' => "admin",
+        // ]);
     }
 }

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
 
-class checkLogin
+class RoleAdmin
 {
     /**
      * Handle an incoming request.
@@ -19,6 +19,10 @@ class checkLogin
         // chưa sử dụng
 
         if (!Auth::check()) {
+            return redirect()->route('wayLogin', ['page' => 'login']);
+        }
+
+        if (Auth::user()->role == "user") {
             return redirect()->route('wayLogin', ['page' => 'login']);
         }
 

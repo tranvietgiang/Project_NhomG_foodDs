@@ -23,6 +23,8 @@ use App\Http\Middleware\checkLogin;
 use App\Models\login;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\LastActivity;
+use App\Http\Middleware\RoleAdmin;
+use App\Http\Middleware\SessionEmail;
 use App\Models\district;
 use App\Models\Product;
 use App\Models\ward;
@@ -51,42 +53,58 @@ Route::get('/role/{page}', [LoginController::class, 'index'])
 /**
  * check login
  */
-Route::prefix('/login')->group(function () {
-    Route::post('/check', [LoginController::class, 'login'])->name('check');
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-    Route::post('/register', [LoginController::class, 'register'])->name('register');
-    Route::post('/forgot', [LoginController::class, 'forgot'])->name('forgot');
-    Route::get('/forgot_form', [LoginController::class, 'forgot_form'])->name('forgot_form');
-    Route::post('/update_pw', [LoginController::class, 'update_pw'])->name('update_pw');
+Route::prefix('/login')
+    ->group(function () {
+        Route::post('/check', [LoginController::class, 'login'])->name('check');
+        Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+        Route::post('/register', [LoginController::class, 'register'])->name('register');
+        Route::post('/forgot', [LoginController::class, 'forgot'])->name('forgot');
+        Route::get('/forgot_form', [LoginController::class, 'forgot_form'])->name('forgot_form');
+        Route::post('/update_pw', [LoginController::class, 'update_pw'])->name('update_pw');
+    });
+
+Route::get('/login/check', function () {
+    return redirect()->route('wayLogin', ['page' => 'login']);
+});
+Route::get('/login/logout', function () {
+    return redirect()->route('wayLogin', ['page' => 'login']);
+});
+Route::get('/login/register', function () {
+    return redirect()->route('wayLogin', ['page' => 'login']);
 });
 
 /**
  * show data role access form admin and employees and client 
+ * /role/admin/check
  */
-Route::prefix('/role/admin')->group(function () {
-    Route::get('/client', [AdminController::class, 'listClient'])->name('manager');
-    Route::get('/search_client', [AdminController::class, 'search_client'])->name('search_client');
-    Route::get('/employees', [AdminController::class, 'showEmployees'])->name('employees');
-    Route::get('/search_employees', [AdminController::class, 'search_staff'])->name('staff.search_employees');
-    Route::get('/search_employees/edit/view/{employees_id}', [AdminController::class, 'edit_view_staff'])->name('staff.view.edit');
-    Route::put('/search_employees/edit/{staff}', [AdminController::class, 'edit_staff'])->name('staff.edit');
-    Route::get('/search_employees/remove/{employees_id}', [AdminController::class, 'remove_staff'])->name('staff.remove');
-    Route::get('/search_employees/add', [AdminController::class, 'add_view_staff'])->name('staff.add.view');
-    Route::get('/search_employees/add/{employees_id}', [AdminController::class, 'add_staff'])->name('staff.add');
+Route::prefix('/role/admin')
+    ->middleware(RoleAdmin::class)
+    ->group(function () {
+        Route::get('/client', [AdminController::class, 'listClient'])->name('manager');
+        Route::get('/search_client', [AdminController::class, 'search_client'])->name('search_client');
+        Route::get('/employees', [AdminController::class, 'showEmployees'])->name('employees');
+        Route::get('/search_employees', [AdminController::class, 'search_staff'])->name('staff.search_employees');
+        Route::get('/search_employees/edit/view/{employees_id}', [AdminController::class, 'edit_view_staff'])->name('staff.view.edit');
+        Route::put('/search_employees/edit/{staff}', [AdminController::class, 'edit_staff'])->name('staff.edit');
+        Route::get('/search_employees/remove/{employees_id}', [AdminController::class, 'remove_staff'])->name('staff.remove');
+        Route::get('/search_employees/add', [AdminController::class, 'add_view_staff'])->name('staff.add.view');
+        Route::get('/search_employees/add/{employees_id}', [AdminController::class, 'add_staff'])->name('staff.add');
+    })->middleware(checkLogin::class);
 
-    /** product */
-    Route::get('/ui/view', [ProductTuyenController::class, 'view_admin_product'])->name('admin.view.product');
-    Route::get('/ui/product/add/view', [ProductTuyenController::class, 'add_view_product'])->name('admin.view.product-add');
-    Route::get('/ui/product/search', [ProductTuyenController::class, 'search_client_product'])->name('search.client.product');
-    Route::get('/ui/product/quantityStore', [ProductTuyenController::class, 'quantityStore'])->name('search.client.quantityStore');
-    Route::get('/ui/product/quantityStoreDesc', [ProductTuyenController::class, 'quantityStoreDesc'])->name('search.client.quantityStoreDesc');
-    Route::get('/ui/product/viewUpdate', [ProductTuyenController::class, 'ViewProductUpdate'])->name('admin.view.product.new');
-    Route::post('/ui/product/add', [ProductTuyenController::class, 'add_product'])->name('admin.add.product');
-    Route::get('/ui/product/edit/view', [ProductTuyenController::class, 'edit_view_product'])->name('admin.edit.view.product');
-    Route::post('/ui/product/edit', [ProductTuyenController::class, 'edit_product'])->name('admin.edit.product');
-    Route::get('/ui/product/remove', [ProductTuyenController::class, 'remove_product'])->name('admin.remove.product');
-})->middleware(checkLogin::class);
-
+Route::prefix("/check")
+    ->middleware(RoleAdmin::class)
+    ->group(function () {
+        Route::get('/ui/view', [ProductTuyenController::class, 'view_admin_product'])->name('admin.view.product');
+        Route::get('/ui/product/add/view', [ProductTuyenController::class, 'add_view_product'])->name('admin.view.product-add');
+        Route::get('/ui/product/search', [ProductTuyenController::class, 'search_client_product'])->name('search.client.product');
+        Route::get('/ui/product/quantityStore', [ProductTuyenController::class, 'quantityStore'])->name('search.client.quantityStore');
+        Route::get('/ui/product/quantityStoreDesc', [ProductTuyenController::class, 'quantityStoreDesc'])->name('search.client.quantityStoreDesc');
+        Route::get('/ui/product/viewUpdate', [ProductTuyenController::class, 'ViewProductUpdate'])->name('admin.view.product.new');
+        Route::post('/ui/product/add', [ProductTuyenController::class, 'add_product'])->name('admin.add.product');
+        Route::get('/ui/product/edit/view', [ProductTuyenController::class, 'edit_view_product'])->name('admin.edit.view.product');
+        Route::post('/ui/product/edit', [ProductTuyenController::class, 'edit_product'])->name('admin.edit.product');
+        Route::get('/ui/product/remove', [ProductTuyenController::class, 'remove_product'])->name('admin.remove.product');
+    });
 
 
 /**email form register */

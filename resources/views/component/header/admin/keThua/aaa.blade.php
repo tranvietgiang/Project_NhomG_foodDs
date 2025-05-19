@@ -27,14 +27,14 @@
 
         <div class="d-flex align-items-center">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <!-- name người đang sử dụng page chưa xong -->
+                <!-- name người đang sử dụng page kế thừ aaa.blade.php -->
                 @if (session('role_admin'))
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="#">{{ session('role_admin') }} </a>
+                        <a class="nav-link text-white" href="#">(QL) {{ session('role_admin') }} </a>
                     </li>
                 @elseif (session('role_employees'))
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="#">{{ session('role_employees') }} </a>
+                        <a class="nav-link text-white" href="#">(NV) {{ session('role_employees') }} </a>
                     </li>
                 @endif
             </ul>
