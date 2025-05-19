@@ -113,6 +113,7 @@
                             <span id="price_old_giang" class="old-price">
                                 {{ $product->product_price }}<sub>đ</sub></span>
                             <span class="discount">-35%</span>
+                            <!-- click để thêm sản phẩm  -->
                             <span>
                                 <a class="add-cart-btn addCartMany"
                                     data-url="{{ route('add.cartMany.giang', [
@@ -229,6 +230,7 @@
     });
 
 
+    /*click để thêm giỏ hàng*/
     $(document).on('click', '.renDeraddCartMany', function(e) {
         e.preventDefault();
 
@@ -257,7 +259,7 @@
 
 
 
-    // Hàm hiển thị thông báo
+    // Hàm hiển thị thông báo state sản phẩm
     function showCartAlert(message) {
         var alertMessage = $('#alert-add-cart');
         alertMessage.text(message); // Đặt nội dung thông báo

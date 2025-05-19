@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 class CartManyGController extends Controller
 {
     //
+    /** thêm sản phẩm vào giỏ hàng nếu mà sản phẩm đã tồn tịa thì tăng số lượng */
     public function add_cartMany(Request $req)
     {
 
