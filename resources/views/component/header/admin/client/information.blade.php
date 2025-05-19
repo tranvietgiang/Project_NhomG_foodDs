@@ -1,3 +1,4 @@
+<!-- git thông tin khách hàng -->
 <link rel="stylesheet" href="{{ asset('component/css/mdb.min.css') }}">
 <!-- Link icon  -->
 <link rel="Website icon" type="png" href="{{ asset('logo-website/login.png') }}">
