@@ -95,8 +95,7 @@ class ViewController extends Controller
     }
 
 
-    // cần fix
-    /** show cart sản phẩm mà khách hàng đã bấm mua ngay */
+    /** show cart sản phẩm mà khách hàng đã bấm mua ngay zalopay mua ngay */
     public function show_cart_mua_ngay(Request $req, $product_id)
     {
 
@@ -114,29 +113,6 @@ class ViewController extends Controller
             'image' => $product_get->product_image,
         ]);
 
-
-
-
-        // dd($a->product_id, $a->quantity_sp, $a->image);
-
-        // /** thêm sản phẩm vào cart để show ra */
-        // /** không thể code kiểu này với mua hàng ngay dc */
-        // $add_cart_sai = Cart::updateOrCreate(
-        //     /** Tham số đầu tiên: Là một mảng chứa các điều kiện tìm kiếm */
-        //     [
-        //         'user_id' => Auth::id(),
-        //         'product_id' => $product_id,
-        //     ],
-        //     /** tham số thứ 2
-        //      * Nếu có một bản ghi trong bảng Cart với user_id và product_id khớp, phương thức sẽ cập nhật bản ghi đó với giá trị mới:
-        //      */
-        //     [
-        //         'quantity_sp' => DB::raw('quantity_sp +' . $product_client_quantity),
-        //         'total_price' => $product_get->product_price,
-        //         'image' => $product_get->product_image,
-        //         'updated_at' => now(),
-        //     ]
-        //);
 
 
         $cart = Cart::select('carts.*', 'products.*')

@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 class PTTTController extends Controller
 {
     //
+    /** phương thức thanh toán mua ngay vnpay */
     public function vnpay_payment(Request $request)
     {
         // kiểm tra xem user đã có điạ chỉ chưa
@@ -124,7 +125,7 @@ class PTTTController extends Controller
         return redirect($vnp_Url);
     }
 
-    /** show ra bills */
+    /** show ra bills function nhận data để show ra sản phẩm của vnpay */
     public function vnpay_return(Request $request)
     {
 

@@ -321,6 +321,7 @@
                                 <button type="button" class="btn btn-plus plus">+</button>
                             </div>
 
+                            <!-- click để mua ngay sản phẩm -->
                             <div class="cta-buttons">
                                 <button id="button_pay" class="btn btn-buy-now" type="submit">
                                     <i class="bi bi-bag-check-fill"></i> MUA NGAY
