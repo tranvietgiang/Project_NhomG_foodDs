@@ -23,8 +23,7 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- giỏ  Hàng -->
-                <input type="hidden">
+                <input type="hidden" class="aa">
                 <!-- Giả sử bạn sẽ thêm sản phẩm vào đây bằng PHP -->
                 @foreach($cartItems as $item)
                 <tr>
