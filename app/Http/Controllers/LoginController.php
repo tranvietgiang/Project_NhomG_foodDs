@@ -53,6 +53,7 @@ class LoginController extends Controller
 
     /**
      * login : kiểm tra user có đăng nhập chưa
+     * git
      */
     public function login(Request $req)
     {
@@ -118,6 +119,7 @@ class LoginController extends Controller
     /**
      * laravel support
      * logout
+     * git
      */
     public function logout(Request $req)
     {

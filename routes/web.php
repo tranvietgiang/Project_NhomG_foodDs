@@ -53,6 +53,7 @@ Route::get('/role/{page}', [LoginController::class, 'index'])
 /**
  * check login
  */
+/** git */
 Route::prefix('/login')
     ->group(function () {
         Route::post('/check', [LoginController::class, 'login'])->name('check');
