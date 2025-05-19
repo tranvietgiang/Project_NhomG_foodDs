@@ -311,15 +311,13 @@ class ThanhToanNhieuItemController extends Controller
         }
     }
 
-
+    /** khi click chọn zalopay sẽ qua đây */
     public function vnpay(Request $request)
     {
 
         $temp = $request->input('arrShow');
         session()->put('arr', $temp);
         $totalPrice = $request->input('total_price_payment');
-
-
 
         $vnp_TmnCode = "PR7H47SW"; // Mã website của bạn tại VNPAY
         $vnp_HashSecret = "WGUPUW7FBTFZHEF52ZPMDZ7IMFWT1Z7K"; // Chuỗi bí mật

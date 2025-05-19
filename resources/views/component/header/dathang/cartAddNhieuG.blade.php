@@ -164,6 +164,8 @@
             </form>
         </div>
     </div>
+    <!-- git -->
+    <div></div>
 
 
     @if (session('success'))
