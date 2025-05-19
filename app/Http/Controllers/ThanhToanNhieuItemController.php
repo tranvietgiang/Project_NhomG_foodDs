@@ -100,7 +100,7 @@ class ThanhToanNhieuItemController extends Controller
     }
 
 
-    /** handle_amount */
+    /** handle_amount git */
     public function handle_amount(Request $request)
     {
         $itemId = $request->get('item_id');

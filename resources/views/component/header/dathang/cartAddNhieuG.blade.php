@@ -261,7 +261,7 @@
 
 
 
-        /*xử lý tăng giảm*/
+        /*xử lý tăng giảm git*/
         $('.quantity-control').each(function() {
             const $amountItem = $(this);
             const $btnAsc = $amountItem.find('.quantity_asc');
