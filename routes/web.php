@@ -217,7 +217,7 @@ Route::post('/list/heart/add', [CartManyGController::class, 'addHeartClient'])->
 
 Route::post('/amount/heart', [HeartGController::class, 'updateAmount'])->name('heart.amount.list');
 
-Route::get('/amount/heart/delete', [HeartGController::class, 'delete_heart'])->name('delete.heart.giang');
+Route::get('/amount/heart/delete', [HeartGController::class, 'delete_heart'])->name('delete.heart.giang'); // router delete sản phẩm yêu thích
 
 // hiện thị  sản phẩm yêu thích
 Route::get('/sanphamyeuthich', [ProductController::class, 'sanphamyeuthich'])->name('sanphamyeuthich');

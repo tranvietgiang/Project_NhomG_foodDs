@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class HeartGController extends Controller
 {
+    /** Update số lượng sản phẩm yêu thích */
     public function updateAmount(Request $request)
     {
         $heartId = $request->input('idHeart');
@@ -27,6 +28,7 @@ class HeartGController extends Controller
         }
     }
 
+    /** xóa sản phẩm yêu thích */
     public function delete_heart(Request $req)
     {
         listHeart::where('heart_id', $req->input('idHeartDelete'))->delete();
