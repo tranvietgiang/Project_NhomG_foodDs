@@ -1,6 +1,6 @@
 <!-- Import MDBootstrap CSS -->
 <link rel="stylesheet" href="{{ asset('component/css/mdb.min.css') }}">
-
+<!-- git forget -->
 <section class="d-flex justify-content-center align-items-center vh-100">
     <div class="card shadow-2-strong" style="width: 25rem;">
         <div class="card-body">
