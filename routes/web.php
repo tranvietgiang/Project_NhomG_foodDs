@@ -84,7 +84,7 @@ Route::prefix('/role/admin')
     ->middleware(RoleAdmin::class)
     ->group(function () {
         Route::get('/client', [AdminController::class, 'listClient'])->name('manager');
-        Route::get('/search_client', [AdminController::class, 'search_client'])->name('search_client');
+        Route::get('/search_client', [AdminController::class, 'search_client'])->name('search_client'); // search_client
         Route::get('/employees', [AdminController::class, 'showEmployees'])->name('employees');
         Route::get('/search_employees', [AdminController::class, 'search_staff'])->name('staff.search_employees'); // route staff.search_employees
         Route::get('/search_employees/edit/view/{employees_id}', [AdminController::class, 'edit_view_staff'])->name('staff.view.edit');
