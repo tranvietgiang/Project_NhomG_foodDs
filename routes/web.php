@@ -266,7 +266,7 @@ Route::get('/payment/view/many', [ThanhToanNhieuItemController::class, 'MyOrder'
 Route::post('/showVnPay/many', [ThanhToanNhieuItemController::class, 'vnpay'])->name('vnpay.payment.many') /*->middleware(checkLogin::class)*/;
 Route::get('/vnpay_payment/many', [ThanhToanNhieuItemController::class, 'call_vnpay_back'])->name('vnpay.payment.many.callback')/*->middleware(checkLogin::class)*/;
 
-Route::get('header/show/render', [ProductController::class, 'header_show_render'])->name('header.show.render');
+Route::get('header/show/render', [ProductController::class, 'header_show_render'])->name('header.show.render'); // route tìm kiếm gợi ý
 
 /** excel laravel */
 Route::get('/export-users', [EmployessController::class, 'export']);
