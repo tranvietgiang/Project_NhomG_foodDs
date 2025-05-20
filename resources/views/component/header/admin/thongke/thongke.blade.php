@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="{{ asset('component/css/mdb.min.css') }}">
-{{-- <a href="{{ url('/role/admin/employees') }}">home</a> --}}
+<a href="{{ url('/role/admin/client') }}">home</a>
 <div class="container mt-4">
 
     {{-- Thống kê tổng quan --}}
@@ -17,9 +17,9 @@
         <div class="col-md-2 col-sm-6">
             <div class="card bg-success text-center shadow">
                 <div class="card-body">
-                    <h2>46</h2>
-                    <p>SP bán chạy nhất</p>
-                    <a href="#" class="btn btn-light btn-sm">Chi tiết</a>
+                    <h2>{{ $sale_count ?? 0 }}</h2>
+                    <p>SP bán chạy nhất(10000000)</p>
+                    <a href="{{ route('statistics.saleProduct') }}" class="btn btn-light btn-sm">Chi tiết</a>
                 </div>
             </div>
         </div>
@@ -27,9 +27,9 @@
         <div class="col-md-2 col-sm-6">
             <div class="card bg-warning text-center shadow">
                 <div class="card-body">
-                    <h2>1</h2>
-                    <p>Top SP đánh giá </p>
-                    <a href="#" class="btn btn-light btn-sm">Chi tiết</a>
+                    <h2>{{ $review_count ?? 0 }}</h2>
+                    <p>Top sp đánh giá cao </p>
+                    <a href="{{ route('statistics.reviewGoods') }}" class="btn btn-light btn-sm">Chi tiết</a>
                 </div>
             </div>
         </div>
@@ -38,7 +38,7 @@
             <div class="card bg-danger text-center shadow">
                 <div class="card-body">
                     <h2>36</h2>
-                    <p>Duyệt yêu cầu nhập</p>
+                    <p> TOP khách hàng mua hàng</p>
                     <a href="#" class="btn btn-light btn-sm">Chi tiết</a>
                 </div>
             </div>
@@ -47,9 +47,9 @@
         <div class="col-md-2 col-sm-6">
             <div class="card bg-primary text-center shadow">
                 <div class="card-body">
-                    <h2>34</h2>
-                    <p>CT nhập chưa duyệt</p>
-                    <a href="#" class="btn btn-light btn-sm">Chi tiết</a>
+                    <h2>{{ $potential_count ?? 0 }}</h2>
+                    <p>Top người hay vao website</p>
+                    <a href="{{ route('statistics.potential_customers') }}" class="btn btn-light btn-sm">Chi tiết</a>
                 </div>
             </div>
         </div>
