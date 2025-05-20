@@ -17,6 +17,7 @@ use App\Http\Controllers\ProductTuyenController;
 use App\Http\Controllers\PTTTController;
 use App\Http\Controllers\ViewController;
 use App\Http\Controllers\SDTController;
+use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\ThanhToanNhieuItemController;
 use App\Http\Controllers\ZaloPayController;
 use App\Http\Middleware\checkLogin;
@@ -270,3 +271,7 @@ Route::get('header/show/render', [ProductController::class, 'header_show_render'
 /** excel laravel */
 Route::get('/export-users', [EmployessController::class, 'export']);
 Route::get('/export-customers', [ExcelClientController::class, 'export'])->name('export.customers');
+
+/** thống kê */
+Route::get('/thong/ke', [StatisticsController::class, 'view'])->name('statistics.view');
+Route::get('/thong/ke/quantity_store', [StatisticsController::class, 'quantitysp_store'])->name('statistics.quantity_store');
