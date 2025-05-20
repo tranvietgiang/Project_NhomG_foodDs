@@ -62,4 +62,15 @@ class CategoryController extends Controller
         $category->delete();
         return redirect()->back()->with('success', 'Xóa thành công');
     }
+
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+
+        $categories = Categorie::where('categories_name', 'like', '%' . $search . '%')
+            ->latest()
+            ->paginate(10);
+
+        return view('component.content.categories.viewcategories', compact('categories'));
+    }
 }

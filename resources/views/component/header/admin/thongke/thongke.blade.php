@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="{{ asset('component/css/mdb.min.css') }}">
-
+{{-- <a href="{{ url('/role/admin/employees') }}">home</a> --}}
 <div class="container mt-4">
 
     {{-- Thống kê tổng quan --}}

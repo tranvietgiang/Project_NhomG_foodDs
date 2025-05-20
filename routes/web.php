@@ -14,6 +14,7 @@ use App\Http\Controllers\HeartGController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductTuyenController;
+use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\PTTTController;
 use App\Http\Controllers\ViewController;
 use App\Http\Controllers\SDTController;
@@ -174,8 +175,7 @@ Route::get('/delete/client_comment/{review_id}', [ProductController::class, 'del
 Route::get('/update/review/{review_id}', [ProductController::class, 'update_review'])->name('client.comment.update')->middleware(checkLogin::class); // router edit comment
 Route::get('/getAvatar/hi', [ProductController::class, 'getAvatar']); // get avatar
 
-/** categories hung crud */
-Route::resource('categories', CategoryController::class);
+
 
 /** zaloPay */
 Route::post('/zaloPay/payment', [ZaloPayController::class, 'zalopay'])->name('zalo.payment');
@@ -275,3 +275,12 @@ Route::get('/export-customers', [ExcelClientController::class, 'export'])->name(
 /** thống kê */
 Route::get('/thong/ke', [StatisticsController::class, 'view'])->name('statistics.view');
 Route::get('/thong/ke/quantity_store', [StatisticsController::class, 'quantitysp_store'])->name('statistics.quantity_store');
+
+/** duy hưng */
+Route::resource('promotions', PromotionController::class)->except(['show']);
+Route::get('/promotions/search', [PromotionController::class, 'search'])->name('promotions.search');
+
+/** categories hung crud */
+Route::resource('categories', CategoryController::class)->except(['show']);;
+/** search duy hung */
+Route::get('/categories/search', [CategoryController::class, 'search'])->name('categories.search');
