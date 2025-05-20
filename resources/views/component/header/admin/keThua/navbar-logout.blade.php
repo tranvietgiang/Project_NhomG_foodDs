@@ -59,7 +59,7 @@
     </div>
 </nav>
 
-<!-- search -->
+<!-- search client paginate -->
 <div>
     <form action="{{ route('search_client') }}" method="get">
         <div class="input-group">

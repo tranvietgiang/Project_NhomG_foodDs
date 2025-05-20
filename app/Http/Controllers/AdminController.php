@@ -80,7 +80,7 @@ class AdminController extends Controller
         return view('component.header.admin.client.form-info-detail', compact('user_detail'));
     }
 
-    /** show information client */
+    /** show information client search client paginate */
     public function search_client(Request $reqName)
     {
         $keyword = $reqName->input('search');
