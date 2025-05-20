@@ -50,7 +50,7 @@
     </div>
 </nav>
 
-<!-- search -->
+<!-- search employees -->
 <div>
     <form action="{{ route('staff.search_employees') }}" method="get">
         <div class="input-group">
