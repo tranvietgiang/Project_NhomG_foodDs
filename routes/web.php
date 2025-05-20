@@ -86,7 +86,7 @@ Route::prefix('/role/admin')
         Route::get('/client', [AdminController::class, 'listClient'])->name('manager');
         Route::get('/search_client', [AdminController::class, 'search_client'])->name('search_client');
         Route::get('/employees', [AdminController::class, 'showEmployees'])->name('employees');
-        Route::get('/search_employees', [AdminController::class, 'search_staff'])->name('staff.search_employees');
+        Route::get('/search_employees', [AdminController::class, 'search_staff'])->name('staff.search_employees'); // route staff.search_employees
         Route::get('/search_employees/edit/view/{employees_id}', [AdminController::class, 'edit_view_staff'])->name('staff.view.edit');
         Route::put('/search_employees/edit/{staff}', [AdminController::class, 'edit_staff'])->name('staff.edit');
         Route::get('/search_employees/remove/{employees_id}', [AdminController::class, 'remove_staff'])->name('staff.remove');

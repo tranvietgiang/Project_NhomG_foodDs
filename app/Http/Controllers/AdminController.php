@@ -97,7 +97,7 @@ class AdminController extends Controller
         return view('component.header.admin.client.list-client', compact('list_client'));
     }
 
-
+    /**staff.search_employees */
     public function search_staff(Request $req)
     {
         $keyword = $req->input('search_staff');
