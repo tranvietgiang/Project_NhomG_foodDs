@@ -268,7 +268,7 @@ class ProductController extends Controller
     }
 
 
-    /** fun this have featured whe clien only input search thì will show recommnet */
+    /** fun this have featured whe clien only input search thì will show recommnet gợi ý */
     public function header_show_render(Request $req)
     {
         $value = $req->get('valueSearch');

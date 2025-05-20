@@ -28,7 +28,7 @@
 
                 <ul class="nav-1 d-flex align-items-center">
 
-                    <!-- handle event input search -->
+                    <!-- handle event input search gợi ý -->
                     <li class="search-bar">
                         <form id="form-search" action="{{ route('seach') }}" method="get">
                             <div class="form-outline input-group mb-0 " data-mdb-input-init>
@@ -307,6 +307,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<!-- tìm kiếm sản phẩm gợi ý trang header -->
 <script>
     $("#key-word").on("input", function() {
         let search = $(this).val().trim().toLowerCase();
