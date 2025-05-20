@@ -272,9 +272,12 @@ Route::get('header/show/render', [ProductController::class, 'header_show_render'
 Route::get('/export-users', [EmployessController::class, 'export']);
 Route::get('/export-customers', [ExcelClientController::class, 'export'])->name('export.customers');
 
-/** thống kê */
+/** thống kê giang*/
 Route::get('/thong/ke', [StatisticsController::class, 'view'])->name('statistics.view');
 Route::get('/thong/ke/quantity_store', [StatisticsController::class, 'quantitysp_store'])->name('statistics.quantity_store');
+Route::get('/thong/ke/saleProduct', [StatisticsController::class, 'sale'])->name('statistics.saleProduct');
+Route::get('/thong/ke/logincount', [StatisticsController::class, 'potential_customers'])->name('statistics.potential_customers');
+Route::get('/thong/ke/reviewGoods', [StatisticsController::class, 'reviewGoods'])->name('statistics.reviewGoods');
 
 /** duy hưng */
 Route::resource('promotions', PromotionController::class)->except(['show']);
