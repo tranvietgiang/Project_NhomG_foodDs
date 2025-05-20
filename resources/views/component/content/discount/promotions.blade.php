@@ -52,6 +52,7 @@
         color: white;
     }
 </style>
+
 <section class="row">
     <!-- Sidebar -->
     <div class="sidebar col-4">
@@ -59,15 +60,16 @@
             <li class="d-flex justify-content-center m-4">
                 <h3>Dashboard</h3>
             </li>
-
-            <!-- page categories -->
+            <!-- nếu admin đổi thành quản lý -->
             @if (Auth::check() && Auth::user()->role == 'admin')
-                <li class="active"><a href="{{ url('categories') }}"><i class="fas fa-box"></i> Quản Lý Phân loại</a>
+                <li class="active"><a href="#"><i class="fas fa-users"></i> Quản Lý Mã giảm giá</a>
                 </li>
             @else
-                <li class="active"><a href="{{ url('categories') }}"><i class="fas fa-box"></i> DS Phân loại</a></li>
+                <li class="active"><a href=""><i class="fas fa-users"></i> DS Mã giảm giá</a>
+                </li>
             @endif
 
+            </li>
             <!-- nếu admin đổi thành quản lý -->
             @if (Auth::check() && Auth::user()->role == 'admin')
                 <li class=""><a href="{{ route('employees') }}"><i class="fas fa-users"></i> Quản Lý Nhân Viên</a>
@@ -75,6 +77,7 @@
             @else
                 <li class=""><a href="{{ route('employees') }}"><i class="fas fa-users"></i> DS Nhân Viên</a></li>
             @endif
+
 
             <!-- page product -->
             @if (Auth::check() && Auth::user()->role == 'admin')
@@ -84,7 +87,13 @@
                 <li><a href="{{ route('admin.view.product') }}"><i class="fas fa-box"></i> DS Sản Phẩm</a></li>
             @endif
 
-
+            <!-- page categories -->
+            @if (Auth::check() && Auth::user()->role == 'admin')
+                <li class=""><a href="{{ url('categories') }}"><i class="fas fa-box"></i> Quản Lý Phân loại</a>
+                </li>
+            @else
+                <li><a href="{{ url('categories') }}"><i class="fas fa-box"></i> DS Phân loại</a></li>
+            @endif
 
             <!-- page client -->
             @if (Auth::check() && Auth::user()->role == 'admin')
@@ -94,16 +103,9 @@
                 <li><a href="{{ route('manager') }}"><i class="fas fa-box"></i> DS khách hàng</a></li>
             @endif
 
-            <!-- page -->
-            @if (Auth::check() && Auth::user()->role == 'admin')
-                <li><a href="{{ route('promotions.index') }}"><i class="fas fa-envelope"></i>QL Mã giảm giá</a></li>
-            @else
-                <li><a href="{{ route('promotions.index') }}"><i class="fas fa-box"></i>DS Mã giảm giá</a></li>
-            @endif
-
             <!-- page client -->
             @if (Auth::check() && Auth::user()->role == 'admin')
-                <li><a href="{{ route('statistics.view') }}"><i class="fas fa-box"></i> Thống kê</a>
+                <li><a href="{{ route('manager') }}"><i class="fas fa-box"></i> Thống kê</a>
                 </li>
             @endif
 
@@ -127,39 +129,31 @@
             </li>
         </ul>
     </div>
-    <!--  -->
+
     <div class="table-container mt-4 col-9">
-
-        <!-- search -->
-        <div>
-            <form action="{{ route('categories.search') }}" method="get">
-                <div class="input-group">
-                    <input type="search" class="form-control rounded" name="search" placeholder="Search" required />
-                    <button type="submit" class="btn btn-primary"> tìm</button>
-                </div>
-            </form>
-        </div>
-
-        <!-- nút thêm -->
         <div class="card">
-            @if (Auth::check() && Auth::user()->role == 'admin')
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="card-title mb-0">Quản Lý Loại Sản Phẩm</h3>
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="card-title mb-0">Quản Lý Mã Giảm Giá</h3>
+                <!-- search -->
+                <div>
+                    <form action="{{ route('promotions.search') }}" method="get">
+                        <div class="input-group">
+                            <input type="search" class="form-control rounded" name="search" placeholder="Search"
+                                required />
+                            <button type="submit" class="btn btn-primary"> tìm</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- click thêm -->
+                @if (Auth::check() && Auth::user()->role == 'admin')
                     <button class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#addModal">
-                        <i class="fas fa-plus me-2"></i>Thêm Loại Sản Phẩm
+                        <i class="fas fa-plus me-2"></i>Thêm Mã Giảm Giá
                     </button>
-                </div>
-            @else
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="card-title mb-0">DS Loại Sản Phẩm</h3>
-                </div>
-            @endif
+                @endif
+            </div>
 
             <div class="card-body">
-                @if (session('destroy-categories-failed'))
-                    <div class="alert alert-warning">{{ session('destroy-categories-failed') }}</div>
-                @endif
-
                 @if (session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
@@ -174,31 +168,48 @@
                     </div>
                 @endif
 
-
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Tên Loại</th>
+                                <th>Mã</th>
+                                <th>Tên</th>
+                                <th>Loại</th>
+                                <th>Giá trị</th>
+                                <th>Đã dùng/Giới hạn</th>
+                                <th>Thời gian</th>
+                                <th>Trạng thái</th>
                                 @if (Auth::check() && Auth::user()->role == 'admin')
                                     <th>Thao Tác</th>
                                 @endif
                             </tr>
                         </thead>
                         <tbody>
-                            @if (Auth::check() && Auth::user()->role == 'admin')
-
-                                @foreach ($categories as $category)
-                                    <tr>
-                                        <td>{{ $category->categories_id }}</td>
-                                        <td>{{ $category->categories_name }}</td>
+                            @foreach ($promotions as $promotion)
+                                <tr>
+                                    <td>{{ $promotion->code }}</td>
+                                    <td>{{ $promotion->name }}</td>
+                                    <td>{{ $promotion->type == 'percentage' ? 'Phần trăm' : 'Số tiền' }}</td>
+                                    <td>{{ $promotion->type == 'percentage' ? $promotion->value . '%' : number_format($promotion->value) . 'đ' }}
+                                    </td>
+                                    <td>{{ $promotion->used_count }}/{{ $promotion->usage_limit ?? 'Không giới hạn' }}
+                                    </td>
+                                    <td>
+                                        {{ $promotion->start_date->format('d/m/Y') }} -
+                                        {{ $promotion->end_date->format('d/m/Y') }}
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-{{ $promotion->is_active ? 'success' : 'danger' }}">
+                                            {{ $promotion->is_active ? 'Hoạt động' : 'Hết hạn' }}
+                                        </span>
+                                    </td>
+                                    @if (Auth::check() && Auth::user()->role == 'admin')
                                         <td>
                                             <button class="btn btn-sm btn-warning" data-mdb-toggle="modal"
-                                                data-mdb-target="#editModal{{ $category->categories_id }}">
+                                                data-mdb-target="#editModal{{ $promotion->id }}">
                                                 <i class="fas fa-edit"></i> Sửa
                                             </button>
-                                            <form action="{{ route('categories.destroy', $category->categories_id) }}"
+                                            <form action="{{ route('promotions.destroy', $promotion->id) }}"
                                                 method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
@@ -208,39 +219,61 @@
                                                 </button>
                                             </form>
                                         </td>
-                                    </tr>
-                                @endforeach
-                            @else
-                                @foreach ($categories as $category)
-                                    <tr>
-                                        <td>{{ $category->categories_id }}</td>
-                                        <td>{{ $category->categories_name }}</td>
-                                    </tr>
-                                @endforeach
-                            @endif
-
+                                    @endif
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
+                    <p>
+                        {{ $promotions->links('pagination::bootstrap-4') }}
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 
+
+
     <!-- Modal Thêm -->
     <div class="modal fade" id="addModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="{{ route('categories.store') }}" method="POST">
+                <form action="{{ route('promotions.store') }}" method="POST">
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title">Thêm Loại Sản Phẩm Mới</h5>
+                        <h5 class="modal-title">Thêm Mã Giảm Giá Mới</h5>
                         <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
                         <div class="form-outline mb-4">
-                            <input type="text" id="categories_name" name="categories_name" class="form-control"
-                                required />
-                            <label class="form-label" for="categories_name">Tên Loại</label>
+                            <input type="text" id="code" name="code" class="form-control" required />
+                            <label class="form-label" for="code">Mã giảm giá</label>
+                        </div>
+                        <div class="form-outline mb-4">
+                            <input type="text" id="name" name="name" class="form-control" required />
+                            <label class="form-label" for="name">Tên chương trình</label>
+                        </div>
+                        <div class="mb-4">
+                            <select class="form-select" name="type" required>
+                                <option value="percentage">Giảm theo phần trăm</option>
+                                <option value="fixed">Giảm số tiền cố định</option>
+                            </select>
+                        </div>
+                        <div class="form-outline mb-4">
+                            <input type="number" id="value" name="value" class="form-control" required />
+                            <label class="form-label" for="value">Giá trị</label>
+                        </div>
+                        <div class="form-outline mb-4">
+                            <input type="number" id="usage_limit" name="usage_limit" class="form-control" />
+                            <label class="form-label" for="usage_limit">Giới hạn sử dụng</label>
+                        </div>
+                        <div class="mb-4">
+                            <label>Thời gian bắt đầu</label>
+                            <input type="datetime-local" name="start_date" class="form-control" required />
+                        </div>
+                        <div class="mb-4">
+                            <label>Thời gian kết thúc</label>
+                            <input type="datetime-local" name="end_date" class="form-control" required />
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -253,25 +286,25 @@
     </div>
 
     <!-- Modal Sửa -->
-    @foreach ($categories as $category)
-        <div class="modal fade" id="editModal{{ $category->categories_id }}" tabindex="-1">
+    @foreach ($promotions as $promotion)
+        <div class="modal fade" id="editModal{{ $promotion->id }}" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <form action="{{ route('categories.update', $category->categories_id) }}" method="POST">
+                    <form action="{{ route('promotions.update', $promotion->id) }}" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="modal-header">
-                            <h5 class="modal-title">Sửa Loại Sản Phẩm</h5>
+                            <h5 class="modal-title">Sửa Mã Giảm Giá</h5>
                             <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
                         </div>
                         <div class="modal-body">
+                            <!-- Các trường giống form thêm mới -->
                             <div class="form-outline mb-4">
-                                <input type="text" id="categories_name{{ $category->categories_id }}"
-                                    name="categories_name" class="form-control"
-                                    value="{{ $category->categories_name }}" required />
-                                <label class="form-label" for="categories_name{{ $category->categories_id }}">Tên
-                                    Loại</label>
+                                <input type="text" id="code{{ $promotion->id }}" name="code"
+                                    class="form-control" value="{{ $promotion->code }}" required />
+                                <label class="form-label" for="code{{ $promotion->id }}">Mã giảm giá</label>
                             </div>
+                            <!-- Thêm các trường khác tương tự -->
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Đóng</button>
@@ -282,12 +315,6 @@
             </div>
         </div>
     @endforeach
-    </div>
 </section>
-<!-- Scripts -->
+
 <script src="{{ asset('component/js/mdb.umd.min.js') }}"></script>
-
-
-{{-- 
-<!-- jQuery (cần cho modal) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}

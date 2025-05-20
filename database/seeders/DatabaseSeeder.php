@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Categorie;
 use App\Models\Product;
+use App\Models\Promotion;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -18,7 +19,7 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         $this->call([
-            UserSeeders::class,
+            // UserSeeders::class,
             // CategorieSeeders::class,
             // ProductsSeeder::class,
             // DayMonthYearSeeder::class,
@@ -26,6 +27,7 @@ class DatabaseSeeder extends Seeder
             // UserSeeders::class,
             // DiscountSeeder::class
             // ClientSeeders::class
+            // promotionsSeeder::class
 
         ]);
     }

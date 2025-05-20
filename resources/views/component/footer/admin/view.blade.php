@@ -142,6 +142,20 @@
                 <li><a href="{{ route('manager') }}"><i class="fas fa-box"></i> DS khách hàng</a></li>
             @endif
 
+
+            <!-- page -->
+            @if (Auth::check() && Auth::user()->role == 'admin')
+                <li><a href="{{ route('promotions.index') }}"><i class="fas fa-envelope"></i>QL Mã giảm giá</a></li>
+            @else
+                <li><a href="{{ route('promotions.index') }}"><i class="fas fa-box"></i>DS Mã giảm giá</a></li>
+            @endif
+
+            <!-- page client -->
+            @if (Auth::check() && Auth::user()->role == 'admin')
+                <li><a href="{{ route('statistics.view') }}"><i class="fas fa-box"></i> Thống kê</a>
+                </li>
+            @endif
+
             <li><a href="#"><i class="fas fa-envelope"></i> Tin Nhắn</a></li>
 
             <!-- client need support -->
