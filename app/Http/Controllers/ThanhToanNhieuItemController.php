@@ -12,6 +12,8 @@ use App\Models\ThanhToanNhieuItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\ZaloPayTemp;
+
 
 class ThanhToanNhieuItemController extends Controller
 {
@@ -195,10 +197,10 @@ class ThanhToanNhieuItemController extends Controller
         ]);
     }
 
-    /** git zalo mua nhiều */
+    /** git zalo mua nhiều cần fix */
+
     public function zalopay(Request $request)
     {
-        // Lấy cấu hình từ .env
         $config = [
             "appid" => 553,
             "key1" => "9phuAOYhan4urywHTh0ndEXiV3pKHr5Q",
@@ -206,43 +208,45 @@ class ThanhToanNhieuItemController extends Controller
             "endpoint" => "https://sandbox.zalopay.com.vn/v001/tpe/createorder"
         ];
 
-        $temp = $request->input('arrShow');
-        $arr = session()->put('arr', $temp);
-        // dd($temp);
+        // arrShow là chuỗi JSON → decode thành mảng
+        $jsonString = $request->input('arrShow');
+        $temp = json_decode($jsonString, true); // ✅ mảng thực sự
 
+        if (!is_array($temp)) {
+            return response("arrShow không hợp lệ", 400);
+        }
 
         $totalPrice = (int) $request->input('total_price_payment');
+        $apptransid = date("ymd") . "_" . uniqid();
+
+        // Lưu tạm vào DB
+        ZaloPayTemp::create([
+            'trans_id' => $apptransid,
+            'user_id' => Auth::id(),
+            'data' => json_encode($temp, JSON_UNESCAPED_UNICODE)
+        ]);
 
         $embeddata = [
-            "merchantinfo" => "embeddata123",
-
-            "redirecturl" => route('zalo.many.callback'),
+            "merchantinfo" => "ZaloManyItem",
+            "redirecturl" => route('zalo.many.callback')
         ];
-
-
-        // Tính tổng số tiền từ các items
 
         $order = [
             "appid" => $config["appid"],
-            "apptime" => round(microtime(true) * 1000), // milliseconds
-            "apptransid" => date("ymd") . "_" . uniqid(), // mã giao dịch
+            "apptime" => round(microtime(true) * 1000),
+            "apptransid" => $apptransid,
             "appuser" => Auth::id(),
-            "item" => json_encode($arr, JSON_UNESCAPED_UNICODE),
+            "item" => json_encode('', JSON_UNESCAPED_UNICODE),
             "embeddata" => json_encode($embeddata, JSON_UNESCAPED_UNICODE),
             "amount" => $totalPrice,
-            "description" => "ZaloPay Integration Demo",
-            // Thay đổi hoặc bỏ qua bankcode để hiển thị trang chọn ngân hàng
-            // "bankcode" => "zalopayapp"
+            "description" => "ZaloPay Mua nhiều sản phẩm"
         ];
 
-
-        // Tạo chuỗi dữ liệu để tính MAC
         $data = $order["appid"] . "|" . $order["apptransid"] . "|" . $order["appuser"] . "|" . $order["amount"]
             . "|" . $order["apptime"] . "|" . $order["embeddata"] . "|" . $order["item"];
 
         $order["mac"] = hash_hmac("sha256", $data, $config["key1"]);
 
-        // Gửi yêu cầu tới ZaloPay API
         $context = stream_context_create([
             "http" => [
                 "header" => "Content-type: application/x-www-form-urlencoded\r\n",
@@ -251,68 +255,72 @@ class ThanhToanNhieuItemController extends Controller
             ]
         ]);
 
-
-
-
         $resp = file_get_contents($config["endpoint"], false, $context);
         $result = json_decode($resp, true);
 
-        // Kiểm tra kết quả trả về từ ZaloPay
         if (isset($result['orderurl'])) {
-            header("Location: " . $result['orderurl']);
-            exit();
-        } else {
-            echo "error-khong-gui-dc";
+            return redirect($result['orderurl']);
         }
+
+        return response("error-khong-gui-dc", 400);
     }
 
     /* git zalopay mua nhiều*/
     public function callback_many_zalopay(Request $request)
     {
-        // Xử lý kết quả thanh toán từ ZaloPay
-        $result = $request->all(); // Lấy tất cả dữ liệu trả về từ ZaloPay
+        $transId = $request->input('apptransid');
 
-        $temp = session('arr', []);
-        $arr = json_decode($temp);
-        $count_arr = count($arr);
-        // dd($temp, $count_arr);
+        $temp = ZaloPayTemp::where('trans_id', $transId)->first();
 
-
-        if (isset($result['status']) && $result['status'] == 1) {
-
-            foreach ($arr as $item) {
-                Cart_buyed::create([
-                    'cart_id' => $item->cart_id,
-                    'user_id' => Auth::id(),
-                    'product_id' => $item->product_id,
-                    'quantity_sp' => $item->quantity_sp,
-                    'total_price' => $item->total_price,
-                    'image' =>  $item->image,
-                ]);
-
-                // 1. Tạo bill
-                $bill = bill::create([
-                    'user_id' => Auth::id(),
-                    'cart_id' => $item->cart_id,
-                    'method_payment_id' => 3 // zalopay
-                ]);
-
-                // 2. Tạo bill_product
-                bill_product::create([
-                    'bill_id' => $bill->bill_id,
-                    'product_id' =>  $item->product_id,
-                    'quantity' => $item->quantity_sp,
-                ]);
-
-                /** sau khi thanh toán thành công thì xóa đi cart của client */
-                Cart::where('user_id', Auth::id())->where('cart_id', $item->cart_id,)->delete();
-            }
-
-            return redirect()->route('payment.many.payment.success');
-        } else {
+        if (!$temp) {
             return redirect()->route('payment.many.payment.failed');
         }
+
+        $arr = json_decode($temp->data, true);
+
+        if (!is_array($arr)) {
+            return redirect()->route('payment.many.payment.failed');
+        }
+
+        $arr = collect($arr)->unique('cart_id')->values()->all(); // 
+
+        if ($request->input('status') == 1) {
+            foreach ($arr as $item) {
+                Cart_buyed::create([
+                    'cart_id' => $item['cart_id'],
+                    'user_id' => $temp->user_id,
+                    'product_id' => $item['product_id'],
+                    'quantity_sp' => $item['quantity_sp'],
+                    'total_price' => $item['total_price'],
+                    'image' => $item['image'],
+                ]);
+
+                $bill = bill::create([
+                    'user_id' => $temp->user_id,
+                    'cart_id' => $item['cart_id'],
+                    'method_payment_id' => 3
+                ]);
+
+                bill_product::create([
+                    'bill_id' => $bill->bill_id,
+                    'product_id' => $item['product_id'],
+                    'quantity' => $item['quantity_sp'],
+                ]);
+
+                Cart::where('user_id', $temp->user_id)
+                    ->where('cart_id', $item['cart_id'])
+                    ->delete();
+            }
+
+            $temp->delete(); // xoá dữ liệu tạm
+            return redirect()->route('payment.many.payment.success');
+        }
+
+        return redirect()->route('payment.many.payment.failed');
     }
+
+
+
 
     /** khi click chọn vnpay sẽ qua đây */
     public function vnpay(Request $request)
