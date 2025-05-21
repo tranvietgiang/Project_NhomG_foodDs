@@ -278,6 +278,9 @@ Route::get('/thong/ke/quantity_store', [StatisticsController::class, 'quantitysp
 Route::get('/thong/ke/saleProduct', [StatisticsController::class, 'sale'])->name('statistics.saleProduct');
 Route::get('/thong/ke/logincount', [StatisticsController::class, 'potential_customers'])->name('statistics.potential_customers');
 Route::get('/thong/ke/reviewGoods', [StatisticsController::class, 'reviewGoods'])->name('statistics.reviewGoods');
+Route::get('/thong/ke/top/clients', [StatisticsController::class, 'top_client'])->name('statistics.top_clients');
+Route::post('/thong/ke/qty', [StatisticsController::class, 'qty'])->name('statistics.qty');
+Route::get('/admin/statistics/sale_not_buy', [StatisticsController::class, 'sale_not_buy'])->name('statistics.sale_not_buy');
 
 /** duy hưng */
 Route::resource('promotions', PromotionController::class)->except(['show']);
