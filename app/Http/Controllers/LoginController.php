@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\RateLimiter;
 
 class LoginController extends Controller
 {
@@ -57,30 +57,56 @@ class LoginController extends Controller
      */
     public function login(Request $req)
     {
+        $originalEmail = $_POST['email'] ?? '';
+        $email = trim($originalEmail);
+        $password = $req->input('password');
+        // dd($password);
 
-        if (empty($req->email) || empty($req->password)) {
+
+
+        $key = 'login|' . $req->ip();
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            $seconds = RateLimiter::availableIn($key);
+            return redirect()->back()->with("login-seconds", "Quá nhiều lần thử đăng nhập. Vui lòng thử lại sau $seconds giây.");
+        }
+
+        /**check client entered? */
+        if (empty($email) || empty($password)) {
+            RateLimiter::hit($key, 60);
             return  redirect()->back()->with('email-password-empty', 'Vui lòng nhập đầy đủ email or password');
         }
 
         // Kiểm tra email hợp lệ trước khi truy vấn database
-        if (!filter_var($req->email, FILTER_VALIDATE_EMAIL)) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            RateLimiter::hit($key, 60);
             return redirect()->back()->with('invalid-email', 'Email không hợp lệ, vui lòng nhập lại.');
         }
 
-        // Kiểm tra mật khẩu phải có ít nhất 5 ký tự
-        if (strlen($req->password) < 4) {
-            return redirect()->back()->with('short-password', 'Mật khẩu phải có ít nhất 4 ký tự.');
+        // Chặn nếu người dùng nhập khoảng trắng ở đầu/cuối email
+        if ($originalEmail != $email) {
+            RateLimiter::hit($key, 60);
+            return redirect()->back()->with("email-space", "Email không được chứa khoảng trắng ở đầu hoặc cuối!");
         }
 
-        $req->validate([
-            'email' => 'required|email', // yêu cầu phải là email
-            'password' => 'required|min:4', // yêu cầu password tối hiểu 4 ký tự
-        ]);
+        // Kiểm tra mật khẩu phải có ít nhất 5 ký tự
+        $length_pass = strlen($password);
+        if ($length_pass < 8 || $length_pass > 72) {
+            RateLimiter::hit($key, 60);
+            return redirect()->back()->with('short-password', 'Mật khẩu không được nhỏ hơn 8 và lớn hơn 72 ký tự!');
+        }
 
-        /** email have exists in database */
+        if (!Auth::attempt($req->only('email', 'password'))) {
+            // Nếu sai thì tăng số lần thử
+            RateLimiter::hit($key, 60);
+            return redirect()->back()->with('wrong-password', 'mật khẩu không đúng!');
+        }
+
+        /** email not exists in database */
         if (!User::where('email', $req->email)->exists()) {
             return  redirect()->back()->with('email-not-exists', 'Email này chưa được đăng ký vào tài khoản');
         }
+
+
 
 
         /**
@@ -89,7 +115,7 @@ class LoginController extends Controller
          */
         if (Auth::attempt($req->only('email', 'password'))) {
             $user = Auth::user();
-
+            RateLimiter::clear($key);
             if ($user->role == 'admin') {
                 /** lấy name */
                 session()->put('role_admin', $user->name);
@@ -107,9 +133,11 @@ class LoginController extends Controller
                 session()->put('role_client', $user->name);
                 session()->put('role_client_email', $user->email);
                 return redirect()->route('website-main');
+            } else {
+                // Trường hợp không hợp lệ
+                Auth::logout(); // Đăng xuất để tránh đăng nhập bất thường
             }
         }
-
         return redirect()->back()->withErrors([
             'login-failed' =>
             'email hoặc mật khẩu sai',
@@ -245,20 +273,12 @@ class LoginController extends Controller
     /** register email otp git */
     public function Register(Request $req)
     {
-        // laravel sẽ tự động kiểm tra xem có trường nào ko đúng request sẽ gửi thông báo error
-        $req->validate([
-            'username' => 'required|max:50',
-            'username' => 'required|min:6',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:4|confirmed'
-        ], [
-            'username.max' => 'Username không được vượt quá 50 ký tự.',
-            'username.min' => 'Username không được nhỏ hơn 6 ký tự.',
-            'email.unique' => 'Email đã tồn tại, vui lòng sử dụng email khác!',
-            'password.min' => 'Trường mật khẩu phải có ít nhất 4 ký tự.',
-            'password.confirmed' => 'Mật khẩu không trùng nhau' //dùng confirmed khi có một field xác nhận tương ứng, ví dụ
-        ]);
-
+        /*explain: alpha_num:
+         * Chữ cái trong alpha_num:
+         * Chỉ bao gồm các ký tự chữ cái từ a-z và A-Z (theo bảng chữ cái Latinh, tức là ký tự ASCII).
+         * Không bao gồm các ký tự chữ cái từ các ngôn ngữ khác như tiếng Nhật (hiragana, katakana, kanji), tiếng Trung, tiếng Hàn, v.v.
+         * Không bao gồm các ký tự đặc biệt (như @, #, $, v.v.) hoặc dấu cách (space).
+         */
         /**
          * 📌 Giải thích từng phần:
          * 
@@ -276,16 +296,79 @@ class LoginController extends Controller
 
          * confirmed: Laravel sẽ kiểm tra xem có password_confirmation không, nếu không có hoặc không khớp, sẽ báo lỗi.
          */
+        $originalName = $_POST['username'] ?? '';
+        $username = trim($originalName);
+
+        $originalEmail = $_POST['email'] ?? '';
+        $email = trim($originalEmail);
+
+        $password = $_POST['password'] ?? '';
+
+        $a = $originalName !== $username ? true : false;
+        $b = $originalEmail !== $email ? true :  false;
+        if ($a && $b) {
+            return redirect()->back()->with("email-name-space", "Username && Email không được chứa khoảng trắng!");
+        }
+
+        if ($originalName !== $username) {
+            return redirect()->back()->with("username-space", "username không được chứa khoảng trắng!");
+        }
+        // Kiểm tra username
+        if ($originalEmail !== $email) {
+            return redirect()->back()->with("email-space", "Email không được chứa khoảng trắng!");
+        }
 
 
-        $email = $req->input('email');
+        if (strlen($password) < 8) {
+            return back()->with('regex-weak-password', 'Mật khẩu phải có ít nhất 8 ký tự.');
+        }
+
+        if (!preg_match('/[a-z]/', $password)) {
+            return back()->with('regex-weak-password', 'Mật khẩu phải chứa ít nhất một chữ thường.');
+        }
+
+        if (!preg_match('/[A-Z]/', $password)) {
+            return back()->with('regex-weak-password', 'Mật khẩu phải chứa ít nhất một chữ hoa.');
+        }
+
+        if (!preg_match('/\d/', $password)) {
+            return back()->with('regex-weak-password', 'Mật khẩu phải chứa ít nhất một số.');
+        }
+
+        if (!preg_match('/[@$!%*?&]/', $password)) {
+            return back()->with('regex-weak-password', 'Mật khẩu phải chứa ít nhất một ký tự đặc biệt.');
+        }
+
+        if (preg_match('/\s/', $password)) {
+            return back()->with('regex-weak-password', 'Mật khẩu không được chứa khoảng trắng.');
+        }
+
+
+        $req->validate([
+            'username' => 'required|min:6|max:50|alpha_num',
+            'email' => 'required|email|unique:users,email',
+            // 'password' => 'required|min:8|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', //regex: Yêu cầu ít nhất một chữ thường, một chữ hoa, một số, một ký tự đặc biệt.
+            'password' => 'confirmed'
+        ], [
+            'username.max' => 'Username không được vượt quá 50 ký tự.',
+            'username.min' => 'Username không được nhỏ hơn 6 ký tự.',
+            'username.alpha_num' => 'Username chỉ được chứa chữ cái và số.',
+            'email.unique' => 'Email đã tồn tại, vui lòng sử dụng email khác!',
+            'email.email' => 'Email phải đúng định dạng',
+            'password.min' => 'Trường mật khẩu phải có ít nhất 8 ký tự.',
+            'password.confirmed' => 'Mật khẩu không trùng nhau', //dùng confirmed khi có một field xác nhận tương ứng, ví dụ
+            // 'password.regex' => 'Mật khẩu phải chứa ít nhất một chữ hoa, một chữ thường, một số và một ký tự đặc biệt.',
+        ]);
+
+
+
         Session::put('otp_page', 'register'); // Lưu trạng thái là 'register'
 
         /** tạo session để lư data check user entry otp rồi mới add account */
         Session::put('user_account_otp', [
-            'name' => $req->input('username'),
+            'name' => $username,
             'email' => $email,
-            'password' => Hash::make($req->input('password'))
+            'password' => Hash::make($password)
         ]);
 
         // Tạo OTP
@@ -340,11 +423,24 @@ class LoginController extends Controller
     public function forgot(Request $req)
     {
 
-        $email = $req->input('email'); // có thể dùng validate 'email' => 'required|email|exists:users,email',
+        $originalEmail = $_POST['email'] ?? '';
+        $email = trim($originalEmail);
 
+
+        // dd([$originalEmail, $email]);
+
+        if ($originalEmail != $email) {
+            return redirect()->back()->with('email-space', 'email không được chứa khoảng trắng');
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return redirect()->back()->with('invalid-email', 'Email không hợp lệ, vui lòng nhập lại.');
+        }
+
+        // dd($_POST['email']);
 
         if (!User::where('email', $email)->first()) {
-            return redirect()->back()->with('email_not_exists_forgot', 'This email not exists');
+            return redirect()->back()->with('email_not_exists_forgot', 'Email này chưa được đăng ký');
         }
 
         session()->put('email_user', $email);
@@ -390,13 +486,61 @@ class LoginController extends Controller
         $pw = $req->input('password');
         $pw_c = $req->input('password_confirmed');
 
+        // 1. Kiểm tra password khớp với password_confirmed
         if ($pw !== $pw_c) {
             return redirect()->back()->with('password-do-not-match', 'password không trùng nhau!');
         }
 
-        if (strlen($pw) < 4) {
-            return redirect()->back()->with('weak-password', 'ký tự password lớn hơn 4!');
+        // 2. Kiểm tra độ dài
+        if (strlen($pw) < 8) {
+            return redirect()->back()->with('weak-password', 'ký tự password lớn hơn 8!');
         }
+
+
+        // 3. Kiểm tra regex
+        /**
+         * Biểu thức trên có nghĩa:
+
+         *(?=.*[a-z]): có ít nhất 1 chữ thường
+
+         *(?=.*[A-Z]): có ít nhất 1 chữ hoa
+
+         *(?=.*\d): có ít nhất 1 số
+
+         *(?=.*[@$!%*?&]): có ít nhất 1 ký tự đặc biệt
+
+         *[A-Za-z\d@$!%*?&]{8,}: tổng cộng ít nhất 8 ký tự, chỉ gồm những ký tự này
+         */
+        // if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[^\s]{8,}$/', $pw)) {
+        // Mật khẩu không hợp lệ
+        //     return redirect()->back()->with('regex-weak-password', 'Mật khẩu phải chứa ít nhất một chữ hoa, một chữ thường, một số và một ký tự đặc biệt, không có khoảng trắng.');
+        // }
+
+
+        if (strlen($pw) < 8) {
+            return back()->with('regex-weak-password', 'Mật khẩu phải có ít nhất 8 ký tự.');
+        }
+
+        if (!preg_match('/[a-z]/', $pw)) {
+            return back()->with('regex-weak-password', 'Mật khẩu phải chứa ít nhất một chữ thường.');
+        }
+
+        if (!preg_match('/[A-Z]/', $pw)) {
+            return back()->with('regex-weak-password', 'Mật khẩu phải chứa ít nhất một chữ hoa.');
+        }
+
+        if (!preg_match('/\d/', $pw)) {
+            return back()->with('regex-weak-password', 'Mật khẩu phải chứa ít nhất một số.');
+        }
+
+        if (!preg_match('/[@$!%*?&]/', $pw)) {
+            return back()->with('regex-weak-password', 'Mật khẩu phải chứa ít nhất một ký tự đặc biệt.');
+        }
+
+        if (preg_match('/\s/', $pw)) {
+            return back()->with('regex-weak-password', 'Mật khẩu không được chứa khoảng trắng.');
+        }
+
 
         /** lấy password cũ so sách với password new bằng hàm hash::check */
         $pw_old = User::where('email', $email)->first();

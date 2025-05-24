@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeders extends Seeder
 {
@@ -15,18 +16,18 @@ class UserSeeders extends Seeder
     public function run(): void
     {
 
-        $faker = Faker::create();
+        // $faker = Faker::create();
 
-        for ($i = 1; $i <= 10; $i++) {
+        // for ($i = 1; $i <= 10; $i++) {
 
-            User::create([
-                'name' => $faker->name(),
-                'email' => $faker->email(),
-                'password' => bcrypt('2005'),
-                'role' => 'client',
-                'phone' => $faker->numerify('03########')
-            ]);
-        }
+        //     User::create([
+        //         'name' => $faker->name(),
+        //         'email' => $faker->email(),
+        //         'password' => bcrypt('2005'),
+        //         'role' => 'client',
+        //         'phone' => $faker->numerify('03########')
+        //     ]);
+        // }
 
         // User::create([
         //     'name' => 'Tran Viet Giang',
@@ -50,10 +51,16 @@ class UserSeeders extends Seeder
         //     'role' => "user",
         // ]);
 
+        $check = User::where('id', 28)->first();
+        if ($check) {
+            $check->password = Hash::make('200225Tvg@');
+            $check->save();
+        }
+
         // User::create([
         //     'name' => 'admin',
         //     'email' => 'admin@gmail.com',
-        //     'password' => bcrypt('2005'),
+        //     'password' => bcrypt('200225Tvg@'),
         //     'role' => "admin",
         // ]);
     }

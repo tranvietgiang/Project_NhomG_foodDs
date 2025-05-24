@@ -6,7 +6,17 @@
         <h1 class="display-6">Register</h1>
     </div>
 
-    <!-- git show error -->
+    <!-- check password -->
+    @if (session('email-name-space'))
+        <div class="alert alert-warning">{{ session('email-name-space') }}</div>
+    @endif
+
+    <!-- check password -->
+    @if (session('regex-weak-password'))
+        <div class="alert alert-warning">{{ session('regex-weak-password') }}</div>
+    @endif
+
+    <!--show error -->
     @if ($errors->any()) <!-- Kiểm tra nếu có lỗi validation nào không -->
         <div class="alert alert-danger">
             <ul style="list-style: none;">
@@ -16,6 +26,16 @@
                 @endforeach
             </ul>
         </div>
+    @endif
+
+    @if (session('username-space'))
+        <div class="alert alert-warning">{{ session('username-space') }}</div>
+    @endif
+
+
+    <!-- password enter wrong-->
+    @if (session('email-space'))
+        <div class="alert alert-warning">{{ session('email-space') }}</div>
     @endif
 
     <div>
@@ -29,7 +49,7 @@
 
             <!-- Email input -->
             <div data-mdb-input-init class="form-outline mb-4">
-                <input type="email" id="login-email" name="email" class="form-control" required />
+                <input type="text" id="login-email" name="email" class="form-control" required />
                 <label class="form-label" for="login-email">Email address</label>
             </div>
 

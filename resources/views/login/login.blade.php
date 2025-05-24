@@ -7,6 +7,15 @@
         <h1 class="display-6">Welcome Login</h1>
     </div>
 
+
+    <!-- password enter wrong-->
+    @if (session('login-seconds'))
+        <div class="alert alert-danger">
+            <span id="countdown">{{ session('login-seconds') }}</span>
+        </div>
+    @endif
+
+
     @if (session('login-failed'))
         <div class="alert alert-warning text-center">{{ session('login-failed') }}</div>
     @endif
@@ -66,20 +75,20 @@
         <div class="alert alert-warning">{{ session('Right-login') }}</div>
     @endif
 
-    {{--
-    <!-- wrong pw-or-email -->
-
-
-    <!-- logout alert -->
-    @if (session('logout-success'))
-        <div class="alert alert-success text-center">{{ session('logout-success') }}</div>
+    <!-- password enter wrong-->
+    @if (session('wrong-password'))
+        <div class="alert alert-warning">{{ session('wrong-password') }}</div>
     @endif
 
 
-    <!-- update password success -->
-    @if (session('update-success'))
-        <div class="alert alert-success">{{ session('update-success') }}</div>
-    @endif --}}
+
+    <!-- password enter wrong-->
+    @if (session('email-space'))
+        <div class="alert alert-warning">{{ session('email-space') }}</div>
+    @endif
+
+
+
     <div>
         <form class="container w-25 mt-5" action="{{ route('check') }}" method="post">
             @csrf
@@ -167,3 +176,18 @@
 
 <!-- import library  MDBootstrap_JS-->
 <script src="{{ asset('component/js/mdb.umd.min.js') }}"></script>
+<script>
+    const countdownText = document.getElementById('countdown');
+    const match = countdownText?.innerText.match(/(\d+)/);
+    let seconds = match ? parseInt(match[1]) : 0;
+
+    const interval = setInterval(() => {
+        seconds--;
+        if (seconds <= 0) {
+            clearInterval(interval);
+            countdownText.innerText = "Bạn có thể thử lại đăng nhập ngay bây giờ.";
+        } else {
+            countdownText.innerText = `Vui lòng thử lại sau ${seconds} giây.`;
+        }
+    }, 1000);
+</script>

@@ -7,11 +7,21 @@
         <div class="alert alert-warning text-center">{{ session('email_not_exists_forgot') }}</div>
     @endif
 
+    <!-- email contain space-->
+    @if (session('email-space'))
+        <div class="alert alert-warning  text-center">{{ session('email-space') }}</div>
+    @endif
+
+    <!-- email not invalid -->
+    @if (session('invalid-email'))
+        <div class="alert alert-warning  text-center">{{ session('invalid-email') }}</div>
+    @endif
+
     <form class="container w-25 mt-5" action="{{ route('forgot') }}" method="post">
         @csrf
         <!-- Email forgot input  -->
         <div data-mdb-input-init class="form-outline mb-4">
-            <input type="email" id="form2Example2" name="email" class="form-control" required />
+            <input type="text" id="form2Example2" name="email" class="form-control" required />
             <label class="form-label" for="form2Example2">Email address</label>
         </div>
 
