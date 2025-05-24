@@ -25,6 +25,11 @@
     @if (session('pw-pw_old-match'))
         <div class="alert alert-warning">{{ session('pw-pw_old-match') }}</div>
     @endif
+
+    <!-- password regex-->
+    @if (session('regex-weak-password'))
+        <div class="alert alert-warning">{{ session('regex-weak-password') }}</div>
+    @endif
     <div>
         <form class="container w-25 mt-5" action="{{ route('update_pw') }}" method="post">
             @csrf
