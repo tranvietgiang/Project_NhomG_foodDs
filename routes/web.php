@@ -12,6 +12,7 @@ use App\Http\Controllers\GithubController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\HeartGController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductTuyenController;
 use App\Http\Controllers\PromotionController;
@@ -30,6 +31,7 @@ use App\Http\Middleware\SessionEmail;
 use App\Models\district;
 use App\Models\Product;
 use App\Models\ward;
+use Barryvdh\DomPDF\PDF;
 use Database\Seeders\CategorieSeeders;
 use Database\Seeders\ProductsSeeder;
 use Illuminate\Contracts\View\View;
@@ -119,7 +121,7 @@ Route::post('/verify-otp', [LoginController::class, 'verifyOtp'])->name('verify.
 /** forgot-email-otp*/
 Route::get('otpForgot', [LoginController::class, 'formOtpForgot'])->name('form.otp');
 // form confirm otp email
-Route::post('/verify-otp-forgot', [LoginController::class, 'verifyOtpForgot'])->name('verifyOTP.otpForgot')/*->middleware(checkLogin::class)*/;
+Route::post('/verify-otp-forgot', [LoginController::class, 'verifyOtpForgot'])->name('verifyOTP.otpForgot');
 
 
 
@@ -271,6 +273,10 @@ Route::get('header/show/render', [ProductController::class, 'header_show_render'
 /** excel laravel */
 Route::get('/export-users', [EmployessController::class, 'export']);
 Route::get('/export-customers', [ExcelClientController::class, 'export'])->name('export.customers');
+
+/** pdf */
+Route::post('/statistics/export', [PDFController::class, 'exportPDF'])->name('pdf.statistic');
+
 
 /** thống kê giang*/
 Route::get('/thong/ke', [StatisticsController::class, 'view'])->name('statistics.view');

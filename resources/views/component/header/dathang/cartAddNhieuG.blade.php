@@ -91,6 +91,9 @@
                 </div>
                 <h4 class="mt-2">Loại ({{ $amount_cart_header ?? 0 }} sản phẩm)</h4>
             </div>
+            @if (session('error'))
+                <div class="alert alert-warning">{{ session('error') }}</div>
+            @endif
             <button id="delete_goods_all" class="btn btn-outline-danger"><i class="bi bi-trash"></i> Xóa tất cả</button>
         </div>
 
@@ -346,8 +349,20 @@
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
-                        console.log('Thành công:', response);
-                        showCartAlert("Thêm sản phâm yêu thích thành công!");
+                        console.log(response.status);
+                        if (response.status === 'error') {
+                            $('#alert-add-cart').css({
+                                'color': '#ffffff',
+                                'background-color': '#dc3545'
+                            });
+                            showCartAlert("Đã xảy ra lỗi khi thêm sản phẩm yêu thích.");
+                        } else {
+                            $('#alert-add-cart').css({
+                                'color': '#198754;',
+                                'background-color': '#d1e7dd'
+                            });
+                            showCartAlert("Thêm sản phẩm yêu thích thành công!");
+                        }
                     },
                 });
 
@@ -387,13 +402,13 @@
         });
 
 
-        // Hàm hiển thị thông báo
         function showCartAlert(message) {
             var alertMessage = $('#alert-add-cart');
             alertMessage.text(message); // Đặt nội dung thông báo
             alertMessage.removeClass('d-none'); // Hiện thông báo
+
             setTimeout(function() {
-                alertMessage.addClass('d-none'); // Ẩn sau 8 giây
+                alertMessage.addClass('d-none'); // Ẩn sau 3 giây
             }, 3000);
         }
     </script>

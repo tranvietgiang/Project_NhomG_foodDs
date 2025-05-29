@@ -25,6 +25,17 @@ class CartManyGController extends Controller
         $productID = $req->route('product_id');
         $goods_price = $req->route('price_goods');
 
+        /** kiểm tra xem sản phẩm có tồn tại không? */
+        $productExist = Product::where('product_id', $productID)->exists();
+        $cartExist = Cart::where('product_id', $productID)
+            ->where('user_id', Auth::id())
+            ->exists();
+        if (!$productExist || !$cartExist) {
+            return response()->json([
+                'status' => 'error'
+            ]);
+        }
+
         // dd([$productID, $goods_price]);
 
         $existingCart = Cart::where('user_id', Auth::id())->where('product_id', $productID)->first();
@@ -69,27 +80,36 @@ class CartManyGController extends Controller
         $productID = $req->input('heartID');
         $priceHeart = $req->input('priceHeart');
 
+        /** kiểm tra xem sản phẩm có tồn tại không? */
+        $productExist = Product::where('product_id', $productID)->exists();
+        $cartExist = Cart::where('product_id', $productID)
+            ->where('user_id', Auth::id())->exists();
 
-        $getProduct = Product::where('product_id', $productID)->first(['product_image', 'product_name']);
-
-        $heartExists = listHeart::Where('user_id', Auth::id())
-            ->where('product_id', $productID)->first();
-
-
-        if (!$heartExists) {
-            listHeart::create([
-                'heart_name' => $getProduct->product_name,
-                'heart_price' => $priceHeart,
-                'heart_amount' => 1,
-                'product_id' => $productID,
-                'user_id' => Auth::id(),
-                'heart_image' => $getProduct->product_image
+        if (!$productExist || !$cartExist) {
+            return response()->json([
+                'status' => 'error'
             ]);
         } else {
-            $heartExists->update([
-                $heartExists->heart_amount += 1,
-                $heartExists->save()
-            ]);
+
+            $getProduct = Product::where('product_id', $productID)->first(['product_image', 'product_name']);
+
+            $heartExists = listHeart::Where('user_id', Auth::id())
+                ->where('product_id', $productID)->first();
+
+
+            if (!$heartExists) {
+                listHeart::create([
+                    'heart_name' => $getProduct->product_name,
+                    'heart_price' => $priceHeart,
+                    'heart_amount' => 1,
+                    'product_id' => $productID,
+                    'user_id' => Auth::id(),
+                    'heart_image' => $getProduct->product_image
+                ]);
+            } else {
+                $heartExists->heart_amount += 1;
+                $heartExists->save();
+            }
         }
     }
 }

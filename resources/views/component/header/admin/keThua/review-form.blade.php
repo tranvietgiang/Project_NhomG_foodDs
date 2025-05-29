@@ -342,7 +342,8 @@
                     @endif
 
                 <div style="margin: 0; padding: 0;"><img width="70px" height="70px" class=" object-fit-cover"
-                        src="{{ asset('image-store/' . $client_Avatar ?? 'avatar_default.png') }}" alt="ảnh comment">
+                        src="{{ asset('image-store/' . ($comment->users->client->client_avatar ?? 'avatar_default.png')) }}"
+                        alt="ảnh comment">
                 </div>
 
 
