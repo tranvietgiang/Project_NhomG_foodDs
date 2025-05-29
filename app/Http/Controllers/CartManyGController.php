@@ -27,10 +27,7 @@ class CartManyGController extends Controller
 
         /** kiểm tra xem sản phẩm có tồn tại không? */
         $productExist = Product::where('product_id', $productID)->exists();
-        $cartExist = Cart::where('product_id', $productID)
-            ->where('user_id', Auth::id())
-            ->exists();
-        if (!$productExist || !$cartExist) {
+        if (!$productExist) {
             return response()->json([
                 'status' => 'error'
             ]);

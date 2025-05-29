@@ -228,6 +228,15 @@
                 }
             });
 
+
+            $(function() {
+                $('.check-tamTinh-all').on('click', function() {
+                    const isChecked = $(this).is(':checked');
+                    $('.check-tamTinh').prop('checked', isChecked).trigger('change');
+                });
+            });
+
+
             /* qua trang bill*/
             $form.on('submit', function(e) {
                 e.preventDefault(); // Ngăn submit mặc định
@@ -284,7 +293,6 @@
                         _token: '{{ csrf_token() }}'
                     },
 
-
                     success: function(value) {
                         if (value.success) {
                             // Cập nhật lại số lượng trên giao diện
@@ -333,7 +341,7 @@
                 });
             });
 
-            // heart git
+            // heart 
             const heart_choose = $amountItem.find('.heart-choose');
             heart_choose.on('click', function() {
                 const idProduct = $(this).data('goods-id');
@@ -358,8 +366,8 @@
                             showCartAlert("Đã xảy ra lỗi khi thêm sản phẩm yêu thích.");
                         } else {
                             $('#alert-add-cart').css({
-                                'color': '#198754;',
-                                'background-color': '#d1e7dd'
+                                'color': '#d1e7dd;',
+                                'background-color': '#198754'
                             });
                             showCartAlert("Thêm sản phẩm yêu thích thành công!");
                         }
