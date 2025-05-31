@@ -4,6 +4,7 @@ use App\Exports\CustomersExport;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartManyGController;
+use App\Http\Controllers\ChatboxController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\EmployessController;
 use App\Http\Controllers\ExcelClientController;
@@ -296,3 +297,5 @@ Route::get('/promotions/search', [PromotionController::class, 'search'])->name('
 Route::resource('categories', CategoryController::class)->except(['show']);;
 /** search duy hung */
 Route::get('/categories/search', [CategoryController::class, 'search'])->name('categories.search');
+
+Route::post('/chatbox', [ChatboxController::class, 'chat'])->name('api.chatbox');

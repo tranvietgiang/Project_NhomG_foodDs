@@ -117,9 +117,9 @@
                             </tr>
                         @endforeach
 
-                        <div style="display: flex">
+                        {{-- <div style="display: flex">
                             {{ $OutOfStore->links('pagination::bootstrap-4') }}
-                        </div>
+                        </div> --}}
 
                         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
