@@ -7,15 +7,26 @@
             <h2 class="text-center mb-4">Xác Nhận OTP</h2>
 
             <!-- Kiểm tra otp -->
-            {{-- @if (session('email_exists_otp'))
-                <div class="alert alert-warning text-center">{{ session('error-forgot-otp') }}</div>
-            @endif --}}
+            @if (session('email_exists_otp'))
+                <div class="alert alert-success text-center">{{ session('email_exists_otp') }}</div>
+            @endif
+
+            <!-- re-send code otp -->
+            @if (session('success'))
+                <div class="alert alert-success text-center">{{ session('success') }}</div>
+            @endif
+
+            <!-- otp wrong -->
+            @if (session('failed'))
+                <div class="alert alert-danger text-center">{{ session('failed') }}</div>
+            @endif
 
             <form action="{{ route('verifyOTP.otpForgot') }}" method="post">
                 @csrf
                 <!-- Input OTP -->
                 <div class="form-outline mb-4">
-                    <input type="text" id="form2Example2" name="otp" class="form-control" required />
+                    <input type="text" id="form2Example2" name="otp" pattern="[0-9]{6}" maxlength="6"
+                        class="form-control" required />
                     <label class="form-label" for="form2Example2">Mã OTP</label>
                 </div>
 
@@ -32,7 +43,7 @@
             <!-- Gửi lại OTP -->
             <form action="{{ route('send.otp') }}" method="POST">
                 @csrf
-                <button type="submit" class="btn btn-outline-primary">
+                <button type="submit" class="btn-sm btn btn-outline-primary">
                     Gửi lại OTP
                 </button>
             </form>
@@ -42,3 +53,10 @@
 
 <!-- Import MDBootstrap JS -->
 <script src="{{ asset('component/js/mdb.umd.min.js') }}"></script>
+<!-- only allowed enter number -->
+<script>
+    document.getElementById('form2Example2').addEventListener('input', function(e) {
+        // Chỉ giữ lại các ký tự số
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+</script>

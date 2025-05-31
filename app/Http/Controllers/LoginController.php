@@ -73,7 +73,7 @@ class LoginController extends Controller
         /**check client entered? */
         if (empty($email) || empty($password)) {
             RateLimiter::hit($key, 60);
-            return  redirect()->back()->with('email-password-empty', 'Vui lòng nhập đầy đủ email or password');
+            return  redirect()->back()->with('email-password-empty', 'Vui lòng nhập đầy đủ email && password');
         }
 
         // Kiểm tra email hợp lệ trước khi truy vấn database
@@ -85,7 +85,7 @@ class LoginController extends Controller
         // Chặn nếu người dùng nhập khoảng trắng ở đầu/cuối email
         if ($originalEmail != $email) {
             RateLimiter::hit($key, 60);
-            return redirect()->back()->with("email-space", "Email không được chứa khoảng trắng ở đầu hoặc cuối!");
+            return redirect()->back()->with("email-space", "Email không được chứa khoảng trắng!");
         }
 
         // Kiểm tra mật khẩu phải có ít nhất 5 ký tự
@@ -95,16 +95,18 @@ class LoginController extends Controller
             return redirect()->back()->with('short-password', 'Mật khẩu không được nhỏ hơn 8 và lớn hơn 72 ký tự!');
         }
 
+        /** email not exists in database */
+        if (!User::where('email', $req->email)->exists()) {
+            return  redirect()->back()->with('email-not-exists', 'Email này chưa được đăng ký vào tài khoản');
+        }
+
         if (!Auth::attempt($req->only('email', 'password'))) {
             // Nếu sai thì tăng số lần thử
             RateLimiter::hit($key, 60);
             return redirect()->back()->with('wrong-password', 'mật khẩu không đúng!');
         }
 
-        /** email not exists in database */
-        if (!User::where('email', $req->email)->exists()) {
-            return  redirect()->back()->with('email-not-exists', 'Email này chưa được đăng ký vào tài khoản');
-        }
+
 
 
 
@@ -319,6 +321,7 @@ class LoginController extends Controller
         }
 
 
+        /** check password */
         if (strlen($password) < 8) {
             return back()->with('regex-weak-password', 'Mật khẩu phải có ít nhất 8 ký tự.');
         }
@@ -401,7 +404,6 @@ class LoginController extends Controller
         // $page = str_contains($previousUrl, 'form-otp') ? 'form-otp' : 'otpForgot';
 
 
-
         if (!$email) {
             return redirect()->route('wayLogin', ['page' => 'login'])
                 ->with('error', 'Không tìm thấy email trong session, vui lòng đăng ký lại.');
@@ -458,25 +460,24 @@ class LoginController extends Controller
         }
 
 
-        return redirect()->route('form.otp')->with('email_exists_otp', 'Please entry otp email');
+        return redirect()->route('form.otp')->with('email_exists_otp', 'Vui lòng nhập otp');
     }
 
 
     /** confirm otp send qua email forget */
     public function verifyOtpForgot(Request $request)
     {
+
         $request->validate([
             'otp' => 'required|numeric',
         ]);
 
-        if (
-            $request->otp == session('otp')
-        ) {
+        if ($request->otp == session('otp')) {
             // qua login
-            return redirect()->route('forgot_form')->with('success-otp-email-forgot', 'Please enter password new');
+            return redirect()->route('forgot_form')->with('success-otp-email-forgot', 'Vui lòng nhập password mới!');
         }
 
-        return back()->with('error-forgot-otp', 'Mã OTP không chính xác, vui lòng thử lại.');
+        return back()->with('failed', 'Mã OTP không chính xác, vui lòng thử lại.');
     }
 
     /**update password for client forget */
@@ -485,16 +486,6 @@ class LoginController extends Controller
         $email = $req->input('email');
         $pw = $req->input('password');
         $pw_c = $req->input('password_confirmed');
-
-        // 1. Kiểm tra password khớp với password_confirmed
-        if ($pw !== $pw_c) {
-            return redirect()->back()->with('password-do-not-match', 'password không trùng nhau!');
-        }
-
-        // 2. Kiểm tra độ dài
-        if (strlen($pw) < 8) {
-            return redirect()->back()->with('weak-password', 'ký tự password lớn hơn 8!');
-        }
 
 
         // 3. Kiểm tra regex
@@ -539,6 +530,12 @@ class LoginController extends Controller
 
         if (preg_match('/\s/', $pw)) {
             return back()->with('regex-weak-password', 'Mật khẩu không được chứa khoảng trắng.');
+        }
+
+
+        //  Kiểm tra password khớp với password_confirmed
+        if ($pw !== $pw_c) {
+            return redirect()->back()->with('password-do-not-match', 'password không trùng nhau!');
         }
 
 

@@ -2,6 +2,8 @@
 <link rel="stylesheet" href="{{ asset('component/css/mdb.min.css') }}">
 <!-- Link icon  -->
 <link rel="Website icon" type="png" href="{{ asset('logo-website/login.png') }}">
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
 <section class="text-center mt-5">
     <div>
         <h1 class="display-6">Welcome Login</h1>
@@ -110,10 +112,8 @@
             <div class="row mb-4">
                 <div class="col d-flex justify-content-center">
                     <!-- Checkbox -->
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="form2Example31" checked />
-                        <label class="form-check-label" for="form2Example31"> Remember me </label>
-                    </div>
+                    <!-- quay ve trang chinh -->
+                    <a href="{{ route('website-main') }}" class="btn ">Home</a>
                 </div>
 
                 <div class="col">
@@ -127,52 +127,25 @@
                 in</button>
 
             <!-- Nút đăng nhập bằng Google -->
-            <a href="{{ route('auth.google') }}" class="google-btn">Login with Google</a> |
+            <a href="{{ route('auth.google') }}" class="google-btn ">
+                Login with Google
+                <i class="bi bi-google"></i>
+            </a><br>
+
 
             <!-- Nút đăng nhập bằng Google -->
-            <a href="{{ url('login/sdt') }}" data-mdb-toggle="modal" data-mdb-target="#addModal"
-                class="google-btn">Login with sdt</a> |
+            <a href="{{ url('login/github') }}" class="github-btn">Login with Github
+                <img class="object-fit-cover" width="20" height="20" src="{{ asset('image-store/github.png') }}"
+                    alt=""></a> <br>
 
-            <!-- Nút đăng nhập bằng Google -->
-            <a href="{{ url('login/github') }}" class="github-btn">Login with Github <img class="object-fit-cover"
-                    width="20" height="20" src="{{ asset('image-store/github.png') }}" alt=""></a> |
-            <!-- quay ve trang chinh -->
-            <a href="{{ route('website-main') }}" class="">Home</a>
 
             <!-- Register buttons -->
             <div class="text-center">
-                <p>Not a member? <a href="{{ route('wayLogin', ['page' => 'register']) }}">Register</a></p>
+                <p>Not a account? <a href="{{ route('wayLogin', ['page' => 'register']) }}">Register</a></p>
             </div>
         </form>
     </div>
 </section>
-
-<!-- Modal nhập SDT -->
-<div class="modal fade" id="addModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form action="{{ route('send.otp') }}" method="POST">
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title">Xác minh số điện thoại</h5>
-                    <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="form-outline">
-                        <input type="text" name="phone" class="form-control" required />
-                        <label class="form-label">Số điện thoại</label>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Gửi mã OTP</button>
-                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Đóng</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 <!-- import library  MDBootstrap_JS-->
 <script src="{{ asset('component/js/mdb.umd.min.js') }}"></script>

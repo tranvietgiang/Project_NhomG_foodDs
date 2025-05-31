@@ -65,9 +65,10 @@ class ViewController extends Controller
 
 
         /** lấy ra danh sách đánh giá của sản phẩm */
-        $list_review = Review::with('users')
-            ->where('product_id',  $req->route('product_id'))
-            ->orderByDesc('created_at')->get();
+        $list_review = Review::with(['users.client']) // Nạp thêm quan hệ client của user
+            ->where('product_id', $req->route('product_id'))
+            ->orderByDesc('created_at')
+            ->get();
 
         /** có 3 cách lấy id từ url là 
          * 1: $req->route('product_id') với điều kiện là phải chuyền id qua router vd: cart/{product_id}'
@@ -89,9 +90,9 @@ class ViewController extends Controller
         $goods_sold = bill_product::where('product_id', $req->route('product_id'))->count();
 
         /** show avatar */
-        $client_Avatar = Client::where('user_id', Auth::id())->value('client_avatar');
+        // $client_Avatar = Client::where('user_id', Auth::id())->value('client_avatar');
 
-        return view('component.header.dathang.cartGiang', compact(['cart', 'list_review', 'review_count_rating', 'final_rating_tbc', 'client_review_category', 'quantity_item_review', 'quantity_store', 'goods_sold', 'client_Avatar']));
+        return view('component.header.dathang.cartGiang', compact(['cart', 'list_review', 'review_count_rating', 'final_rating_tbc', 'client_review_category', 'quantity_item_review', 'quantity_store', 'goods_sold']));
     }
 
 

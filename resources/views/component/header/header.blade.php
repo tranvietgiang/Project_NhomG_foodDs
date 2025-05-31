@@ -303,12 +303,14 @@
 
     <!-- run on top -->
     <button id="go-to-top" onclick="scrollToTop()">↑</button>
+
 </section>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- tìm kiếm sản phẩm gợi ý trang header -->
+@include('component.header.chatbox.message')
 <script>
+    /* tìm kiếm sản phẩm gợi ý trang header */
     $("#key-word").on("input", function() {
         let search = $(this).val().trim().toLowerCase();
 

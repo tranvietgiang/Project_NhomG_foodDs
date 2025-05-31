@@ -152,8 +152,22 @@
                 $('#cartCount').text(value.cartCount);
                 console.log(value.alert_add_cart)
                 if (value.alertCart) {
+                    $('#alert-add-cart').css({
+                        'color': '#198754;',
+                        'background-color': '#d1e7dd'
+                    });
+                    showCartAlert('Thêm sản phẩm vào giỏ hàng thành công!');
+                } else if (value.status === "error") {
+                    $('#alert-add-cart').css({
+                        'color': '#ffffff',
+                        'background-color': '#dc3545'
+                    });
                     showCartAlert('Thêm sản phẩm vào giỏ hàng thành công!');
                 } else {
+                    $('#alert-add-cart').css({
+                        'color': '#ffffff',
+                        'background-color': '#dc3545'
+                    });
                     showCartAlert('Quý khách vui lòng đăng nhập');
                 }
             }

@@ -2,6 +2,9 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
+<div>
+    <a href="{{ route('cart.shows_goods') }}">quay lại</a>
+</div>
 <div class="container mt-5">
     <h2 class="text-center mb-4 text-primary">Thông tin đơn hàng</h2>
 

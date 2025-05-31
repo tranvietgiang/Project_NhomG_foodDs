@@ -7,13 +7,8 @@
         <h1 class="display-6 text-center">Update Password</h1>
     </div>
 
-    @if (session('success-otp-email-forgo'))
+    @if (session('success-otp-email-forgot'))
         <div class="alert alert-success">{{ session('success-otp-email-forgot') }}</div>
-    @endif
-
-    <!-- password yếu -->
-    @if (session('weak-password'))
-        <div class="alert alert-warning">{{ session('weak-password') }}</div>
     @endif
 
     <!-- password không trùng nhau -->
