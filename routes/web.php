@@ -9,6 +9,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\EmployessController;
 use App\Http\Controllers\ExcelClientController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\FbController;
 use App\Http\Controllers\GithubController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\HeartGController;
@@ -165,6 +166,10 @@ Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallb
 /** login vs github */
 Route::get('login/github', [GithubController::class, 'redirectToProvider']);
 Route::get('login/github/callback', [GithubController::class, 'handleProviderCallback']);
+
+/** login vs fb */
+Route::get('/auth/facebook', [FbController::class, 'redirectToFacebook']);
+Route::get('/auth/facebook/callback', [FbController::class, 'handleFacebookCallback']);
 
 
 /* cart đặt hàng  */
