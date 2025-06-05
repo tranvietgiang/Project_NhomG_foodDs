@@ -25,7 +25,7 @@ class FbController extends Controller
 
             $existingUser = User::where('email', $facebookUser->getEmail())->first();
 
-            /**a */
+            /**b */
             if ($existingUser) {
                 $existingUser->update([
                     'provider' => 'facebook',
