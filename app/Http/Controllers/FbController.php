@@ -24,9 +24,17 @@ class FbController extends Controller
             $user = User::where('provider_id', $facebookUser->getId())->first();
 
             $existingUser = User::where('email', $facebookUser->getEmail())->first();
+
+            /**b */
             if ($existingUser) {
-                return redirect()->route('wayLogin', ['page' => 'login'])->with('fb-login', 'Email này đã được sử dụng, vui lòng đăng nhập tài khoản khác!');
+                $existingUser->update([
+                    'provider' => 'facebook',
+                    'provider_id' => $facebookUser->getId(),
+                ]);
+                Auth::login($existingUser);
+                return redirect()->route('website-main');
             }
+
 
             if ($user) {
                 Auth::login($user);
