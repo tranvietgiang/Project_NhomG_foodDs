@@ -133,10 +133,15 @@
             </a><br>
 
 
-            <!-- Nút đăng nhập bằng Google -->
+            <!-- Nút đăng nhập bằng Github -->
             <a href="{{ url('login/github') }}" class="github-btn">Login with Github
                 <img class="object-fit-cover" width="20" height="20" src="{{ asset('image-store/github.png') }}"
                     alt=""></a> <br>
+
+            <!-- Nút đăng nhập bằng fb -->
+            <a href="{{ url('/auth/facebook') }}" class="github-btn">Login with facebook
+                <i class="bi bi-facebook"></i>
+            </a> <br>
 
 
             <!-- Register buttons -->
