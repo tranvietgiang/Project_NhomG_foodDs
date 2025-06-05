@@ -36,6 +36,10 @@ class LoginController extends Controller
     public function index($page)
     {
         //
+        if (Auth::check()) {
+            return redirect()->route('website-main');
+        }
+
         $checkWay = ['login', 'register', 'forgot'];
 
         if (!in_array($page, $checkWay)) {
