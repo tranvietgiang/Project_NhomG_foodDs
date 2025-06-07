@@ -389,7 +389,7 @@
                 </div>
                 <!-- Formulaire -->
                 <div class="col-md-9">
-                    <!-- show error phải dùng validate -->
+                    {{-- <!-- show error phải dùng validate -->
                     @if ($errors->any())
                         <!-- Kiểm tra nếu có lỗi validation nào không -->
                         <div class="alert alert-danger">
@@ -400,7 +400,15 @@
                                 @endforeach
                             </ul>
                         </div>
-                    @endif
+                    @endif --}}
+
+
+                    @foreach ($errors->all() as $error)
+                        @if ($loop->first)
+                            <div class="alert alert-danger">{{ $error }}</div>
+                        @endif
+                    @endforeach
+
 
                     <!-- check update có success -->
                     @if (session('update_client_success'))
@@ -411,6 +419,17 @@
                     @if (session('client_phone_unique'))
                         <div class="alert alert-warning">{{ session('client_phone_unique') }}</div>
                     @endif
+
+                    <!-- client_date -->
+                    @if (session('date_int'))
+                        <div class="alert alert-warning">{{ session('date_int') }}</div>
+                    @endif
+
+                    <!-- client_gender -->
+                    @if (session('check_gender'))
+                        <div class="alert alert-warning">{{ session('check_gender') }}</div>
+                    @endif
+
                     <h5 class="fw-bold btn btn-success">Thông tin tài khoản</h5>
                     <form action="{{ route('update_client') }}" method="POST">
                         @csrf
@@ -424,15 +443,24 @@
 
                         <!-- lấy dữ liệu thông tin show ra nếu có -->
                         @php
-                            $addressParts = explode(',', optional(Auth::user()->client)->client_address);
+
+                            $client = optional(Auth::user())->client;
+                            $address = $client ? $client->client_address : null;
+                            $addressParts = $address ? explode(',', $address) : [];
+
+                            $province = $addressParts[0] ?? null;
+                            $district = $addressParts[1] ?? null;
+                            $ward = $addressParts[2] ?? null;
+
                         @endphp
 
                         <!-- Thành phố (City) -->
                         <div class="form-group mb-4">
-                            <select id="province" name="client_province" class="form-control" required>
+                            <select id="province" name="client_province" class="form-control">
                                 <option style="color: #000" value="" disabled selected>
-                                    {{ !empty(trim($addressParts[0])) ? $addressParts[0] : 'Thành Phố' }}
+                                    {{ !empty(trim($province)) ? $province : 'Thành Phố' }}
                                 </option>
+
                                 @foreach ($provinces as $item)
                                     <option value="{{ $item->province_id }}">
                                         {{ $item->name }}
@@ -443,10 +471,11 @@
 
                         <!-- Quận huyện (District) -->
                         <div class="form-group mb-4">
-                            <select id="district" name="client_district" class="form-control" required>
-                                <option value="" disabled selected>
-                                    {{ $addressParts[1] ?? 'Quận/Huyện' }}
+                            <select id="district" name="client_district" class="form-control">
+                                <option value="{{ $district ?? null }}" disabled selected>
+                                    {{ $district ?? 'Quận/Huyện' }}
                                 </option>
+
                             </select>
                         </div>
 
@@ -454,8 +483,9 @@
                         <div class="form-group mb-4">
                             <select id="wards" name="client_wards" class="form-control">
                                 <option value="" disabled selected>
-                                    {{ $addressParts[2] ?? ' Phường/Xã' }}
+                                    {{ $ward ?? 'Phường/Xã' }}
                                 </option>
+
                             </select>
                         </div>
 
@@ -469,7 +499,7 @@
                         <!-- Number input -->
                         <div data-mdb-input-init class="form-outline mb-4">
                             <input type="text" id="form6Example6" name="client_phone" class="form-control"
-                                pattern="[0-9]{10}" inputmode="numeric" maxlength="10" required
+                                pattern="[0-9]{10}" inputmode="numeric" maxlength="10"
                                 value="{{ optional(Auth::user()->client)->client_phone ?? '' }}" />
                             <label class="form-label" for="form6Example6">Số điện thoại *</label>
                         </div>
@@ -510,8 +540,8 @@
                         <!-- Sinh nhật (Birthday) -->
                         <div class="row mb-4">
                             <div class="col">
-                                <select name="client_day" id="daySelect" class="form-control" required>
-                                    <option value="" disabled selected>
+                                <select name="client_day" id="daySelect" class="form-control">
+                                    <option value="{{ $dat_of_birth[0] }}" selected>
                                         {{ !empty($dat_of_birth[0]) ? $dat_of_birth[0] : 'ngày' }}
                                     </option>
                                     @foreach ($day as $item)
@@ -521,16 +551,16 @@
                             </div>
 
                             <div class="col">
-                                <select id="monthSelect" name="client_month" class="form-control" required>
-                                    <option value="" disabled selected>
+                                <select id="monthSelect" name="client_month" class="form-control">
+                                    <option value="{{ $dat_of_birth[1] ?? null }}" selected>
                                         {{ $dat_of_birth[1] ?? 'Month' }}
                                     </option>
                                 </select>
                             </div>
 
                             <div class="col">
-                                <select id="year" name="client_year" class="form-control" required>
-                                    <option value="" disabled selected>
+                                <select id="year" name="client_year" class="form-control">
+                                    <option value="{{ $dat_of_birth[2] ?? null }}" selected>
                                         <!-- cần sửa lại mỗi lần mà session hết thời gian thì nó sẽ ko coàn hiện nx -->
                                         {{ $dat_of_birth[2] ?? 'Year' }}
                                     </option>
@@ -540,6 +570,8 @@
                                 </select>
                             </div>
                         </div>
+
+
                         <!-- Note -->
                         <p style="font-size: 12px; color: gray;">
                             * Để thay đổi số điện thoại, vui lòng nhắn tin vào và nhập nút Cập nhật bên cạnh số điện
@@ -596,13 +628,13 @@
     $("#province").change(function() {
         let province_id = $(this).val(); // Lấy giá trị province_id từ dropdown tỉnh/thành phố
         $.ajax({
-            url: "/get-districts", // Gửi yêu cầu đến đường dẫn " route('/get-districts')
+            url: "/get-districts",
             type: "POST",
             data: {
-                province_id: province_id, // Truyền province_id qua dữ liệu yêu cầu
-                _token: "{{ csrf_token() }}" // CSRF token để bảo vệ yêu cầu khỏi tấn công CSRF
+                province_id: province_id,
+                _token: "{{ csrf_token() }}"
             },
-            success: function(data) { // Khi server trả về dữ liệu
+            success: function(data) {
                 // Cập nhật dropdown quận huyện, xóa tất cả các option cũ
                 $("#district").html('<option value="">Chọn quận/huyện</option>');
                 $.each(data, function(key, value) { // Duyệt qua danh sách quận huyện trả về

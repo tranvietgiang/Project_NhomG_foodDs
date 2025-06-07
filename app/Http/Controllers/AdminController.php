@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Admin;
 use App\Models\Client;
+use App\Models\day;
 use App\Models\daymonthyear;
 use App\Models\district;
 use App\Models\Product;
@@ -123,82 +124,101 @@ class AdminController extends Controller
     }
 
 
-
-    /** khách hàng cập nhật thông tin đầy đủ git */
     public function update_client(Request $req)
     {
+        // 1. Validate chỉ các trường có trong request
         $req->validate([
-            'client_name' => 'required|max:50',
-            'client_phone' => 'required|regex:/^[0-9]{10,11}$/'
+            'client_phone'    => 'sometimes|required|regex:/^[0-9]{10,11}$/',
+            'client_province' => 'sometimes|required',
+            'client_district' => 'sometimes|required',
+            'client_wards'    => 'sometimes|required',
+            'client_day'      => 'sometimes|required|min:1|max:31',
+            'client_month'    => 'sometimes|required|min:1|max:12',
+            // 'client_year'     => 'sometimes|required|',
+            'client_gender'   => 'sometimes|required|in:Nam,Nữ',
         ], [
-            'client_name.max' => 'Ký tự không vượt quá 50!',
+            'required'          => 'Vui lòng nhập đầy đủ thông tin.',
             'client_phone.regex' => 'Số điện thoại phải gồm 10 hoặc 11 chữ số!',
+            'in'                => 'Giới tính không hợp lệ.',
+            'digits'            => 'Độ dài chữ số không hợp lệ.',
         ]);
 
         $user = Auth::user();
 
-        /** kiểm tra xem information trong table client created chưa?
-         *  nếu chưa thì sẽ create một thông tin với user_id người đang đăng nhập
-         */
-        if (!optional(Auth::user()->client)->client_id) {
-            Client::create([
-                'user_id' => $user->id,
-                'client_name' => $user->name,
-            ]);
-        }
+        // 2. Đảm bảo luôn có record Client
+        $client = Client::firstOrCreate(
+            ['user_id' => $user->id],
+            ['client_name' => $user->name]
+        );
 
-
-
-
-        /** kiểm tra nếu sdt user đã tồn tại trong table vì nếu trùng sdt thì người giao hàng sẽ không điện mà 
-         * người mình đang cần giao có đúng số điện này không.
-         */
-        $check_phone = $req->client_phone;
-        if (Client::Where('client_phone', $check_phone)->exists()) {
-
-            // Tìm client khác đang dùng cùng số điện thoại
-            $duplicateClient = Client::where('client_phone', $check_phone)
+        // 3. Cập nhật số điện thoại + tên
+        if ($req->filled('client_phone')) {
+            // kiểm tra unique phone
+            $exists = Client::where('client_phone', $req->client_phone)
                 ->where('user_id', '!=', $user->id)
-                ->first();
-
-            // get ra client có sdt này có trùng với thằng đang login không.
-            if ($duplicateClient) {
+                ->exists();
+            if ($exists) {
                 return redirect()->back()->with(
                     'client_phone_unique',
-                    'Xin lỗi quý khách, hãy kiểm tra lại số điện thoại mình dùng, vì đã có người khác sử dụng
-                    có phải là sim chính chủ không, xin cảm ơn!'
+                    'Số điện thoại này đã có người sử dụng.'
                 );
             }
+            $client->client_phone = $req->client_phone;
         }
 
-        $client = Client::where('user_id', $user->id)->first();
-
-        if ($client) {
-            // lấy giá trị các model
+        // 4. Cập nhật địa chỉ theo province/district/ward
+        if ($req->filled(['client_province', 'client_district', 'client_wards'])) {
             $province = Province::where('province_id', $req->client_province)->first();
             $district = District::where('district_id', $req->client_district)->first();
             $ward = Ward::where('wards_id', $req->client_wards)->first();
 
-            $year = year::find($req->client_year);  // Giả sử Year là bảng chứa thông tin năm
-
-
-            $client->client_name = $req->client_name;
-            $client->client_phone = $req->client_phone;
             $client->client_address = $province->name . ', ' . $district->name . ', ' . $ward->name;
-
-            if ($req->client_address_tail !== "") {
-                $client->client_address_detail = $req->client_address_detail;
-            }
-
-
-            $client->client_gender = $req->client_gender;
-            $client->dat_of_birth = $req->client_day . '/0' . $req->client_month . '/' . $year->year;
-
-            $client->save();
         }
 
-        return redirect()->back()->with('update_client_success', 'bạn dã cập nhật thông tin thành công');
+        // 5. Cập nhật address_detail nếu có
+        if ($req->filled('client_address_detail')) {
+            $client->client_address_detail = $req->client_address_detail;
+        }
+
+        // 6. Cập nhật giới tính
+        if ($req->filled('client_gender')) {
+            $client->client_gender = $req->client_gender;
+        }
+
+        // 7. Cập nhật ngày sinh
+        if ($req->filled(['client_day', 'client_month', 'client_year'])) {
+            $d = (int)$req->client_day;
+            $m = (int)$req->client_month;
+            $y = (int)$req->client_year;
+
+            if (!checkdate($m, $d, $y) || $y > date('Y')) {
+                return redirect()->back()->with('date_int', 'Ngày sinh không hợp lệ!');
+            }
+
+            $year = Year::find($req->client_year);
+            $year_old = Year::where('year', $req->input('client_year'))->first();
+
+            // dd($d, $m, $year->year);
+
+            if (empty($year)) {
+                $year = $year_old->year;
+            } else {
+                $year = $year->year;
+            }
+
+            if ($d < 10 && $m < 10) {
+                $client->dat_of_birth = '0' . $d . '/0' . $m . '/' . $year;
+            } else {
+                $client->dat_of_birth =  $d . '/' . $m . '/' . $year;
+            }
+        }
+
+        // 8. Lưu và trả về
+        $client->save();
+
+        return redirect()->back()->with('update_client_success', 'Cập nhật thông tin thành công!');
     }
+
 
     /** cập nhật avatar cho client git */
     public function client_avatar_update(Request $req)
