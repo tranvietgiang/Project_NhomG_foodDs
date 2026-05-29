@@ -1,80 +1,86 @@
-<!-- import library MDBootstrap_CSS -->
-<link rel="stylesheet" href="{{ asset('component/css/mdb.min.css') }}">
-{{-- <link rel="icon" href=""> --}}
-<section class="text-center mt-5">
-    <div>
-        <h1 class="display-6">Register</h1>
-    </div>
+<!DOCTYPE html>
+<html lang="vi">
 
-    <!-- check password -->
-    @if (session('email-name-space'))
-        <div class="alert alert-warning">{{ session('email-name-space') }}</div>
-    @endif
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký - FoodDS</title>
+    <link rel="Website icon" type="png" href="{{ asset('logo-website/login.png') }}">
+    <link rel="stylesheet" href="{{ asset('component/css/foodds.css') }}">
+</head>
 
-    <!-- check password -->
-    @if (session('regex-weak-password'))
-        <div class="alert alert-warning">{{ session('regex-weak-password') }}</div>
-    @endif
+<body>
+    <main class="fd-auth-page">
+        <section class="fd-auth-shell">
+            <aside class="fd-auth-visual">
+                <img src="{{ asset('component/header/img/img-animation-2.jpg') }}" alt="FoodDS">
+                <div class="fd-auth-copy">
+                    <div class="fd-eyebrow">Tạo tài khoản</div>
+                    <h1>Lưu món yêu thích và đặt hàng tiện hơn</h1>
+                    <p>Đăng ký FoodDS để theo dõi đơn hàng, nhận ưu đãi và mua lại món ngon nhanh chóng.</p>
+                </div>
+            </aside>
 
-    <!--show error -->
-    @if ($errors->any()) <!-- Kiểm tra nếu có lỗi validation nào không -->
-        <div class="alert alert-danger">
-            <ul style="list-style: none;">
-                <!-- Lấy tất cả lỗi validation hiện tại -->
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+            <div class="fd-auth-card">
+                <a href="{{ route('website-main') }}" class="fd-auth-logo">
+                    <img src="{{ asset('logo-website/login.png') }}" alt="FoodDS">
+                    <strong>FoodDS</strong>
+                </a>
 
-    @if (session('username-space'))
-        <div class="alert alert-warning">{{ session('username-space') }}</div>
-    @endif
+                <h2 class="fd-auth-title">Đăng ký</h2>
+                <p class="fd-auth-subtitle">Tạo tài khoản mới bằng email của bạn.</p>
 
+                <div class="fd-alerts">
+                    @foreach (['email-name-space', 'regex-weak-password', 'username-space', 'email-space'] as $key)
+                        @if (session($key))
+                            <div class="fd-alert warning">{{ session($key) }}</div>
+                        @endif
+                    @endforeach
 
-    <!-- password enter wrong-->
-    @if (session('email-space'))
-        <div class="alert alert-warning">{{ session('email-space') }}</div>
-    @endif
+                    @if ($errors->any())
+                        <div class="fd-alert warning">
+                            @foreach ($errors->all() as $error)
+                                <div>{{ $error }}</div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
 
-    <div>
-        <form class="container w-25 mt-5" action="{{ route('register') }}" method="post">
-            @csrf
-            <!-- username input -->
-            <div data-mdb-input-init class="form-outline mb-4">
-                <input type="text" name="username" id="login-name" class="form-control" required />
-                <label class="form-label" for="login-name">username</label>
+                <form action="{{ route('register') }}" method="post">
+                    @csrf
+                    <div class="fd-field">
+                        <label for="login-name">Tên tài khoản</label>
+                        <input type="text" name="username" id="login-name" value="{{ old('username') }}"
+                            placeholder="Nhập tên tài khoản" required>
+                    </div>
+
+                    <div class="fd-field">
+                        <label for="login-email">Email</label>
+                        <input type="text" id="login-email" name="email" value="{{ old('email') }}"
+                            placeholder="you@example.com" required>
+                    </div>
+
+                    <div class="fd-field">
+                        <label for="login-pw">Mật khẩu</label>
+                        <input type="password" name="password" id="login-pw" placeholder="Ít nhất 8 ký tự" required>
+                    </div>
+
+                    <div class="fd-field">
+                        <label for="login-pwc">Nhập lại mật khẩu</label>
+                        <input type="password" name="password_confirmation" id="login-pwc"
+                            placeholder="Nhập lại mật khẩu" required>
+                    </div>
+
+                    <button type="submit" class="fd-auth-submit">Đăng ký</button>
+                </form>
+
+                <p class="fd-auth-bottom">
+                    Đã có tài khoản?
+                    <a href="{{ route('wayLogin', ['page' => 'login']) }}">Đăng nhập</a>
+                </p>
             </div>
+        </section>
+    </main>
+</body>
 
-            <!-- Email input -->
-            <div data-mdb-input-init class="form-outline mb-4">
-                <input type="text" id="login-email" name="email" class="form-control" required />
-                <label class="form-label" for="login-email">Email address</label>
-            </div>
-
-            <!-- Password input -->
-            <div data-mdb-input-init class="form-outline mb-4">
-                <input type="password" name="password" id="login-pw" class="form-control" required />
-                <label class="form-label" for="login-pw">Password</label>
-            </div>
-
-            <!-- Password Confirm input  -->
-            <div data-mdb-input-init class="form-outline mb-4">
-                <input type="password" name="password_confirmation" id="login-pwc" class="form-control" required />
-                <label class="form-label" for="login-pwc">Password_confirm</label>
-            </div>
-
-            <!-- Submit button -->
-            <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block mb-4">Sign
-                up</button>
-
-            <!-- Register buttons -->
-            <div class="text-center ">
-                <a class="btn btn-outline-primary" href="{{ route('wayLogin', ['page' => 'login']) }}">Sign in</a></p>
-            </div>
-        </form>
-    </div>
-</section>
-<!-- import library  MDBootstrap_JS-->
-<script src="{{ asset('component/js/mdb.umd.min.js') }}"></script>
+</html>

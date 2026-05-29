@@ -43,6 +43,7 @@ use Illuminate\View\View as ViewView;
 /**
  * tên domain default website
  */
+Route::get('/', [LoginController::class, 'showIndex']);
 Route::get('/food_ds.com', [LoginController::class, 'showIndex'])->name('website-main');
 Route::get('/sale-item', [LoginController::class, 'OrderBestSale'])->name('sale.item.index');
 
@@ -115,13 +116,15 @@ Route::prefix("/check")
 
 
 /**email form register */
-Route::get('/form-otp', [LoginController::class, 'showOtpForm'])->name('otp.form') /*->middleware(checkLogin::class)*/;
+Route::get('/form-otp', fn () => redirect()->route('wayLogin', ['page' => 'login'])
+    ->with('success_register', 'Hệ thống đã tắt xác minh OTP qua email.'))->name('otp.form') /*->middleware(checkLogin::class)*/;
 Route::post('/send-otp', [LoginController::class, 'sendOtp'])->name('send.otp')/*->middleware(checkLogin::class)*/;
 Route::post('/verify-otp', [LoginController::class, 'verifyOtp'])->name('verify.otp')/*->middleware(checkLogin::class)*/;
 
 
 /** forgot-email-otp*/
-Route::get('otpForgot', [LoginController::class, 'formOtpForgot'])->name('form.otp');
+Route::get('otpForgot', fn () => redirect()->route('forgot_form')
+    ->with('success-otp-email-forgot', 'Hệ thống đã tắt xác minh OTP qua email.'))->name('form.otp');
 // form confirm otp email
 Route::post('/verify-otp-forgot', [LoginController::class, 'verifyOtpForgot'])->name('verifyOTP.otpForgot');
 
@@ -199,6 +202,8 @@ Route::get('/client/info/{user_id}', [AdminController::class, 'client_detail_man
 
 // thanh toán momo ca
 Route::post('/momo_payment', [CheckoutController::class, 'momo_payment'])->name('momo_payment');
+Route::get('/momo/return', [CheckoutController::class, 'momo_return'])->name('momo.return');
+Route::post('/momo/ipn', [CheckoutController::class, 'momo_ipn'])->name('momo.ipn');
 
 // hiện thị tất cả sản phẩm ca
 Route::get('/allproduct', [ProductController::class, 'showallproduct'])->name('allproduct');

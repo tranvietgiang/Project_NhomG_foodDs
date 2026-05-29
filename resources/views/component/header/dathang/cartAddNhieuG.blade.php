@@ -1,422 +1,468 @@
-<!-- hiển thị giỏ hàng của khách hàng  -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Giỏ Hàng</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-<meta name="csrf-token" content="{{ csrf_token() }}">
-<style>
-    .cart-item img {
-        width: 80px;
-        height: 80px;
-        object-fit: cover;
-    }
+<!doctype html>
+<html lang="vi">
 
-    .cart-item .quantity-control {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Giỏ hàng | FoodDS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ asset('component/css/foodds.css') }}">
+    <style>
+        .cart-page {
+            padding: 24px 0 40px;
+        }
 
-    .cart-item .btn-outline-secondary {
-        width: 30px;
-        height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-    }
+        .cart-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 340px;
+            gap: 18px;
+            align-items: start;
+        }
 
-    .cart-item .btn-outline-danger {
-        width: 30px;
-        height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-    }
+        .cart-toolbar,
+        .cart-row,
+        .bill-line {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
 
-    .subtotal-section {
-        background-color: #f8f9fa;
-        padding: 15px;
-        border-radius: 5px;
-    }
+        .cart-toolbar {
+            justify-content: space-between;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
 
-    #alert-add-cart {
-        position: fixed;
-        /* Cố định vị trí trên màn hình */
-        top: 50%;
-        /* Đặt ở giữa theo chiều dọc */
-        left: 50%;
-        /* Đặt ở giữa theo chiều ngang */
-        transform: translate(-50%, -50%);
-        /* Dịch chuyển để căn giữa chính xác */
-        z-index: 1050;
-        /* Đảm bảo thông báo nằm trên các phần tử khác */
-        width: 90%;
-        /* Chiều rộng linh hoạt */
-        max-width: 500px;
-        /* Giới hạn chiều rộng tối đa */
-        padding: 15px;
-        /* Khoảng cách bên trong */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        /* Thêm bóng để nổi bật */
-        opacity: 0;
-        /* Ban đầu ẩn (dùng cho hiệu ứng) */
-        transition: opacity 0.3s ease-in-out;
-        /* Hiệu ứng mượt mà */
-    }
+        .cart-list {
+            display: grid;
+            gap: 12px;
+        }
 
-    /* Khi thông báo hiển thị */
-    #alert-add-cart:not(.d-none) {
-        opacity: 1;
-        /* Hiện thông báo */
-    }
-</style>
+        .cart-row {
+            border: 1px solid var(--fd-border);
+            border-radius: 16px;
+            background: #fff;
+            padding: 12px;
+            transition: 0.2s ease;
+        }
+
+        .cart-row:hover {
+            border-color: #86efac;
+            box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+        }
+
+        .cart-check {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--fd-green);
+            flex: 0 0 auto;
+        }
+
+        .cart-img {
+            width: 96px;
+            height: 96px;
+            border-radius: 14px;
+            object-fit: cover;
+            background: #f1f5f9;
+            flex: 0 0 auto;
+        }
+
+        .cart-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .cart-name {
+            margin: 0 0 6px;
+            font-size: 17px;
+            font-weight: 900;
+            color: var(--fd-ink);
+        }
+
+        .cart-meta {
+            margin: 0;
+            color: var(--fd-muted);
+            font-size: 13px;
+        }
+
+        .cart-side {
+            display: grid;
+            justify-items: end;
+            gap: 10px;
+        }
+
+        .cart-price {
+            color: var(--fd-red);
+            font-size: 18px;
+            font-weight: 900;
+        }
+
+        .qty-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--fd-border);
+            border-radius: 999px;
+            padding: 5px;
+        }
+
+        .qty-box button,
+        .cart-small-btn {
+            border: 0;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+            color: var(--fd-ink);
+        }
+
+        .cart-small-btn.danger {
+            color: var(--fd-red);
+        }
+
+        .cart-small-btn.heart {
+            color: var(--fd-green-dark);
+        }
+
+        .quantity_goods {
+            min-width: 26px;
+            text-align: center;
+            font-weight: 900;
+        }
+
+        .summary-panel {
+            position: sticky;
+            top: 16px;
+        }
+
+        .bill-line {
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--fd-border);
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 56px 20px;
+        }
+
+        .empty-cart i {
+            font-size: 54px;
+            color: var(--fd-green);
+        }
+
+        #alert-add-cart,
+        #alertMessage {
+            position: fixed;
+            left: 50%;
+            top: 22px;
+            transform: translateX(-50%);
+            z-index: 9999;
+            width: min(420px, calc(100% - 24px));
+            border-radius: 14px;
+            padding: 12px 14px;
+            box-shadow: var(--fd-shadow);
+            font-weight: 800;
+        }
+
+        #alertMessage {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        @media (max-width: 860px) {
+            .cart-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-panel {
+                position: static;
+            }
+
+            .cart-row {
+                align-items: flex-start;
+            }
+
+            .cart-side {
+                justify-items: start;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .cart-row {
+                display: grid;
+                grid-template-columns: auto 82px minmax(0, 1fr);
+            }
+
+            .cart-img {
+                width: 82px;
+                height: 82px;
+            }
+
+            .cart-side {
+                grid-column: 2 / -1;
+                margin-left: 0;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container mt-5">
-        <!-- Tiêu đề -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div>
-                <a href="{{ route('website-main') }}" class=" text-decoration-none btn btn-outline-success "><i
-                        class="bi bi-arrow-left"></i> TIẾP TỤC
-                    MUA SẮM</a>
-                <!-- qua danh sách yêu thích -->
-                <a class="btn btn-outline-danger" href="{{ route('goods.heart.giang') }}">List Heart</a>
-
+    <main class="cart-page">
+        <div class="fd-container">
+            <div class="fd-section-head">
                 <div>
-                    <input type="checkbox" id="all-checked" class="me-3 check-tamTinh-all">
-                    <label for="all-checked">All</label>
+                    <p class="fd-eyebrow">FoodDS Cart</p>
+                    <h1 class="fd-title">Giỏ hàng của bạn</h1>
+                    <p class="fd-muted">Chọn món muốn thanh toán, chỉnh số lượng rồi xác nhận đơn hàng.</p>
                 </div>
-                <h4 class="mt-2">Loại ({{ $amount_cart_header ?? 0 }} sản phẩm)</h4>
+                <div class="fd-actions">
+                    <a href="{{ route('website-main') }}" class="fd-btn fd-btn-outline"><i class="bi bi-arrow-left"></i> Tiếp tục mua</a>
+                    <a href="{{ route('goods.heart.giang') }}" class="fd-icon-btn fd-btn-outline" title="Sản phẩm yêu thích"><i class="bi bi-heart"></i></a>
+                </div>
             </div>
-            @if (session('error'))
-                <div class="alert alert-warning">{{ session('error') }}</div>
+
+            @if (session('success'))
+                <div id="alertMessage">{{ session('success') }}</div>
             @endif
-            <button id="delete_goods_all" class="btn btn-outline-danger"><i class="bi bi-trash"></i> Xóa tất cả</button>
-        </div>
 
-        <!-- Danh sách sản phẩm -->
-        @php
-            //
-            $tamTinh = 0;
-        @endphp
-        <!-- mã hóa id sản phẩm trách bị phá -->
-        @foreach ($cartMany as $cart)
-            @php
-                $encryptedProductId = encrypt($cart->product_id);
-            @endphp
-            <div class="cart-item d-flex align-items-center border-bottom py-3">
-                <!-- checked -->
-                <input data-client-image="{{ $cart->image }}" data-carted-id="{{ $cart->cart_id }}"
-                    data-product-id="{{ $encryptedProductId }}" data-client-amount="{{ $cart->quantity_sp }}"
-                    data-client-price="{{ $cart->total_price }}" type="checkbox" class="me-3 check-tamTinh">
+            @if (session('error'))
+                <div class="fd-alert warning">{{ session('error') }}</div>
+            @endif
 
-                <img width="300" height="300" src="{{ asset('component/image-product/' . $cart->image) }}"
-                    alt="" class="me-3 object-fit-cover">
-                <div class="flex-grow-1">
-                    <h5>{{ $cart->product_name }}</h5>
-                    <p>Khối lượng (g): 250g</p>
-                    <p>Đóng gói: Túi</p>
-                </div>
-
-                <div class="text-end">
-                    <h5>{{ number_format($cart->product_price) }} đ</h5>
-                    <div class="quantity-control" data-item-id="{{ $cart->product_id }}">
-                        <button class="btn
-                        btn-outline-secondary quantity_desc">-</button>
-                        <span class="quantity_goods">{{ $cart->quantity_sp ?? 0 }}</span>
-                        <button class="btn btn-outline-secondary quantity_asc">+</button>
-                        <button class="btn btn-outline-danger ms-2 remove-goods"><i class="bi bi-trash"></i></button>
-
-                        <!-- heart git heart -->
-                        <button data-goods-id="{{ $cart->product_id }}" data-goods-price="{{ $cart->total_price }}"
-                            class="btn btn-outline-success ms-2 heart-choose"><i class="bi bi-heart"></i>
+            <div class="cart-layout">
+                <section class="fd-panel">
+                    <div class="cart-toolbar">
+                        <label class="fd-chip" for="all-checked">
+                            <input type="checkbox" id="all-checked" class="check-tamTinh-all" style="accent-color: var(--fd-green)">
+                            Chọn tất cả
+                        </label>
+                        <button id="delete_goods_all" class="fd-btn fd-btn-outline" type="button">
+                            <i class="bi bi-trash3"></i> Xóa tất cả
                         </button>
                     </div>
-                </div>
+
+                    @if ($cartMany->isEmpty())
+                        <div class="empty-cart">
+                            <i class="bi bi-bag-x"></i>
+                            <h2 class="fd-title" style="font-size:24px;margin-top:12px">Giỏ hàng đang trống</h2>
+                            <p class="fd-muted">Thêm vài món ngon rồi quay lại thanh toán nha.</p>
+                            <a href="{{ route('website-main') }}" class="fd-btn">Đi mua hàng</a>
+                        </div>
+                    @else
+                        <div class="cart-list">
+                            @foreach ($cartMany as $cart)
+                                @php
+                                    $encryptedProductId = encrypt($cart->product_id);
+                                @endphp
+                                <article class="cart-row">
+                                    <input data-client-image="{{ $cart->image }}" data-carted-id="{{ $cart->cart_id }}"
+                                        data-product-id="{{ $encryptedProductId }}" data-client-amount="{{ $cart->quantity_sp }}"
+                                        data-client-price="{{ $cart->total_price }}" type="checkbox" class="cart-check check-tamTinh">
+
+                                    <img class="cart-img" src="{{ asset('component/image-product/' . $cart->image) }}" alt="{{ $cart->product_name }}">
+
+                                    <div class="cart-info">
+                                        <h2 class="cart-name">{{ $cart->product_name }}</h2>
+                                        <p class="cart-meta">Đóng gói: Túi • Khối lượng: 250g</p>
+                                        <p class="cart-meta">Mã giỏ: #{{ $cart->cart_id }}</p>
+                                    </div>
+
+                                    <div class="cart-side">
+                                        <div class="cart-price">{{ number_format($cart->product_price) }} đ</div>
+                                        <div class="qty-box quantity-control" data-item-id="{{ $cart->product_id }}">
+                                            <button type="button" class="quantity_desc" title="Giảm"><i class="bi bi-dash"></i></button>
+                                            <span class="quantity_goods">{{ $cart->quantity_sp ?? 0 }}</span>
+                                            <button type="button" class="quantity_asc" title="Tăng"><i class="bi bi-plus"></i></button>
+                                            <button type="button" class="cart-small-btn danger remove-goods" title="Xóa"><i class="bi bi-trash3"></i></button>
+                                            <button type="button" data-goods-id="{{ $cart->product_id }}" data-goods-price="{{ $cart->total_price }}"
+                                                class="cart-small-btn heart heart-choose" title="Yêu thích"><i class="bi bi-heart"></i></button>
+                                        </div>
+                                    </div>
+                                </article>
+                            @endforeach
+                        </div>
+                    @endif
+                </section>
+
+                <aside class="fd-panel summary-panel">
+                    @php
+                        $cartTotal = $cartMany->sum(fn($cart) => $cart->product_price * $cart->quantity_sp);
+                    @endphp
+                    <h2 class="fd-title" style="font-size:24px">Thông tin đơn hàng</h2>
+                    <div class="bill-line">
+                        <span>Sản phẩm trong giỏ</span>
+                        <strong>{{ $amount_cart_header ?? 0 }}</strong>
+                    </div>
+                    <div class="bill-line">
+                        <span>Tổng tiền giỏ hàng</span>
+                        <strong id="totalAmount">{{ number_format($cartTotal) }} đ</strong>
+                    </div>
+                    <div class="bill-line">
+                        <span>Đang chọn</span>
+                        <strong id="totalItemSelect">0 đ</strong>
+                    </div>
+
+                    @if (session('address_exists'))
+                        <p class="fd-alert warning" style="margin-top:12px">
+                            {{ session('address_exists') }}
+                            <a href="{{ url('/information-client') }}" style="color:#9a3412;font-weight:900">Cập nhật địa chỉ</a>
+                        </p>
+                    @endif
+
+                    <form id="confirm-payment" method="post" style="margin-top:14px">
+                        @csrf
+                        <button type="submit" class="fd-btn btn-payment" style="width:100%" disabled>
+                            <i class="bi bi-receipt"></i> Xác nhận giỏ hàng
+                        </button>
+                    </form>
+                </aside>
             </div>
-            @php
-                $price = $cart->product_price * $cart->quantity_sp;
-                $tamTinh += $price;
-
-                $cartSl = $cart->quantity_sp;
-                $cartPrice = $cart->total_price;
-            @endphp
-        @endforeach
-        <!-- Tổng tiền khách hàng phải chọn sản phẩm mới xác nhận được -->
-        <div class="subtotal-section mt-4 text-end">
-            <h5>Thông tin đơn hàng</h5>
-            @php
-                $price_final = $tamTinh;
-            @endphp
-
-            <p id="totalItemSelect">Tiền đơn hàng bạn chọn(?): 0 đ</p>
-
-            <p id="totalAmount">Tổng tiền đơn hàng: {{ number_format($price_final) ?? 0 }} đ</p>
-            <p class="text-danger">
-                @if (session('address_exists'))
-                    {{ session('address_exists') }} <a href="{{ url('/information-client') }}">điền</a>
-                @endif
-            </p>
-
-            <!-- form confirm payment -->
-            <form id="confirm-payment" style="padding: 0; margin: 0;" method="get">
-                {{-- @csrf --}}
-                <button type="submit" class="btn btn-secondary btn-payment">XÁC
-                    NHẬN GIỎ HÀNG
-                </button>
-            </form>
         </div>
-    </div>
-    <!-- git -->
-    <div></div>
+    </main>
 
+    <div id="alert-add-cart" class="fd-alert success d-none"></div>
 
-    @if (session('success'))
-        <div id ="alertMessage" class = "alert alert-success" role = "alert">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    <div id="alert-add-cart" class="alert alert-success d-none" role="alert"></div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
-        /* handle button payment*/
-        $(document).ready(function() {
-            const $btn = $('.btn-payment');
-            const $form = $('#confirm-payment');
-            const $all_checked = $('#all-checked');
+        const csrfToken = "{{ csrf_token() }}";
 
+        function formatVnd(value) {
+            return new Intl.NumberFormat('vi-VN').format(value) + ' đ';
+        }
 
-            /* handle kiểm tra khách hàng có chọn sản phẩm chưa*/
-            $('.check-tamTinh').on('change', function() {
-                if ($('.check-tamTinh:checked').length > 0) {
-                    $btn.addClass("btn-success").removeClass("btn-secondary");
-                    $btn.prop('disabled', false);
-
-
-                    let total = 0;
-                    $('.check-tamTinh:checked').each(function() {
-                        const amount = Number($(this).data('client-amount'));
-                        const price = Number($(this).data('client-price'));
-                        total += amount * price;
-                    });
-
-                    $.ajax({
-                        url: "/get/money/select",
-                        type: "POST",
-                        data: {
-                            amount: 1,
-                            priceClient: total,
-                            _token: "{{ csrf_token() }}"
-                        },
-                        success: function(response) {
-                            $('#totalItemSelect').text(
-                                `Tiền đơn hàng bạn chọn: ${response.totalItemSelect} đ`
-                            );
-                        }
-                    });
-
-                } else {
-                    $btn.removeClass("btn-success").addClass("btn-secondary");
-                    $btn.prop('disabled', true);
-                    $('#totalItemSelect').text(
-                        `Tiền đơn hàng bạn chọn: 0 đ`);
-                }
+        function refreshSelectedTotal() {
+            let total = 0;
+            $('.check-tamTinh:checked').each(function() {
+                total += Number($(this).data('client-amount')) * Number($(this).data('client-price'));
             });
 
+            $('#totalItemSelect').text(formatVnd(total));
+            $('.btn-payment').prop('disabled', total <= 0);
+        }
 
-            $(function() {
-                $('.check-tamTinh-all').on('click', function() {
-                    const isChecked = $(this).is(':checked');
-                    $('.check-tamTinh').prop('checked', isChecked).trigger('change');
-                });
-            });
+        $('.check-tamTinh').on('change', refreshSelectedTotal);
 
-
-            /* qua trang bill*/
-            $form.on('submit', function(e) {
-                e.preventDefault(); // Ngăn submit mặc định
-
-                let items = [];
-                $('.check-tamTinh:checked').each(function() {
-                    items.push({
-                        cart_id: $(this).data('carted-id'),
-                        product_id: $(this).data('product-id'),
-                        amount: $(this).data('client-amount'),
-                        price: $(this).data('client-price'),
-                        image: $(this).data('client-image'),
-                    });
-                });
-
-                $.ajax({
-                    url: "/show/url/cartMany",
-                    type: "post",
-                    data: {
-                        arrItems: JSON.stringify(items),
-                        _token: "{{ csrf_token() }}"
-                    },
-                    success: function(response) {
-                        window.location.href = response.redirect_url;
-                    },
-                    error: function(xhr) {
-                        console.error(xhr.responseText);
-                    }
-                });
-            });
-
+        $('#all-checked').on('change', function() {
+            $('.check-tamTinh').prop('checked', $(this).is(':checked'));
+            refreshSelectedTotal();
         });
 
+        $('#confirm-payment').on('submit', function(event) {
+            event.preventDefault();
 
+            const items = [];
+            $('.check-tamTinh:checked').each(function() {
+                items.push({
+                    cart_id: $(this).data('carted-id'),
+                    product_id: $(this).data('product-id'),
+                    amount: $(this).data('client-amount'),
+                    price: $(this).data('client-price'),
+                    image: $(this).data('client-image'),
+                });
+            });
 
+            if (!items.length) {
+                showCartAlert('Bạn hãy chọn ít nhất một sản phẩm để thanh toán.', 'warning');
+                return;
+            }
 
-        /*xử lý tăng giảm git*/
+            $.post("/show/url/cartMany", {
+                arrItems: JSON.stringify(items),
+                _token: csrfToken
+            }).done(function(response) {
+                window.location.href = response.redirect_url;
+            }).fail(function() {
+                showCartAlert('Chưa tạo được trang thanh toán, vui lòng thử lại.', 'warning');
+            });
+        });
+
         $('.quantity-control').each(function() {
-            const $amountItem = $(this);
-            const $btnAsc = $amountItem.find('.quantity_asc');
-            const $btnDesc = $amountItem.find('.quantity_desc');
-            const $quantityElem = $amountItem.find('.quantity_goods');
-            const itemId = $amountItem.data('item-id');
-
-
+            const $control = $(this);
+            const $quantity = $control.find('.quantity_goods');
+            const $checkbox = $control.closest('.cart-row').find('.check-tamTinh');
+            const itemId = $control.data('item-id');
 
             function updateQuantity(newQty) {
-                $.ajax({
-                    url: "{{ route('cartMany.amount.item') }}",
-                    type: "POST",
-                    data: {
-                        item_id: itemId,
-                        quantity: newQty,
-                        _token: '{{ csrf_token() }}'
-                    },
-
-                    success: function(value) {
-                        if (value.success) {
-                            // Cập nhật lại số lượng trên giao diện
-                            $quantityElem.text(newQty);
-                            $('#totalAmount').text(`Tạm tính ${value.totalAmount}`);
-                            console.log(value.totalAmount)
-                        }
+                $.post("{{ route('cartMany.amount.item') }}", {
+                    item_id: itemId,
+                    quantity: newQty,
+                    _token: csrfToken
+                }).done(function(response) {
+                    if (response.success) {
+                        $quantity.text(newQty);
+                        $checkbox.data('client-amount', newQty);
+                        $('#totalAmount').text(response.totalAmount + ' đ');
+                        refreshSelectedTotal();
                     }
                 });
             }
 
-            $btnAsc.on('click', function() {
-                let current = parseInt($quantityElem.text());
-                let newQty = current + 1;
-                $quantityElem.text(newQty);
-                updateQuantity(newQty);
+            $control.find('.quantity_asc').on('click', function() {
+                updateQuantity(parseInt($quantity.text(), 10) + 1);
             });
 
-            $btnDesc.on('click', function() {
-                let current = parseInt($quantityElem.text());
+            $control.find('.quantity_desc').on('click', function() {
+                const current = parseInt($quantity.text(), 10);
                 if (current > 1) {
-                    let newQty = current - 1;
-                    $quantityElem.text(newQty);
-                    updateQuantity(newQty);
+                    updateQuantity(current - 1);
                 }
             });
 
-
-            // xóa 1 sản phẩm
-            const remove_goods = $amountItem.find('.remove-goods');
-
-            remove_goods.on('click', function() {
-                const itemId = $amountItem.data('item-id');
-
-                $.ajax({
-                    url: "{{ route('remove.cartMany.giang') }}",
-                    type: "GET",
-                    data: {
-                        goods_remove: itemId,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        location.reload();
-                    },
-
+            $control.find('.remove-goods').on('click', function() {
+                $.get("{{ route('remove.cartMany.giang') }}", {
+                    goods_remove: itemId,
+                    _token: csrfToken
+                }).done(function() {
+                    location.reload();
                 });
             });
 
-            // heart 
-            const heart_choose = $amountItem.find('.heart-choose');
-            heart_choose.on('click', function() {
-                const idProduct = $(this).data('goods-id');
-                const price = $(this).data('goods-price');
-                console.log([idProduct, price]);
-
-                $.ajax({
-                    url: "{{ route('heart.list.client') }}",
-                    type: "POST",
-                    data: {
-                        heartID: idProduct,
-                        priceHeart: price,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        console.log(response.status);
-                        if (response.status === 'error') {
-                            $('#alert-add-cart').css({
-                                'color': '#ffffff',
-                                'background-color': '#dc3545'
-                            });
-                            showCartAlert("Đã xảy ra lỗi khi thêm sản phẩm yêu thích.");
-                        } else {
-                            $('#alert-add-cart').css({
-                                'color': '#d1e7dd;',
-                                'background-color': '#198754'
-                            });
-                            showCartAlert("Thêm sản phẩm yêu thích thành công!");
-                        }
-                    },
+            $control.find('.heart-choose').on('click', function() {
+                $.post("{{ route('heart.list.client') }}", {
+                    heartID: $(this).data('goods-id'),
+                    priceHeart: $(this).data('goods-price'),
+                    _token: csrfToken
+                }).done(function(response) {
+                    showCartAlert(response.status === 'error' ? 'Không thêm được sản phẩm yêu thích.' : 'Đã thêm vào danh sách yêu thích.', response.status === 'error' ? 'warning' : 'success');
                 });
-
             });
-
-
-            // đóng
         });
-
-        /* xóa all item của client git*/
-        const remove_goods_all = document.getElementById('delete_goods_all');
 
         $('#delete_goods_all').on('click', function() {
-
-            if (confirm('Bạn có chắc muốn xóa tất cả sản phẩm?')) {
-                $.ajax({
-                    url: "{{ route('goods.cartManyAll') }}",
-                    type: "get",
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function() {
-                        location.reload();
-                    }
-                })
+            if (!confirm('Bạn có chắc muốn xóa tất cả sản phẩm khỏi giỏ hàng?')) {
+                return;
             }
-        })
 
-        /* hiển thị alert client đã thêm vào dánh yêu thích*/
-        document.addEventListener("DOMContentLoaded", function() {
-            var alertMessage = document.getElementById('alertMessage');
-            if (alertMessage) {
-                setTimeout(function() {
-                    alertMessage.style.display = 'none';
-                }, 2000); // 2000 milliseconds = 2 seconds
-            }
+            $.get("{{ route('goods.cartManyAll') }}", {
+                _token: csrfToken
+            }).done(function() {
+                location.reload();
+            });
         });
 
-
-        function showCartAlert(message) {
-            var alertMessage = $('#alert-add-cart');
-            alertMessage.text(message); // Đặt nội dung thông báo
-            alertMessage.removeClass('d-none'); // Hiện thông báo
+        function showCartAlert(message, type = 'success') {
+            const $alert = $('#alert-add-cart');
+            $alert.text(message)
+                .toggleClass('success', type === 'success')
+                .toggleClass('warning', type !== 'success')
+                .removeClass('d-none');
 
             setTimeout(function() {
-                alertMessage.addClass('d-none'); // Ẩn sau 3 giây
-            }, 3000);
+                $alert.addClass('d-none');
+            }, 2600);
         }
+
+        setTimeout(function() {
+            $('#alertMessage').fadeOut(250);
+        }, 2200);
     </script>
+</body>
+
+</html>

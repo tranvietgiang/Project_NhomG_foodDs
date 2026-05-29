@@ -427,9 +427,13 @@
                             $addressParts = explode(',', optional(Auth::user()->client)->client_address);
                         @endphp
 
+                        <input type="hidden" id="client_province_name" name="client_province_name">
+                        <input type="hidden" id="client_district_name" name="client_district_name">
+                        <input type="hidden" id="client_ward_name" name="client_ward_name">
+
                         <!-- Thành phố (City) -->
                         <div class="form-group mb-4">
-                            <select id="province" name="client_province" class="form-control" required>
+                            <select id="province" name="client_province" class="form-control">
                                 <option style="color: #000" value="" disabled selected>
                                     {{ !empty(trim($addressParts[0])) ? $addressParts[0] : 'Thành Phố' }}
                                 </option>
@@ -443,7 +447,7 @@
 
                         <!-- Quận huyện (District) -->
                         <div class="form-group mb-4">
-                            <select id="district" name="client_district" class="form-control" required>
+                            <select id="district" name="client_district" class="form-control">
                                 <option value="" disabled selected>
                                     {{ $addressParts[1] ?? 'Quận/Huyện' }}
                                 </option>
@@ -593,49 +597,58 @@
 <!-- link ajax -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $("#province").change(function() {
-        let province_id = $(this).val(); // Lấy giá trị province_id từ dropdown tỉnh/thành phố
-        $.ajax({
-            url: "/get-districts", // Gửi yêu cầu đến đường dẫn " route('/get-districts')
-            type: "POST",
-            data: {
-                province_id: province_id, // Truyền province_id qua dữ liệu yêu cầu
-                _token: "{{ csrf_token() }}" // CSRF token để bảo vệ yêu cầu khỏi tấn công CSRF
-            },
-            success: function(data) { // Khi server trả về dữ liệu
-                // Cập nhật dropdown quận huyện, xóa tất cả các option cũ
-                $("#district").html('<option value="">Chọn quận/huyện</option>');
-                $.each(data, function(key, value) { // Duyệt qua danh sách quận huyện trả về
-                    // Thêm các option mới vào dropdown quận huyện
-                    $("#district").append(
-                        `<option value="${value.district_id}">${value.name}</option>`);
-                });
-            }
+    let vnAddressData = [];
+    const provinceSelect = document.getElementById('province');
+    const districtSelect = document.getElementById('district');
+    const wardSelect = document.getElementById('wards');
+    const provinceNameInput = document.getElementById('client_province_name');
+    const districtNameInput = document.getElementById('client_district_name');
+    const wardNameInput = document.getElementById('client_ward_name');
+
+    fetch('https://provinces.open-api.vn/api/?depth=3')
+        .then(response => response.json())
+        .then(data => {
+            vnAddressData = data;
+            provinceSelect.innerHTML = '<option value="" disabled selected>Chọn tỉnh/thành phố</option>';
+            data.forEach(province => {
+                provinceSelect.insertAdjacentHTML('beforeend', `<option value="${province.code}">${province.name}</option>`);
+            });
+        })
+        .catch(() => {
+            provinceSelect.innerHTML = '<option value="" disabled selected>Không tải được danh sách địa chỉ</option>';
+        });
+
+    provinceSelect.addEventListener('change', function() {
+        const province = vnAddressData.find(item => String(item.code) === this.value);
+        provinceNameInput.value = province ? province.name : '';
+        districtNameInput.value = '';
+        wardNameInput.value = '';
+
+        districtSelect.innerHTML = '<option value="" disabled selected>Chọn quận/huyện</option>';
+        wardSelect.innerHTML = '<option value="" disabled selected>Chọn phường/xã</option>';
+
+        (province?.districts || []).forEach(district => {
+            districtSelect.insertAdjacentHTML('beforeend', `<option value="${district.code}">${district.name}</option>`);
         });
     });
 
+    districtSelect.addEventListener('change', function() {
+        const province = vnAddressData.find(item => String(item.code) === provinceSelect.value);
+        const district = province?.districts?.find(item => String(item.code) === this.value);
+        districtNameInput.value = district ? district.name : '';
+        wardNameInput.value = '';
 
-
-    // Khi chọn quận/huyện
-    $("#district").change(function() {
-        let district_id = $(this).val(); // Lấy giá trị district_id từ dropdown quận/huyện
-        $.ajax({
-            url: "/get-wards", // Gửi yêu cầu đến đường dẫn route route('/get-wards')
-            type: "POST", // Gửi yêu cầu POST
-            data: {
-                district_id: district_id, // Truyền district_id qua dữ liệu yêu cầu
-                _token: "{{ csrf_token() }}" // CSRF token để bảo vệ yêu cầu khỏi tấn công CSRF
-            },
-            success: function(data) { // Khi server trả về dữ liệu
-                // Cập nhật dropdown phường xã, xóa tất cả các option cũ
-                $("#wards").html('<option value="">Chọn phường/xã</option>');
-                $.each(data, function(key, value) { // Duyệt qua danh sách phường xã trả về
-                    // Thêm các option mới vào dropdown phường xã
-                    $("#wards").append(
-                        `<option value="${value.wards_id}">${value.name}</option>`);
-                });
-            }
+        wardSelect.innerHTML = '<option value="" disabled selected>Chọn phường/xã</option>';
+        (district?.wards || []).forEach(ward => {
+            wardSelect.insertAdjacentHTML('beforeend', `<option value="${ward.code}">${ward.name}</option>`);
         });
+    });
+
+    wardSelect.addEventListener('change', function() {
+        const province = vnAddressData.find(item => String(item.code) === provinceSelect.value);
+        const district = province?.districts?.find(item => String(item.code) === districtSelect.value);
+        const ward = district?.wards?.find(item => String(item.code) === this.value);
+        wardNameInput.value = ward ? ward.name : '';
     });
 
 

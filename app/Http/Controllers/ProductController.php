@@ -128,19 +128,9 @@ class ProductController extends Controller
 
         );
 
-        // hiển thị sản phẩm trong  giỏ hàng
-        $cartItems = Cart::select('carts.*', 'products.product_name', 'products.product_image', 'products.product_price')
-            ->join('products', 'carts.product_id', '=', 'products.product_id')
-            ->where('carts.user_id', Auth::id())
-            ->get();
-
-        $totalAmount = $cartItems->sum(function ($item) {
-            return $item->product_price * $item->quantity_sp;
-        });
-
-        // Chuyển hướng đến phương thức show_cartCa và truyền dữ liệu cartItems
-
-        return view('component.belowContent.cart', compact('cartItems', 'totalAmount'));
+        return redirect()
+            ->route('cart.shows_goods')
+            ->with('success', 'Đã thêm sản phẩm vào giỏ hàng.');
     }
 
     // xóa giỏ hàng 
@@ -264,7 +254,8 @@ class ProductController extends Controller
             return view('component.belowContent.allproduct', compact('products'));
         }
 
-        return redirect()->route('login')->with('message', 'Vui lòng đăng nhập để xem sản phẩm yêu thích.');
+        return redirect()->route('wayLogin', ['page' => 'login'])
+            ->with('message', 'Vui lòng đăng nhập để xem sản phẩm yêu thích.');
     }
 
 

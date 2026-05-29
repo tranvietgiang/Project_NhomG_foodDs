@@ -1,71 +1,71 @@
-<<<<<<< HEAD
-# Project_NhomH_foodDs
-Project cuoi ky be2
-=======
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# FoodDS - Website Ban Do An
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+FoodDS la project Laravel cho website ban do an/thuc uong, co cac luong chinh cho khach hang va quan tri:
 
-## About Laravel
+- Xem danh sach san pham, tim kiem, sap xep theo gia, xem san pham yeu thich.
+- Xem chi tiet san pham, danh gia san pham sau khi mua hang.
+- Them gio hang, dat nhieu san pham, thanh toan COD/VNPay/ZaloPay.
+- Dang ky, dang nhap, quen mat khau bang OTP email.
+- Quan tri san pham, danh muc, khach hang, nhan vien, khuyen mai va thong ke.
+- Xuat Excel/PDF cho mot so bao cao.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Cong nghe
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- PHP 8.2+
+- Laravel 12
+- MySQL hoac database tuong thich Laravel
+- Vite
+- Tailwind CSS 4
+- Bootstrap/MDB cho mot so man hinh cu
+- Laravel Socialite, DomPDF, Maatwebsite Excel
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Cai dat
 
-## Learning Laravel
+```bash
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Cap nhat thong tin database trong file `.env`, sau do chay:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```bash
+php artisan migrate --seed
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Neu chi muon nap lai du lieu mau:
 
-## Laravel Sponsors
+```bash
+php artisan db:seed
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Chay project
 
-### Premium Partners
+Chay server Laravel:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+```bash
+php artisan serve
+```
 
-## Contributing
+Chay Vite de bien dich Tailwind:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+npm run dev
+```
 
-## Code of Conduct
+Mo trang chinh:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```text
+http://127.0.0.1:8000/food_ds.com
+```
 
-## Security Vulnerabilities
+## Build giao dien
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+npm run build
+```
 
-## License
+## Ghi chu du lieu mau
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
->>>>>>> datHangNhieu-giang
+Seeder hien tao danh muc va nhieu san pham do an/thuc uong voi anh co san trong `public/component/image-product`. Neu them anh moi, hay dat file vao thu muc nay va cap nhat `database/seeders/ProductsSeeder.php`.

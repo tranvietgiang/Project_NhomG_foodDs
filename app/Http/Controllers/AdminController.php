@@ -175,18 +175,30 @@ class AdminController extends Controller
 
         if ($client) {
             // lấy giá trị các model
-            $province = Province::where('province_id', $req->client_province)->first();
-            $district = District::where('district_id', $req->client_district)->first();
-            $ward = Ward::where('wards_id', $req->client_wards)->first();
+            $year = year::find($req->client_year);
+            $provinceName = $req->input('client_province_name');
+            $districtName = $req->input('client_district_name');
+            $wardName = $req->input('client_ward_name');
 
-            $year = year::find($req->client_year);  // Giả sử Year là bảng chứa thông tin năm
+            if (!$provinceName || !$districtName || !$wardName) {
+                $province = Province::where('province_id', $req->client_province)->first();
+                $district = District::where('district_id', $req->client_district)->first();
+                $ward = Ward::where('wards_id', $req->client_wards)->first();
 
+                $provinceName = $provinceName ?: optional($province)->name;
+                $districtName = $districtName ?: optional($district)->name;
+                $wardName = $wardName ?: optional($ward)->name;
+            }
 
             $client->client_name = $req->client_name;
             $client->client_phone = $req->client_phone;
-            $client->client_address = $province->name . ', ' . $district->name . ', ' . $ward->name;
+            $newAddress = collect([$provinceName, $districtName, $wardName])->filter()->implode(', ');
 
-            if ($req->client_address_tail !== "") {
+            if ($newAddress !== '') {
+                $client->client_address = $newAddress;
+            }
+
+            if ($req->filled('client_address_detail')) {
                 $client->client_address_detail = $req->client_address_detail;
             }
 

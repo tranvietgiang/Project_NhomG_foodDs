@@ -4,7 +4,7 @@
     Cảm ơn bạn đã đặt hàng! Dưới đây là thông tin đơn hàng:
 
     @foreach ($cart as $item)
-        - **Sản phẩm:** {{ $item->product_name }}
+        - **Sản phẩm:** {{ $item->product_name ?? optional($item->products)->product_name ?? 'Sản phẩm' }}
         - **Số lượng:** {{ $item->quantity_sp }}
         - **Giá:** {{ number_format($item->total_price) }} VND
     @endforeach
