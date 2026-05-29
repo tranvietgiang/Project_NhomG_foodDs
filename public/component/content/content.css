@@ -1,116 +1,123 @@
-.content-part-1 {
-    border: 1px solid #f2ebeb;
-    padding: 20px;
-    background: #ffffff !important;
+.food-section {
+    margin-top: 28px;
 }
 
-.title-part-1 {
-    margin-bottom: 20px;
-    border-bottom: 1px solid #f2ebeb;
-    padding-bottom: 10px;
+.food-panel {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+    padding: 22px;
 }
 
-.title-part-1 span {
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.image-product-content-1 {
-    background-size: cover;
-    width: 250px !important;
-    height: 300px !important;
-}
-
-.frame-image {
-    border: 1px solid #f2ebeb;
-    padding: 10px;
-    text-align: center;
-}
-
-.old-price {
-    text-decoration: line-through;
-    color: #000;
-    opacity: 0.5;
-}
-
-.discount {
-    font-weight: bold;
-}
-
-.frame-image {
-    text-align: left !important;
-}
-
-.content-part-1 .frame-image span {
-    display: block;
-}
-
-.product_name_demo {
-    white-space: nowrap;
-    /* Ngăn xuống dòng */
+.food-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    background: #ffffff;
+    min-height: 100%;
     overflow: hidden;
-    /* Ẩn phần văn bản vượt quá kích thước */
-    text-overflow: ellipsis;
-    /* Hiển thị dấu "..." khi nội dung bị cắt */
-    max-width: 200px;
-    /* Điều chỉnh độ rộng tối đa */
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.food-card:hover {
+    transform: translateY(-4px);
+    border-color: #86efac;
+    box-shadow: 0 14px 34px rgba(22, 163, 74, 0.12);
+}
+
+.food-card-image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    background: #f1f5f9;
 }
 
 .product_name {
     display: -webkit-box;
-    -webkit-line-clamp: 1;
-    /* Giới hạn tối đa 2 dòng */
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    min-height: 44px;
     overflow: hidden;
-    /* Ẩn nội dung dư thừa */
-    max-width: 200px;
-    /* Độ rộng tối đa */
 }
 
 .product_star {
-    display: inline;
     font-size: 13px;
 }
 
 .new-price {
+    color: #dc2626;
     font-size: 19px;
 }
 
-#alert-add-cart {
-    position: fixed; /* Cố định vị trí trên màn hình */
-    top: 50%; /* Đặt ở giữa theo chiều dọc */
-    left: 50%; /* Đặt ở giữa theo chiều ngang */
-    transform: translate(-50%, -50%); /* Dịch chuyển để căn giữa chính xác */
-    z-index: 1050; /* Đảm bảo thông báo nằm trên các phần tử khác */
-    width: 90%; /* Chiều rộng linh hoạt */
-    max-width: 500px; /* Giới hạn chiều rộng tối đa */
-    padding: 15px; /* Khoảng cách bên trong */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Thêm bóng để nổi bật */
-    opacity: 0; /* Ban đầu ẩn (dùng cho hiệu ứng) */
-    transition: opacity 0.3s ease-in-out; /* Hiệu ứng mượt mà */
+.old-price {
+    color: #94a3b8;
+    font-size: 13px;
+    text-decoration: line-through;
 }
 
-/* Khi thông báo hiển thị */
-#alert-add-cart:not(.d-none) {
-    opacity: 1; /* Hiện thông báo */
+.discount {
+    border-radius: 999px;
+    background: #fee2e2;
+    color: #dc2626;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 8px;
 }
 
 .add-cart-btn {
-    background-color: #2ecc71;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
     align-items: center;
-    justify-content: center;
+    background-color: #16a34a;
+    border: none;
+    border-radius: 999px;
+    color: white;
     cursor: pointer;
-    transition: var(--transition);
+    display: inline-flex;
     font-size: 16px;
+    height: 42px;
+    justify-content: center;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    width: 42px;
 }
 
 .add-cart-btn:hover {
-    background-color: #2ecc71;
-    transform: scale(1.1);
+    background-color: #15803d;
+    transform: scale(1.06);
+}
+
+#bestSaleContainer {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+#alert-add-cart {
+    border: 0;
+    border-radius: 14px;
+    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.2);
+    left: 50%;
+    max-width: 460px;
+    opacity: 0;
+    padding: 16px 20px;
+    position: fixed;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.25s ease;
+    width: calc(100% - 32px);
+    z-index: 1050;
+}
+
+#alert-add-cart:not(.d-none) {
+    opacity: 1;
+}
+
+@media (min-width: 576px) {
+    #bestSaleContainer {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 992px) {
+    #bestSaleContainer {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
 }

@@ -9,9 +9,12 @@ use App\Models\Cart_buyed;
 use App\Models\Client;
 use App\Models\Product;
 use App\Models\ThanhToanNhieuItem;
+use App\Mail\OrderConfirmationMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use App\Models\ZaloPayTemp;
 
 
@@ -60,6 +63,15 @@ class ThanhToanNhieuItemController extends Controller
 
                 Cart::where('cart_id', $item->cart_id)->where('user_id', Auth::id())->delete();
             }
+        }
+
+        try {
+            Mail::to(Auth::user()->email)->send(new OrderConfirmationMail(collect($cartShow)));
+        } catch (\Throwable $exception) {
+            Log::warning('Order confirmation mail failed after COD many payment', [
+                'message' => $exception->getMessage(),
+                'user_id' => Auth::id(),
+            ]);
         }
 
         return redirect()->route('payment.many.payment.success');

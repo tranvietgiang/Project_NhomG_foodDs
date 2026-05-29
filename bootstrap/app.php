@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use App\Http\Middleware\checkLogin;
 use App\Http\Middleware\LastActivity;
@@ -13,7 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // $middleware->append(checkLogin::class); // Thêm middleware của bạn ở đây
+        // $middleware->append(checkLogin::class); // ThÃªm middleware cá»§a báº¡n á»Ÿ Ä‘Ã¢y
+        $middleware->validateCsrfTokens(except: [
+            'momo/ipn',
+        ]);
     })
 
     ->withExceptions(function (Exceptions $exceptions) {

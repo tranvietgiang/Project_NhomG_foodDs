@@ -136,13 +136,25 @@
                             </div>
 
                             <!-- ZaloPay -->
-                            <div class="form-check">
+                            <div class="form-check mb-2">
                                 <input class="form-check-input" type="radio" name="payment_method" id="zalopay"
                                     value="zalopay">
                                 <label class="form-check-label" for="zalopay">
                                     <div class="d-flex align-items-center">
                                         <i class="fas fa-wallet me-2 text-info"></i>
                                         ZALOPAY
+                                    </div>
+                                </label>
+                            </div>
+
+                            <!-- MoMo -->
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" id="momo"
+                                    value="momo">
+                                <label class="form-check-label" for="momo">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-wallet me-2 text-danger"></i>
+                                        MOMO
                                     </div>
                                 </label>
                             </div>
@@ -177,6 +189,9 @@
                     break;
                 case "zalopay":
                     form.action = "{{ route('zalo.payment') }}";
+                    break;
+                case "momo":
+                    form.action = "{{ route('momo_payment') }}";
                     break;
                 default: // COD
                     form.action = "{{ route('pptt.payment.cod') }}";

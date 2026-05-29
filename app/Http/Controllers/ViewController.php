@@ -9,25 +9,26 @@ use App\Models\Cartbuyed;
 use App\Models\Client;
 use App\Models\Product;
 use App\Models\User;
+use App\Mail\OrderConfirmationMail;
 use Illuminate\Http\Request;
 use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use PhpParser\Node\Expr\Match_;
-use App\Mail\OrderConfirmationMail;
 
 class ViewController extends Controller
 {
 
-    /** form show_cart và review info detail products */
+    /** form show_cart vÃƒÂ  review info detail products */
     public function show_cart(Request $req, $product_id)
     {
 
-        /** lấy ra sản phẩm nè */
+        /** lÃ¡ÂºÂ¥y ra sÃ¡ÂºÂ£n phÃ¡ÂºÂ©m nÃƒÂ¨ */
         $cart = Product::where('product_id', $req->product_id)->orderByDesc('created_at')->get();
 
-        /** nếu id product ko có trong table products thì quay về main */
+        /** nÃ¡ÂºÂ¿u id product ko cÃƒÂ³ trong table products thÃƒÂ¬ quay vÃ¡Â»Â main */
 
         $check_cart = false;
         foreach ($cart as $i) {
@@ -40,40 +41,40 @@ class ViewController extends Controller
         }
 
 
-        /** số lượt đánh giá */
+        /** sÃ¡Â»â€˜ lÃ†Â°Ã¡Â»Â£t Ã„â€˜ÃƒÂ¡nh giÃƒÂ¡ */
         $review_count_rating = Review::where('product_id', $product_id)->count();
 
         /** total rating */
         $avenger_rating = Review::where('product_id', $product_id)->avg('review_rating');
 
-        /** tính trung bình đánh giá 5 */
+        /** tÃƒÂ­nh trung bÃƒÂ¬nh Ã„â€˜ÃƒÂ¡nh giÃƒÂ¡ 5 */
         $final_rating_tbc = round($avenger_rating, 1);
 
-        /** phân loại số đánh giá theo nhóm */
+        /** phÃƒÂ¢n loÃ¡ÂºÂ¡i sÃ¡Â»â€˜ Ã„â€˜ÃƒÂ¡nh giÃƒÂ¡ theo nhÃƒÂ³m */
         /**
-         * DB::raw() là gì?
-         * DB::raw() dùng để viết câu SQL "thô" (raw SQL) bên trong Eloquent query của Laravel.
-         * Nó cho phép bạn dùng những hàm SQL mà Laravel không hỗ trợ sẵn hoặc không có hàm tương ứng.
-         * pluck: tạo ra array với key value
+         * DB::raw() lÃƒÂ  gÃƒÂ¬?
+         * DB::raw() dÃƒÂ¹ng Ã„â€˜Ã¡Â»Æ’ viÃ¡ÂºÂ¿t cÃƒÂ¢u SQL "thÃƒÂ´" (raw SQL) bÃƒÂªn trong Eloquent query cÃ¡Â»Â§a Laravel.
+         * NÃƒÂ³ cho phÃƒÂ©p bÃ¡ÂºÂ¡n dÃƒÂ¹ng nhÃ¡Â»Â¯ng hÃƒÂ m SQL mÃƒÂ  Laravel khÃƒÂ´ng hÃ¡Â»â€” trÃ¡Â»Â£ sÃ¡ÂºÂµn hoÃ¡ÂºÂ·c khÃƒÂ´ng cÃƒÂ³ hÃƒÂ m tÃ†Â°Ã†Â¡ng Ã¡Â»Â©ng.
+         * pluck: tÃ¡ÂºÂ¡o ra array vÃ¡Â»â€ºi key value
          */
 
-        /** phân loại lượt đanh giá */
+        /** phÃƒÂ¢n loÃ¡ÂºÂ¡i lÃ†Â°Ã¡Â»Â£t Ã„â€˜anh giÃƒÂ¡ */
         $client_review_category = Review::where('product_id', $product_id)
             ->select('review_rating', DB::raw('count(*) as total'))
             ->groupBy('review_rating')
             ->pluck('total', 'review_rating');
 
 
-        /** lấy ra danh sách đánh giá của sản phẩm */
-        $list_review = Review::with(['users.client']) // Nạp thêm quan hệ client của user
+        /** lÃ¡ÂºÂ¥y ra danh sÃƒÂ¡ch Ã„â€˜ÃƒÂ¡nh giÃƒÂ¡ cÃ¡Â»Â§a sÃ¡ÂºÂ£n phÃ¡ÂºÂ©m */
+        $list_review = Review::with(['users.client']) // NÃ¡ÂºÂ¡p thÃƒÂªm quan hÃ¡Â»â€¡ client cÃ¡Â»Â§a user
             ->where('product_id', $req->route('product_id'))
             ->orderByDesc('created_at')
             ->get();
 
-        /** có 3 cách lấy id từ url là 
-         * 1: $req->route('product_id') với điều kiện là phải chuyền id qua router vd: cart/{product_id}'
+        /** cÃƒÂ³ 3 cÃƒÂ¡ch lÃ¡ÂºÂ¥y id tÃ¡Â»Â« url lÃƒÂ
+         * 1: $req->route('product_id') vÃ¡Â»â€ºi Ã„â€˜iÃ¡Â»Âu kiÃ¡Â»â€¡n lÃƒÂ  phÃ¡ÂºÂ£i chuyÃ¡Â»Ân id qua router vd: cart/{product_id}'
          * 2: $req->query('product)
-         * 3: thêm parament(tham số) vào show_cart(Request $req, $product_id)
+         * 3: thÃƒÂªm parament(tham sÃ¡Â»â€˜) vÃƒÂ o show_cart(Request $req, $product_id)
          */
 
 
@@ -96,14 +97,14 @@ class ViewController extends Controller
     }
 
 
-    /** show cart sản phẩm mà khách hàng đã bấm mua ngay  */
+    /** show cart sÃ¡ÂºÂ£n phÃ¡ÂºÂ©m mÃƒÂ  khÃƒÂ¡ch hÃƒÂ ng Ã„â€˜ÃƒÂ£ bÃ¡ÂºÂ¥m mua ngay  */
     public function show_cart_mua_ngay(Request $req, $product_id)
     {
 
-        /** số lượng mà khách hàng đã chọn */
+        /** sÃ¡Â»â€˜ lÃ†Â°Ã¡Â»Â£ng mÃƒÂ  khÃƒÂ¡ch hÃƒÂ ng Ã„â€˜ÃƒÂ£ chÃ¡Â»Ân */
         $product_client_quantity = $req->input('cart_quantity');
 
-        /** lấy ra sản phẩm mà client bấm mua ngay dựa vào id */
+        /** lÃ¡ÂºÂ¥y ra sÃ¡ÂºÂ£n phÃ¡ÂºÂ©m mÃƒÂ  client bÃ¡ÂºÂ¥m mua ngay dÃ¡Â»Â±a vÃƒÂ o id */
         $product_get = Product::where('product_id', $product_id)->first();
 
         $cart_add = Cart::create([
@@ -122,16 +123,20 @@ class ViewController extends Controller
             ->where('carts.cart_id', $cart_add->cart_id)
             ->get();
 
-
-
-        // Gửi email cho user hiện tại
-        Mail::to(Auth::user()->email)->send(new OrderConfirmationMail($cart));
+        try {
+            Mail::to(Auth::user()->email)->send(new OrderConfirmationMail($cart));
+        } catch (\Throwable $exception) {
+            Log::warning('Order confirmation mail failed after direct checkout', [
+                'message' => $exception->getMessage(),
+                'user_id' => Auth::id(),
+            ]);
+        }
 
         return view('component.header.dathang.checkout', compact(['cart', 'product_id']));
     }
 
 
-    /** hiển thị ra sản phẩm mà client bấm mua ngay */
+    /** hiÃ¡Â»Æ’n thÃ¡Â»â€¹ ra sÃ¡ÂºÂ£n phÃ¡ÂºÂ©m mÃƒÂ  client bÃ¡ÂºÂ¥m mua ngay */
     public function show_bill_product($cart_id)
     {
         $show_bill = User::select('clients.*', 'products.*', 'cart_buyeds.quantity_sp', DB::raw('(cart_buyeds.quantity_sp * cart_buyeds.total_price) AS TOTAL_PRICE'))
@@ -140,6 +145,6 @@ class ViewController extends Controller
             ->join('products', 'cart_buyeds.product_id', '=', 'products.product_id')
             ->where('users.id', Auth::id())->where('cart_buyeds.cart_id', $cart_id)->limit('1')->get();
 
-        return view('component.header.dathang.bill', compact('show_bill'))->with('order-success', 'Thanh toán đơn hàng thành công.');
+        return view('component.header.dathang.bill', compact('show_bill'))->with('order-success', 'Thanh toÃƒÂ¡n Ã„â€˜Ã†Â¡n hÃƒÂ ng thÃƒÂ nh cÃƒÂ´ng.');
     }
 }

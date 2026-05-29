@@ -1,285 +1,185 @@
-<link rel="stylesheet" href="{{ asset('component/content/content.css') }}">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
-<section class="container">
-    <div class="content-part-1">
-        <div class="title-part-1">
-            <span id="home" class="btn btn-success">Sản phẩm mới</span>
-            <span id="saleRating" data-url="{{ route('sale.item.index') }}" class="btn btn-outline-success">Bán chạy
-                nhất
-            </span>
-        </div>
-        <div id="bestSaleContainer" class="d-flex justify-contet-center align-items-center gap-2">
+@php
+    function fdProductCard($product, $amount_star_5, $product_sold) {
+        $price_discount = round($product->product_price * 0.65);
+        return [
+            'sale_price' => $price_discount,
+            'sold' => $product_sold[$product->product_id] ?? 0,
+            'stars' => $amount_star_5[$product->product_id] ?? 0,
+        ];
+    }
+@endphp
 
-            @foreach ($content_data as $item)
-                <div class="frame-image">
-                    {{-- <span>{{ $item->product_id }}</span> --}}
-                    <input type="hidden" name="product_id" value="{{ $item->product_id }}">
-                    <!-- cart -->
-                    <div>
-                        <a href="{{ route('show_cart', ['product_id' => $item->product_id]) }}">
-                            <img class="image-product-content-1 img-fluid"
-                                src="{{ asset('component/image-product/' . $item->product_image) }}" alt="">
-                        </a>
-                    </div>
-                    <h5 class="product_name"><b>
-                            {{ $item->product_name }}
-                        </b></h5>
-                    <span class="text-warning product_star">
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <span style="display: inline; color: #000">({{ $amount_star_5[$item->product_id] ?? 0 }})</span>
-                    </span>
-
-                    <span style="font-size:14px " class="text-success"> <i class="bi bi-bag-check"></i> đã bán
-                        {{ $product_sold[$item->product_id] ?? 0 }}</span>
-                    @php
-                        $price_coupon = $item->product_price - ($item->product_price * 35) / 100;
-                    $price_discount = round($price_coupon, 0); @endphp
-                    <span class="new-price"><b> {{ number_format($price_discount) }}</b><sub>đ</sub></span>
-                    <div class="d-flex justify-content-center align-items-center gap-5">
-                        <span class="old-price">1500.0<sub>đ</sub></span>
-                        <span style="margin-left: -10px" class="discount">-35%</span>
-                        <span>
-                            <a class="add-cart-btn addCartMany"
-                                data-url="{{ route('add.cartMany.giang', [
-                                    'product_id' => $item->product_id,
-                                    'price_goods' => $item->product_price,
-                                ]) }}">
-                                <i class="fas fa-cart-plus"></i>
-                            </a>
-                        </span>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    </div>
-</section>
-
-<!-- part-2 -->
-<section class="container pt-5">
-    <div class="content-part-1">
-        <div class="section-header">
-            <h2 class="section-title text-uppercase">Tinh hoa đất việt</h2>
-            <div class="categories">
-                <a href="#" class="category-btn category-main">SẢN PHẨM MỚI</a>
-                <a href="#" class="category-btn category-sub">?????????</a>
-                <a href="#" class="category-btn category-sub">?????????</a>
-                <a href="#" class="category-btn category-sub">?????????</a>
+<section class="fd-section fd-container">
+    <div class="fd-panel">
+        <div class="fd-section-head">
+            <div>
+                <p class="fd-eyebrow">Món ngon mới mỗi ngày</p>
+                <h2 class="fd-title">Sản phẩm nổi bật</h2>
+            </div>
+            <div class="fd-chip-row">
+                <button id="home" type="button" class="fd-chip active" style="border:0">Sản phẩm mới</button>
+                <button id="saleRating" data-url="{{ route('sale.item.index') }}" type="button" class="fd-chip" style="border:0">Bán chạy nhất</button>
             </div>
         </div>
 
-        <div class="row">
-            @foreach ($content_data_hung as $product)
-                <div class="col-6 col-md-3 mb-3">
-                    {{-- <span>{{ $product->product_id }}</span> --}}
-                    <div class="frame-image">
-                        <div>
-                            <a href="{{ route('show_cart', ['product_id' => $product->product_id]) }}">
-                                <img class="image-product-content-1 img-fluid"
-                                    src="{{ asset('component/image-product/' . $product->product_image) }}"
-                                    alt="">
-                            </a>
+        <div id="bestSaleContainer" class="fd-product-grid">
+            @foreach ($content_data as $item)
+                @php $meta = fdProductCard($item, $amount_star_5, $product_sold); @endphp
+                <article class="fd-card">
+                    <a href="{{ route('show_cart', ['product_id' => $item->product_id]) }}">
+                        <img class="fd-card-img" src="{{ asset('component/image-product/' . $item->product_image) }}"
+                            alt="{{ $item->product_name }}">
+                    </a>
+                    <div class="fd-card-body">
+                        <a class="fd-card-title" href="{{ route('show_cart', ['product_id' => $item->product_id]) }}">{{ $item->product_name }}</a>
+                        <div class="fd-stars">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            <span class="fd-muted">({{ $meta['stars'] }})</span>
                         </div>
-                        <h5 class="product_name text-center"><b>
-                                {{ $product->product_name }}
-                            </b></h5>
-
-                        <span class="text-warning product_star">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <!-- web showIndex -->
-                            <span
-                                style="display: inline; color: #000; margin-left: 5px;">({{ $amount_star_5[$product->product_id] ?? 0 }})
-                            </span>
-                        </span>
-
-                        <span style="font-size:14px" class="text-success"> <i class="bi bi-bag-check"></i> đã bán
-                            {{ $product_sold[$product->product_id] ?? 0 }}
-                        </span>
-
-                        <span class="new-price">
-                            <b class="price_new_giang" id="price-new">{{ number_format($price_discount) }}</b>
-                            <sub>đ</sub>
-                        </span>
-
-                        <div class="d-flex align-items-center gap-5">
-                            <span id="price_old_giang" class="old-price">
-                                {{ $product->product_price }}<sub>đ</sub></span>
-                            <span class="discount">-35%</span>
-                            <!-- click để thêm sản phẩm  -->
-                            <span>
-                                <a class="add-cart-btn addCartMany"
-                                    data-url="{{ route('add.cartMany.giang', [
-                                        'product_id' => $product->product_id,
-                                        'price_goods' => $product->product_price,
-                                    ]) }}">
-                                    <i class="fas fa-cart-plus"></i>
-                                </a>
-                            </span>
+                        <div class="fd-muted"><i class="bi bi-bag-check"></i> Đã bán {{ $meta['sold'] }}</div>
+                        <div class="fd-price-line">
+                            <div>
+                                <div class="fd-price">{{ number_format($meta['sale_price']) }}đ</div>
+                                <span class="fd-old-price">{{ number_format($item->product_price) }}đ</span>
+                                <span class="fd-sale">-35%</span>
+                            </div>
+                            <a class="fd-add addCartMany"
+                                data-url="{{ route('add.cartMany.giang', ['product_id' => $item->product_id, 'price_goods' => $item->product_price]) }}"
+                                aria-label="Thêm vào giỏ hàng"><i class="fas fa-cart-plus"></i></a>
                         </div>
                     </div>
-                </div>
+                </article>
             @endforeach
-
         </div>
     </div>
 </section>
 
+<section class="fd-section fd-container">
+    <div class="fd-panel">
+        <div class="fd-section-head">
+            <div>
+                <p class="fd-eyebrow">Đặc sản và đồ uống</p>
+                <h2 class="fd-title">Tinh hoa đất Việt</h2>
+            </div>
+            <div class="fd-chip-row">
+                <a href="{{ route('allproduct') }}" class="fd-chip active">Xem tất cả</a>
+                <a href="#" class="fd-chip">Đồ ăn</a>
+                <a href="#" class="fd-chip">Thức uống</a>
+                <a href="#" class="fd-chip">Trái cây</a>
+            </div>
+        </div>
+
+        <div class="fd-product-grid">
+            @foreach ($content_data_hung as $product)
+                @php $meta = fdProductCard($product, $amount_star_5, $product_sold); @endphp
+                <article class="fd-card">
+                    <a href="{{ route('show_cart', ['product_id' => $product->product_id]) }}">
+                        <img class="fd-card-img" src="{{ asset('component/image-product/' . $product->product_image) }}"
+                            alt="{{ $product->product_name }}">
+                    </a>
+                    <div class="fd-card-body">
+                        <a class="fd-card-title" href="{{ route('show_cart', ['product_id' => $product->product_id]) }}">{{ $product->product_name }}</a>
+                        <div class="fd-stars">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            <span class="fd-muted">({{ $meta['stars'] }})</span>
+                        </div>
+                        <div class="fd-muted"><i class="bi bi-bag-check"></i> Đã bán {{ $meta['sold'] }}</div>
+                        <div class="fd-price-line">
+                            <div>
+                                <div class="fd-price">{{ number_format($meta['sale_price']) }}đ</div>
+                                <span class="fd-old-price">{{ number_format($product->product_price) }}đ</span>
+                                <span class="fd-sale">-35%</span>
+                            </div>
+                            <a class="fd-add addCartMany"
+                                data-url="{{ route('add.cartMany.giang', ['product_id' => $product->product_id, 'price_goods' => $product->product_price]) }}"
+                                aria-label="Thêm vào giỏ hàng"><i class="fas fa-cart-plus"></i></a>
+                        </div>
+                    </div>
+                </article>
+            @endforeach
+        </div>
+    </div>
+</section>
 
 <div id="alert-add-cart" class="alert alert-success d-none" role="alert"></div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script>
-    /* handle thêm cart*/
     $('.addCartMany').on('click', function(e) {
         e.preventDefault();
-        let url = $(this).data('url'); // Lấy URL từ data-url
+        let url = $(this).data('url');
 
         $.ajax({
             url: url,
             type: "POST",
-            data: {
-                _token: "{{ csrf_token() }}"
-            },
+            data: {_token: "{{ csrf_token() }}"},
             success: function(value) {
                 $('#cartCount').text(value.cartCount);
-                console.log(value.alert_add_cart)
-                if (value.alertCart) {
-                    $('#alert-add-cart').css({
-                        'color': '#198754;',
-                        'background-color': '#d1e7dd'
-                    });
-                    showCartAlert('Thêm sản phẩm vào giỏ hàng thành công!');
-                } else if (value.status === "error") {
-                    $('#alert-add-cart').css({
-                        'color': '#ffffff',
-                        'background-color': '#dc3545'
-                    });
-                    showCartAlert('Thêm sản phẩm vào giỏ hàng thành công!');
-                } else {
-                    $('#alert-add-cart').css({
-                        'color': '#ffffff',
-                        'background-color': '#dc3545'
-                    });
-                    showCartAlert('Quý khách vui lòng đăng nhập');
-                }
+                showCartAlert(value.alertCart ? 'Thêm sản phẩm vào giỏ hàng thành công!' : 'Quý khách vui lòng đăng nhập.');
             }
         });
     });
 
-    // let productId = $(this).next('.frame-image').find('input[name="product_id"]').val(); // lấy nhất xác luôn
-    // let productId = $('input[name="product_id"]').first().val(); // lấy cái đầu tiên
     $('#home').on('click', function() {
-        const url = $(this).data('url');
-        window.location.href = "{{ route('website-main') }}"
+        window.location.href = "{{ route('website-main') }}";
     });
 
     $('#saleRating').on('click', function() {
         const url = $(this).data('url');
-
         $.ajax({
             url: url,
             type: "GET",
             success: function(response) {
                 let html = '';
-                let data2 = response.data;
-                let numberStar = response.amount_star_5;
-                console.log("Dữ liệu nhận được:", numberStar);
-                // console.log("Kiểm tra data2:", response.data2);
-
+                let data2 = response.data || [];
+                let numberStar = response.amount_star_5 || {};
 
                 data2.forEach(item => {
-                    let price_discount = Math.round(item.product_price - (item
-                        .product_price * 35) / 100);
-
+                    let price_discount = Math.round(item.product_price * 0.65);
                     html += `
-                <div class="frame-image">
-                    <input type="hidden" name="product_id" value="${item.product_id}">
-                    <div>
+                    <article class="fd-card">
                         <a href="/cart/${item.product_id}">
-                            <img class="image-product-content-1 img-fluid"
-                                 src="/component/image-product/${item.product_image}" alt="">
+                            <img class="fd-card-img" src="/component/image-product/${item.product_image}" alt="${item.product_name}">
                         </a>
-                    </div>
-                    <h5 class="product_name"><b>${item.product_name}</b></h5>
-                    <span class="text-warning product_star">
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <span style="color:#000">(${numberStar[item.product_id] ?? 0})</span>
-                    </span>
-                    <span style="font-size:14px" class="text-success"> <i class="bi bi-bag-check"></i> đã bán ${item.SOLUONG}</span>
-                    <span class="new-price"><b>${price_discount}</b><sub>đ</sub></span>
-                    <div class="d-flex justify-content-center align-items-center gap-3">
-                        <span class="old-price">${item.product_price}<sub>đ</sub></span>
-                        <span class="discount">-35%</span>
-                        <span>
-                            <div style="font-size: 10px" 
-                    class="btn-sm btn btn-success renDeraddCartMany"
-                    data-render-id="${item.product_id}"
-                    data-render-price="${item.product_price}">
-                    Thêm vào giỏ
+                        <div class="fd-card-body">
+                            <a class="fd-card-title" href="/cart/${item.product_id}">${item.product_name}</a>
+                            <div class="fd-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i> <span class="fd-muted">(${numberStar[item.product_id] ?? 0})</span></div>
+                            <div class="fd-muted"><i class="bi bi-bag-check"></i> Đã bán ${item.SOLUONG}</div>
+                            <div class="fd-price-line">
+                                <div>
+                                    <div class="fd-price">${Number(price_discount).toLocaleString('vi-VN')}đ</div>
+                                    <span class="fd-old-price">${Number(item.product_price).toLocaleString('vi-VN')}đ</span>
+                                    <span class="fd-sale">-35%</span>
+                                </div>
+                                <button type="button" class="fd-add renDeraddCartMany" data-render-id="${item.product_id}" data-render-price="${item.product_price}" aria-label="Thêm vào giỏ hàng"><i class="fas fa-cart-plus"></i></button>
                             </div>
-
-                        </span>
-                    </div>
-                </div>`;
+                        </div>
+                    </article>`;
                 });
-
                 $('#bestSaleContainer').html(html);
-            },
-            error: function(err) {
-                console.error("Lỗi khi lấy sản phẩm bán chạy", err);
             }
         });
     });
 
-
-    /*click để thêm giỏ hàng*/
     $(document).on('click', '.renDeraddCartMany', function(e) {
         e.preventDefault();
-
         const product_id = $(this).data('render-id');
         const price_goods = $(this).data('render-price');
-
         $.ajax({
             url: `/add/cartMany/${product_id}/${price_goods}`,
             type: "POST",
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success: function(response) {
                 $('#cartCount').text(response.cartCount);
-                if (response.alertCart) {
-                    showCartAlert('Thêm sản phẩm vào giỏ hàng thành công!');
-                } else {
-                    showCartAlert('Quý khách vui lòng đăng nhập');
-                }
-            },
-            error: function(xhr) {
-                console.error(xhr.responseText);
+                showCartAlert(response.alertCart ? 'Thêm sản phẩm vào giỏ hàng thành công!' : 'Quý khách vui lòng đăng nhập.');
             }
         });
     });
 
-
-
-    // Hàm hiển thị thông báo state sản phẩm
     function showCartAlert(message) {
         var alertMessage = $('#alert-add-cart');
-        alertMessage.text(message); // Đặt nội dung thông báo
-        alertMessage.removeClass('d-none'); // Hiện thông báo
-        setTimeout(function() {
-            alertMessage.addClass('d-none'); // Ẩn sau 8 giây
-        }, 3000);
+        alertMessage.text(message).removeClass('d-none');
+        setTimeout(function() { alertMessage.addClass('d-none'); }, 3000);
     }
 </script>

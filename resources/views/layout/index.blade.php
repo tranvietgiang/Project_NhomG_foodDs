@@ -1,11 +1,12 @@
  <!DOCTYPE html>
- <html lang="en">
+ <html lang="vi">
 
  <head>
      <meta charset="UTF-8">
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <meta http-equiv="X-UA-Compatible" content="ie=edge">
-     <title>Document</title>
+     <title>FoodDS - Đồ ăn và thức uống</title>
+     <link rel="stylesheet" href="{{ asset('component/css/foodds.css') }}">
      <!-- link md bootstrap(thư viên của bootstrap) -->
      <link rel="stylesheet" href="{{ asset('component/css/mdb.min.css') }}">
      <!-- Link icon  -->
@@ -29,7 +30,8 @@
              padding: 0;
              overflow-x: hidden;
              font-family: 'Roboto', sans-serif;
-             background: #eeeeee !important;
+             background: #f8fafc !important;
+             color: #1f2937;
          }
 
          li {
@@ -48,6 +50,17 @@
  </head>
 
  <body>
+     @if (session('payment-success'))
+         <div class="fd-container" style="margin-top: 16px;">
+             <div class="fd-alert success">{{ session('payment-success') }}</div>
+         </div>
+     @endif
+
+     @if (session('payment-error'))
+         <div class="fd-container" style="margin-top: 16px;">
+             <div class="fd-alert warning">{{ session('payment-error') }}</div>
+         </div>
+     @endif
 
      <!-- header Giang -->
      <header>
@@ -55,9 +68,9 @@
      </header>
 
      <!-- content ca -->
-     <div class="content">
+     <main class="content">
          @include('component.content.content')
-     </div>
+     </main>
 
      <!-- belowContent duyHung -->
      <div class="belowContent">
