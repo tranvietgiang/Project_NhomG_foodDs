@@ -134,7 +134,7 @@
         <div>
             <form action="{{ route('categories.search') }}" method="get">
                 <div class="input-group">
-                    <input type="search" class="form-control rounded" name="search" placeholder="Search" required />
+                    <input type="search" class="form-control rounded" name="search" placeholder="Search" required maxlength="100" />
                     <button type="submit" class="btn btn-primary"> tìm</button>
                 </div>
             </form>
@@ -238,7 +238,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-outline mb-4">
-                            <input type="text" id="categories_name" name="categories_name" class="form-control"
+                            <input type="text" id="categories_name" name="categories_name" class="form-control" maxlength="50"
                                 required />
                             <label class="form-label" for="categories_name">Tên Loại</label>
                         </div>
@@ -266,7 +266,7 @@
                         </div>
                         <div class="modal-body">
                             <div class="form-outline mb-4">
-                                <input type="text" id="categories_name{{ $category->categories_id }}"
+                                <input type="text" id="categories_name{{ $category->categories_id }}" maxlength="50"
                                     name="categories_name" class="form-control"
                                     value="{{ $category->categories_name }}" required />
                                 <label class="form-label" for="categories_name{{ $category->categories_id }}">Tên

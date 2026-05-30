@@ -38,7 +38,7 @@
 
             <div class="mb-6">
                 <label for="otp" class="block text-gray-700 text-sm font-bold mb-2">Mã OTP:</label>
-                <input type="text" name="otp" id="otp"
+                <input type="text" name="otp" id="otp" pattern="[0-9]{6}" maxlength="6"
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     placeholder="Nhập mã OTP gồm 6 chữ số">
             </div>

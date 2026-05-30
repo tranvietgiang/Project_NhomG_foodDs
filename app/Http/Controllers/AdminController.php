@@ -83,7 +83,13 @@ class AdminController extends Controller
     /** show information client search client paginate */
     public function search_client(Request $reqName)
     {
-        $keyword = $reqName->input('search');
+        $validated = $reqName->validate([
+            'search' => 'nullable|string|max:100',
+        ], [
+            'search.max' => 'Từ khóa tìm kiếm không được vượt quá 100 ký tự.',
+        ]);
+
+        $keyword = trim($validated['search'] ?? '');
 
 
         $list_client = User::with('client')->where('role', 'user')
@@ -100,7 +106,13 @@ class AdminController extends Controller
     /**staff.search_employees */
     public function search_staff(Request $req)
     {
-        $keyword = $req->input('search_staff');
+        $validated = $req->validate([
+            'search_staff' => 'nullable|string|max:100',
+        ], [
+            'search_staff.max' => 'Từ khóa tìm kiếm không được vượt quá 100 ký tự.',
+        ]);
+
+        $keyword = trim($validated['search_staff'] ?? '');
 
         $list_employees = User::where('role', 'employees')
             ->where(function ($query) use ($keyword) {
@@ -129,10 +141,22 @@ class AdminController extends Controller
     {
         $req->validate([
             'client_name' => 'required|max:50',
-            'client_phone' => 'required|regex:/^[0-9]{10,11}$/'
+            'client_phone' => 'required|regex:/^[0-9]{10,11}$/',
+            'client_address_detail' => 'nullable|string|max:255',
+            'client_gender' => 'nullable|in:male,female',
+            'client_province' => 'nullable|integer|exists:tb_provinces,province_id',
+            'client_district' => 'nullable|integer|exists:tb_districts,district_id',
+            'client_wards' => 'nullable|integer|exists:tb_wards,wards_id',
+            'client_province_name' => 'nullable|string|max:100',
+            'client_district_name' => 'nullable|string|max:100',
+            'client_ward_name' => 'nullable|string|max:100',
+            'client_day' => 'required|integer|min:1|max:31',
+            'client_month' => 'required|integer|min:1|max:12',
+            'client_year' => 'required|integer|exists:years,year_id',
         ], [
             'client_name.max' => 'Ký tự không vượt quá 50!',
             'client_phone.regex' => 'Số điện thoại phải gồm 10 hoặc 11 chữ số!',
+            'client_address_detail.max' => 'Địa chỉ chi tiết không được vượt quá 255 ký tự.',
         ]);
 
         $user = Auth::user();
@@ -215,6 +239,11 @@ class AdminController extends Controller
     /** cập nhật avatar cho client git */
     public function client_avatar_update(Request $req)
     {
+        $req->validate([
+            'avatar-client' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ], [
+            'avatar-client.max' => 'Ảnh đại diện không được vượt quá 2MB.',
+        ]);
 
         /** nếu mà chưa có client thì tạo new */
         if (!optional(Auth::user()->client)->client_id) {
@@ -270,13 +299,14 @@ class AdminController extends Controller
         }
 
         $req->validate([
-            "staff_name" => "max:100",
-            "staff_email" => "max:255",
-            "staff_email" => "min:5"
+            "staff_name" => "required|string|max:100",
+            "staff_email" => "required|email|min:5|max:255",
+            "staff_phone" => "nullable|regex:/^[0-9]{10,11}$/",
         ], [
             "staff_name.max" => "Tên nhân viên quá dài",
             "staff_email.max" => "email quá dài (lớn hơn 5 or nhỏ hơn 255)",
-            "staff_email.min" => "email quá ngắn email quá dài (lớn hơn 5 or nhỏ hơn 255)"
+            "staff_email.min" => "email quá ngắn email quá dài (lớn hơn 5 or nhỏ hơn 255)",
+            "staff_phone.regex" => "Số điện thoại phải gồm 10 hoặc 11 chữ số.",
         ]);
 
         $roleEdit = $role ? "employees" : $role;

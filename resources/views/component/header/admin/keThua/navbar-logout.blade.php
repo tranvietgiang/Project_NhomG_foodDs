@@ -63,7 +63,7 @@
 <div>
     <form action="{{ route('search_client') }}" method="get">
         <div class="input-group">
-            <input type="search" class="form-control rounded" value="{{ request('search') }}" name="search"
+            <input type="search" class="form-control rounded" value="{{ request('search') }}" name="search" maxlength="100"
                 placeholder="Search" aria-label="Search" aria-describedby="search-addon" required />
             <button type="submit" class="btn btn-primary" data-mdb-ripple-init> <i class="fas fa-search"></i></button>
         </div>

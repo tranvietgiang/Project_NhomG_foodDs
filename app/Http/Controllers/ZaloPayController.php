@@ -15,6 +15,16 @@ class ZaloPayController extends Controller
 {
     public function zalopay(Request $request)
     {
+        $request->validate([
+            'cart_id_payment' => 'required|integer',
+            'total_price_payment' => 'required|numeric|min:0|max:999999999',
+            'product_id' => 'required|integer|exists:products,product_id',
+            'product_name' => 'required|string|max:100',
+            'product_quantity' => 'required|integer|min:1|max:99',
+            'product_image' => 'nullable|string|max:255',
+            'product_price' => 'required|numeric|min:0|max:999999999',
+        ]);
+
         // Lấy cấu hình từ .env
         $config = [
             "appid" => 553,
@@ -142,6 +152,15 @@ class ZaloPayController extends Controller
 
     public function callback_zalopay(Request $request)
     {
+        $request->validate([
+            'apptransid' => 'nullable|string|max:100',
+            'client_name' => 'nullable|string|max:100',
+            'product_name' => 'nullable|string|max:100',
+            'product_image' => 'nullable|string|max:255',
+            'total_price' => 'nullable|numeric|min:0|max:999999999',
+            'product_quantity' => 'nullable|integer|min:1|max:99',
+        ]);
+
         // dd(session()->all());
 
 

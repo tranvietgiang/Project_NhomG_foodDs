@@ -42,7 +42,7 @@
                     @csrf
                     <div class="fd-field">
                         <label for="forgot-email">Email</label>
-                        <input type="text" id="forgot-email" name="email" value="{{ old('email') }}"
+                        <input type="text" id="forgot-email" name="email" value="{{ old('email') }}" maxlength="255"
                             placeholder="you@example.com" required>
                     </div>
 

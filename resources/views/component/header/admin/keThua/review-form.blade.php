@@ -266,7 +266,7 @@
     <!-- form create review git add commit -->
     <form id="review-form" action="{{ url('/client/review/cart/bought') }}" method="post"
         enctype="multipart/form-data">
-        <input type="text" name="product_id" value="{{ $product_id = $cart->first()->product_id }}">
+        <input type="hidden" name="product_id" value="{{ $product_id = $cart->first()->product_id }}">
 
         @csrf
         <div class="user-review">
@@ -280,13 +280,13 @@
             </div>
         </div>
         <div>
-            <textarea name="review_content" id="client-comment" class="form-control" rows="4"
+            <textarea name="review_content" id="client-comment" class="form-control" rows="4" maxlength="1000"
                 placeholder="Nhập đánh giá về sản phẩm (tối thiểu 10 ký tự)"></textarea>
             <button type="submit" class="submit-btn">GỬI ĐÁNH GIÁ</button>
             <span class="text-danger fw-bold" id="errorMessage"></span>
         </div>
         <div>
-            <input onchange="show_imageAttached()" class="d-none" name="image_attached" id="image-review"
+            <input onchange="show_imageAttached()" class="d-none" name="image_attached" id="image-review" accept="image/png,image/jpeg,image/webp"
                 type="file">
             <label for="image-review">Đích kèm <i class="fa-solid fa-image"></i></label>
             <div id="show_image_attached"></div>
@@ -372,7 +372,7 @@
 
                             <!-- input edit -->
                             <p style="margin: 0; padding: 0;">
-                                <input class="form-control mb-3 input_review-comment" style="display: none"
+                                <input class="form-control mb-3 input_review-comment" style="display: none" maxlength="1000"
                                     name="edit_comment_input" placeholder="Nhập chỉnh sủa comment của bạn... "
                                     type="text">
                             </p>

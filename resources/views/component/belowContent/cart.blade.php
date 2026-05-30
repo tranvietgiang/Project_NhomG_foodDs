@@ -35,7 +35,7 @@
                                 style="display:inline;">
                                 @csrf
                                 @method('PUT') <!-- Xác định yêu cầu PUT cho cập nhật -->
-                                <input type="number" name="quantity" value="{{ $item->quantity_sp }}" min="1"
+                                <input type="number" name="quantity" value="{{ $item->quantity_sp }}" min="1" max="99"
                                     class="form-control" onchange="this.form.submit()" />
                             </form>
                         </td>

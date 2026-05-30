@@ -12,17 +12,17 @@
         <div class="form-row">
             <div class="form-group col-md-7">
                 <label for="product-name">Tên sản phẩm</label>
-                <input type="text" class="form-control" name="product-name" id="product-name" required>
+                <input type="text" class="form-control" name="product-name" id="product-name" required maxlength="100">
             </div>
 
             <div class="form-group col-md-2">
                 <label for="price">Giá bán</label>
-                <input name="product-price" type="number" class="form-control" id="price" required>
+                <input name="product-price" type="number" class="form-control" id="price" required min="0" max="999999999">
             </div>
 
             <div class="form-group col-md-1">
                 <label for="qmount">Số lượng</label>
-                <input name="product-amount" type="number" class="form-control" id="amount" required>
+                <input name="product-amount" type="number" class="form-control" id="amount" required min="0" max="99999">
             </div>
         </div>
 
@@ -42,13 +42,13 @@
             <label for="image-product"> <img id="showImg" width="300" height="300"
                     class="object-fit-cover rounded border" src="{{ asset('component/image-product/imagDefault.png') }}"
                     alt=""></label>
-            <input onchange="LoadImage()" name="product-image" id="image-product" type="file"
+            <input onchange="LoadImage()" name="product-image" id="image-product" type="file" accept="image/png,image/jpeg,image/webp"
                 class="form-control-file d-none" multiple>
         </div>
 
         <div class="form-group">
             <label for="description">Mô tả sản phẩm</label><br>
-            <textarea name="product-description" style="width: 1000px; height: 200px;" id="description"></textarea>
+            <textarea name="product-description" style="width: 1000px; height: 200px;" id="description" maxlength="255"></textarea>
         </div>
 
         <button type="submit" class="btn btn-primary">Thêm sản phẩm</button>

@@ -21,6 +21,16 @@ class ProductController extends Controller
     /** kiểm tra xem client đã mua hàng chưa rồi mới cho đánh giá controller thêm comment */
     public function review(Request $req)
     {
+        $req->validate([
+            'product_id' => 'required|integer|exists:products,product_id',
+            'review_content' => 'required|string|max:1000',
+            'client_rating' => 'required|integer|min:1|max:5',
+            'image_attached' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ], [
+            'review_content.max' => 'Nội dung đánh giá không được vượt quá 1000 ký tự.',
+            'client_rating.required' => 'Vui lòng chọn số sao đánh giá.',
+            'image_attached.max' => 'Ảnh đánh giá không được vượt quá 2MB.',
+        ]);
 
         $product_id = $req->input('product_id');
 
@@ -90,6 +100,12 @@ class ProductController extends Controller
      */
     public function update_review(Request $req, $review_id)
     {
+        $req->validate([
+            'edit_comment_input' => 'required|string|max:1000',
+        ], [
+            'edit_comment_input.max' => 'Nội dung đánh giá không được vượt quá 1000 ký tự.',
+        ]);
+
         $edit_update_review = Review::where('user_id', Auth::id())->where('review_id', $review_id)->first();
 
         if ($edit_update_review) {
@@ -112,6 +128,12 @@ class ProductController extends Controller
     // thêm vào giỏ hàng 
     public function addtocart(Request $request)
     {
+        $request->validate([
+            'product_id' => 'required|integer|exists:products,product_id',
+            'product_price' => 'required|numeric|min:0|max:999999999',
+            'product_image' => 'nullable|string|max:255',
+            'quantity_sp' => 'required|integer|min:1|max:99',
+        ]);
 
         Cart::updateOrCreate(
             [
@@ -154,6 +176,10 @@ class ProductController extends Controller
     //  cập nhật giá khi số  lượng thay đổi
     public function updateSL(Request $request, $id)
     {
+        $request->validate([
+            'quantity' => 'required|integer|min:1|max:99',
+        ]);
+
         $quantity = $request->input('quantity');
 
         // Cập nhật số lượng sản phẩm
@@ -197,7 +223,13 @@ class ProductController extends Controller
     //tìm kiếm phân trang
     public function search(Request $request)
     {
-        $query = $request->input('query');
+        $validated = $request->validate([
+            'query' => 'required|string|max:100',
+        ], [
+            'query.max' => 'Từ khóa tìm kiếm không được vượt quá 100 ký tự.',
+        ]);
+
+        $query = trim($validated['query']);
 
         // tìm kiếm sản phẩm theo tên 
         $products = Product::where('product_name', 'LIKE', "%{$query}%")->paginate(6)->appends(['query' => $query]);
@@ -262,7 +294,11 @@ class ProductController extends Controller
     /** fun this have featured whe clien only input search thì will show recommnet gợi ý */
     public function header_show_render(Request $req)
     {
-        $value = $req->get('valueSearch');
+        $validated = $req->validate([
+            'valueSearch' => 'nullable|string|max:100',
+        ]);
+
+        $value = trim($validated['valueSearch'] ?? '');
 
         $temp = Product::where('product_name', 'like', "%$value%")->limit(5)->get();
         return response()->json([

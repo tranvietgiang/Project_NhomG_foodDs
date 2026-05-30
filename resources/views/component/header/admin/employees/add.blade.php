@@ -31,17 +31,17 @@
             <form>
                 <div class="form-group">
                     <label for="employee-name">Tên Nhân Viên</label>
-                    <input type="text" id="employee-name" name="employee-name" placeholder="Nhập tên nhân viên"
+                    <input type="text" id="employee-name" name="employee-name" placeholder="Nhập tên nhân viên" maxlength="100"
                         required>
                 </div>
                 <div class="form-group">
                     <label for="employee-position">Chức Vụ</label>
-                    <input type="text" id="employee-position" name="employee-position" placeholder="Nhập chức vụ"
+                    <input type="text" id="employee-position" name="employee-position" placeholder="Nhập chức vụ" maxlength="100"
                         required>
                 </div>
                 <div class="form-group">
                     <label for="employee-salary">Lương (VNĐ)</label>
-                    <input type="number" id="employee-salary" name="employee-salary" placeholder="Nhập lương" required>
+                    <input type="number" id="employee-salary" name="employee-salary" placeholder="Nhập lương" required min="0" max="999999999">
                 </div>
                 <div class="form-group">
                     <label for="employee-status">Trạng Thái</label>

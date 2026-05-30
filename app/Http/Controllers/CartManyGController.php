@@ -25,6 +25,10 @@ class CartManyGController extends Controller
         $productID = $req->route('product_id');
         $goods_price = $req->route('price_goods');
 
+        if (!filter_var($productID, FILTER_VALIDATE_INT) || !is_numeric($goods_price) || $goods_price < 0 || $goods_price > 999999999) {
+            return response()->json(['status' => 'error']);
+        }
+
         /** kiểm tra xem sản phẩm có tồn tại không? */
         $productExist = Product::where('product_id', $productID)->exists();
         if (!$productExist) {
@@ -73,6 +77,11 @@ class CartManyGController extends Controller
     /** handle thêm sản phẩm vào danh sách yêu thích */
     public function addHeartClient(Request $req)
     {
+        $req->validate([
+            'heartID' => 'required|integer|exists:products,product_id',
+            'priceHeart' => 'required|numeric|min:0|max:999999999',
+        ]);
+
         // Lấy dữ liệu từ body request
         $productID = $req->input('heartID');
         $priceHeart = $req->input('priceHeart');

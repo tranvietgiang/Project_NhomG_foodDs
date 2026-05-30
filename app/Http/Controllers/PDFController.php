@@ -13,7 +13,11 @@ class PDFController extends Controller
 {
     public function exportPdf(Request $request)
     {
-        $mode = $request->input('mode');
+        $validated = $request->validate([
+            'mode' => 'required|in:OutOfStore,sale_products,potential_customers,reviewGoods,top_clients,sale_not_buy,BestSeller',
+        ]);
+
+        $mode = $validated['mode'];
 
         // Khởi tạo MPDF với cấu hình font
         $mpdf = new Mpdf([

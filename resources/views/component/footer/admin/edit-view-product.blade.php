@@ -13,19 +13,19 @@
             <input type="hidden" name="product_id" value="{{ $getEdit->product_id }}">
             <div class="form-group col-md-7">
                 <label for="product-name">Tên sản phẩm</label>
-                <input type="text" class="form-control" value="{{ $getEdit->product_name ?? 'noName-default' }}"
+                <input type="text" class="form-control" value="{{ $getEdit->product_name ?? 'noName-default' }}" maxlength="100"
                     name="product-name" id="product-name" required>
             </div>
 
             <div class="form-group col-md-2">
                 <label for="price">Giá bán</label>
-                <input name="product-price" value="{{ $getEdit->product_price ?? 'noPrice-default' }}" type="number"
+                <input name="product-price" value="{{ $getEdit->product_price ?? 'noPrice-default' }}" type="number" min="0" max="999999999"
                     class="form-control" id="price" required>
             </div>
 
             <div class="form-group col-md-1">
                 <label for="amount">SL trong kho</label>
-                <input value="{{ $getEdit->quantity_store ?? 'noSL-default' }}" name="product-amount" type="number"
+                <input value="{{ $getEdit->quantity_store ?? 'noSL-default' }}" name="product-amount" type="number" min="0" max="99999"
                     class="form-control" id="amount" required>
             </div>
         </div>
@@ -48,13 +48,13 @@
                     class="object-fit-cover rounded border"
                     src="{{ asset('component/image-product/' . $getEdit->product_image ?? 'imagDefault.png') }}"
                     alt=""></label>
-            <input onchange="LoadImage()" name="product-image" id="image-product" type="file"
+            <input onchange="LoadImage()" name="product-image" id="image-product" type="file" accept="image/png,image/jpeg,image/webp"
                 class="form-control-file d-none" multiple>
         </div>
 
         <div class="form-group">
             <label for="description">Mô tả sản phẩm</label><br>
-            <textarea name="product-description" style="width: 1000px; height: 200px;" id="description">{{ $getEdit->description ?? 'noDesc-default' }}</textarea>
+            <textarea name="product-description" style="width: 1000px; height: 200px;" id="description" maxlength="255">{{ $getEdit->description ?? 'noDesc-default' }}</textarea>
         </div>
 
         <button type="submit" class="btn btn-primary">Sửa sản phẩm</button>

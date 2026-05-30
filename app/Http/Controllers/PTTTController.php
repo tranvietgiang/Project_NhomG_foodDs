@@ -19,6 +19,17 @@ class PTTTController extends Controller
     /** phương thức thanh toán mua ngay vnpay */
     public function vnpay_payment(Request $request)
     {
+        $request->validate([
+            'user_id_payment' => 'required|integer',
+            'cart_id_payment' => 'required|integer',
+            'total_price_payment' => 'required|numeric|min:0|max:999999999',
+            'product_id' => 'required|integer|exists:products,product_id',
+            'product_name' => 'required|string|max:100',
+            'product_quantity' => 'required|integer|min:1|max:99',
+            'product_image' => 'nullable|string|max:255',
+            'product_price' => 'required|numeric|min:0|max:999999999',
+        ]);
+
         // kiểm tra xem user đã có điạ chỉ chưa
         $check_address = Client::where('user_id', Auth::id())->exists();
 
@@ -156,6 +167,14 @@ class PTTTController extends Controller
     /** thanh toán khi nhận hàng*/
     public function payment_cod(Request $req)
     {
+        $req->validate([
+            'cart_id_payment' => 'required|integer',
+            'product_id' => 'required|integer|exists:products,product_id',
+            'product_quantity' => 'required|integer|min:1|max:99',
+            'product_image' => 'nullable|string|max:255',
+            'product_price' => 'required|numeric|min:0|max:999999999',
+        ]);
+
         // kiểm tra xem user đã có điạ chỉ chưa
         $check_address = Client::where('user_id', Auth::id())->exists();
 

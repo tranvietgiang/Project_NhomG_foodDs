@@ -61,6 +61,14 @@ class LoginController extends Controller
      */
     public function login(Request $req)
     {
+        $req->validate([
+            'email' => 'required|string|max:255',
+            'password' => 'required|string|max:72',
+        ], [
+            'email.max' => 'Email không được vượt quá 255 ký tự.',
+            'password.max' => 'Mật khẩu không được vượt quá 72 ký tự.',
+        ]);
+
         $originalEmail = $_POST['email'] ?? '';
         $email = trim($originalEmail);
         $password = $req->input('password');
@@ -353,15 +361,17 @@ class LoginController extends Controller
 
         $req->validate([
             'username' => 'required|min:6|max:50|alpha_num',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email|max:255|unique:users,email',
             // 'password' => 'required|min:8|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', //regex: Yêu cầu ít nhất một chữ thường, một chữ hoa, một số, một ký tự đặc biệt.
-            'password' => 'confirmed'
+            'password' => 'required|string|max:72|confirmed'
         ], [
             'username.max' => 'Username không được vượt quá 50 ký tự.',
             'username.min' => 'Username không được nhỏ hơn 6 ký tự.',
             'username.alpha_num' => 'Username chỉ được chứa chữ cái và số.',
             'email.unique' => 'Email đã tồn tại, vui lòng sử dụng email khác!',
             'email.email' => 'Email phải đúng định dạng',
+            'email.max' => 'Email không được vượt quá 255 ký tự.',
+            'password.max' => 'Mật khẩu không được vượt quá 72 ký tự.',
             'password.min' => 'Trường mật khẩu phải có ít nhất 8 ký tự.',
             'password.confirmed' => 'Mật khẩu không trùng nhau', //dùng confirmed khi có một field xác nhận tương ứng, ví dụ
             // 'password.regex' => 'Mật khẩu phải chứa ít nhất một chữ hoa, một chữ thường, một số và một ký tự đặc biệt.',
@@ -428,6 +438,11 @@ class LoginController extends Controller
     /** check email have exists qua page update password git */
     public function forgot(Request $req)
     {
+        $req->validate([
+            'email' => 'required|string|max:255',
+        ], [
+            'email.max' => 'Email không được vượt quá 255 ký tự.',
+        ]);
 
         $originalEmail = $_POST['email'] ?? '';
         $email = trim($originalEmail);
@@ -473,7 +488,7 @@ class LoginController extends Controller
     {
 
         $request->validate([
-            'otp' => 'required|numeric',
+            'otp' => 'required|digits:6',
         ]);
 
         if ($request->otp == session('otp')) {
@@ -487,6 +502,16 @@ class LoginController extends Controller
     /**update password for client forget */
     public function update_pw(Request $req)
     {
+        $req->validate([
+            'email' => 'required|email|max:255',
+            'password' => 'required|string|max:72',
+            'password_confirmed' => 'required|string|max:72',
+        ], [
+            'email.max' => 'Email không được vượt quá 255 ký tự.',
+            'password.max' => 'Mật khẩu không được vượt quá 72 ký tự.',
+            'password_confirmed.max' => 'Mật khẩu xác nhận không được vượt quá 72 ký tự.',
+        ]);
+
         $email = $req->input('email');
         $pw = $req->input('password');
         $pw_c = $req->input('password_confirmed');
@@ -563,8 +588,8 @@ class LoginController extends Controller
     public function verifyOtp(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
-            'otp' => 'required|numeric',
+            'email' => 'required|email|max:255',
+            'otp' => 'required|digits:6',
         ]);
 
 
@@ -611,6 +636,10 @@ class LoginController extends Controller
     /** hiện thị tên huyện/quận */
     public function getDistricts(Request $request)
     {
+        $request->validate([
+            'province_id' => 'required|integer|exists:tb_provinces,province_id',
+        ]);
+
         $districts = district::where('province_id', $request->province_id)->get();
         return response()->json($districts);
     }
@@ -618,6 +647,10 @@ class LoginController extends Controller
     /** hiện thị tên xã/phường */
     public function getWards(Request $request)
     {
+        $request->validate([
+            'district_id' => 'required|integer|exists:tb_districts,district_id',
+        ]);
+
         $wards = ward::where('district_id', $request->district_id)->get();
         return response()->json($wards);
     }

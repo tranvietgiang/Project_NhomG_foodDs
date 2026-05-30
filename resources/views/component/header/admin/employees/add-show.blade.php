@@ -5,17 +5,17 @@
     <h1>Thêm nhân viên nhân viên</h1>
     <div class="form-group mb-3">
         <label for="name">Tên Nhân Viên</label>
-        <input type="text" name="staff_name" id="name" class="form-control" required>
+        <input type="text" name="staff_name" id="name" class="form-control" required maxlength="100">
     </div>
 
     <div class="form-group mb-3">
         <label for="email">Email</label>
-        <input type="text" name="staff_email" id="email" class="form-control" required>
+        <input type="text" name="staff_email" id="email" class="form-control" required maxlength="255">
     </div>
 
     <div class="form-group mb-3">
         <label for="phone">Số Điện Thoại</label>
-        <input type="phone" name="staff_phone" id="phone" class="form-control" required>
+        <input type="phone" name="staff_phone" id="phone" class="form-control" required maxlength="11" pattern="[0-9]{10,11}">
     </div>
 
     <div class="form-group mb-3">

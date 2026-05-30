@@ -28,6 +28,10 @@ class ThanhToanNhieuItemController extends Controller
     /** controller thanh toán khi nhận hàng */
     public function cod(Request $request)
     {
+        $request->validate([
+            'arrShow' => 'required|json|max:20000',
+        ]);
+
         $checkAddress = Client::where('user_id', Auth::id())->exists();
         if (!$checkAddress) {
             return redirect()->back()->with('addressNotExists', 'Bạn chưa có thông tin nhận hàng, vui lòng điền thông tin để nhận hàng tại đây');
@@ -117,6 +121,11 @@ class ThanhToanNhieuItemController extends Controller
     /** handle_amount git */
     public function handle_amount(Request $request)
     {
+        $request->validate([
+            'item_id' => 'required|integer|exists:products,product_id',
+            'quantity' => 'required|integer|min:1|max:99',
+        ]);
+
         $itemId = $request->get('item_id');
         $quantity = $request->get('quantity');
 
@@ -145,6 +154,10 @@ class ThanhToanNhieuItemController extends Controller
     /** xóa goods client choose controller xóa một cart mua nhiều */
     public function handle_remove_giang(Request $request)
     {
+        $request->validate([
+            'goods_remove' => 'required|integer|exists:products,product_id',
+        ]);
+
         $goods_id = $request->get('goods_remove');
 
         Cart::where('user_id', Auth::id())->where('product_id', $goods_id)->delete();
@@ -160,6 +173,10 @@ class ThanhToanNhieuItemController extends Controller
 
     public function routeBill(Request $request)
     {
+        $request->validate([
+            'arrItems' => 'required|json|max:20000',
+        ]);
+
         $json = $request->input('arrItems', '[]');
         session(['cart_many_selected' => $json]);
 
@@ -202,6 +219,10 @@ class ThanhToanNhieuItemController extends Controller
 
     public function priceSelect(Request $request)
     {
+        $request->validate([
+            'priceClient' => 'required|numeric|min:0|max:999999999',
+        ]);
+
         $tongTien = $request->input('priceClient');
 
         return response()->json([
@@ -213,6 +234,11 @@ class ThanhToanNhieuItemController extends Controller
 
     public function zalopay(Request $request)
     {
+        $request->validate([
+            'arrShow' => 'required|json|max:20000',
+            'total_price_payment' => 'required|numeric|min:1000|max:999999999',
+        ]);
+
         $config = [
             "appid" => 553,
             "key1" => "9phuAOYhan4urywHTh0ndEXiV3pKHr5Q",
@@ -280,6 +306,11 @@ class ThanhToanNhieuItemController extends Controller
     /* git zalopay mua nhiều*/
     public function callback_many_zalopay(Request $request)
     {
+        $request->validate([
+            'apptransid' => 'required|string|max:100',
+            'status' => 'nullable|integer|in:0,1',
+        ]);
+
         $transId = $request->input('apptransid');
 
         $temp = ZaloPayTemp::where('trans_id', $transId)->first();
@@ -337,6 +368,10 @@ class ThanhToanNhieuItemController extends Controller
     /** khi click chọn vnpay sẽ qua đây */
     public function vnpay(Request $request)
     {
+        $request->validate([
+            'arrShow' => 'required|json|max:20000',
+            'total_price_payment' => 'required|numeric|min:1000|max:999999999',
+        ]);
 
         $temp = $request->input('arrShow');
         session()->put('arr', $temp);

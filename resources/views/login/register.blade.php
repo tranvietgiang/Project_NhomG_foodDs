@@ -50,24 +50,24 @@
                     @csrf
                     <div class="fd-field">
                         <label for="login-name">Tên tài khoản</label>
-                        <input type="text" name="username" id="login-name" value="{{ old('username') }}"
+                        <input type="text" name="username" id="login-name" value="{{ old('username') }}" minlength="6" maxlength="50"
                             placeholder="Nhập tên tài khoản" required>
                     </div>
 
                     <div class="fd-field">
                         <label for="login-email">Email</label>
-                        <input type="text" id="login-email" name="email" value="{{ old('email') }}"
+                        <input type="text" id="login-email" name="email" value="{{ old('email') }}" maxlength="255"
                             placeholder="you@example.com" required>
                     </div>
 
                     <div class="fd-field">
                         <label for="login-pw">Mật khẩu</label>
-                        <input type="password" name="password" id="login-pw" placeholder="Ít nhất 8 ký tự" required>
+                        <input type="password" name="password" id="login-pw" placeholder="Ít nhất 8 ký tự" required minlength="8" maxlength="72">
                     </div>
 
                     <div class="fd-field">
                         <label for="login-pwc">Nhập lại mật khẩu</label>
-                        <input type="password" name="password_confirmation" id="login-pwc"
+                        <input type="password" name="password_confirmation" id="login-pwc" minlength="8" maxlength="72"
                             placeholder="Nhập lại mật khẩu" required>
                     </div>
 
