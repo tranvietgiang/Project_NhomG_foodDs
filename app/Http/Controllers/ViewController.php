@@ -100,6 +100,9 @@ class ViewController extends Controller
     /** show cart sÃ¡ÂºÂ£n phÃ¡ÂºÂ©m mÃƒÂ  khÃƒÂ¡ch hÃƒÂ ng Ã„â€˜ÃƒÂ£ bÃ¡ÂºÂ¥m mua ngay  */
     public function show_cart_mua_ngay(Request $req, $product_id)
     {
+        $req->validate([
+            'cart_quantity' => 'required|integer|min:1|max:99',
+        ]);
 
         /** sÃ¡Â»â€˜ lÃ†Â°Ã¡Â»Â£ng mÃƒÂ  khÃƒÂ¡ch hÃƒÂ ng Ã„â€˜ÃƒÂ£ chÃ¡Â»Ân */
         $product_client_quantity = $req->input('cart_quantity');

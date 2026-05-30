@@ -46,6 +46,10 @@ class SDTController extends Controller
 
     public function sendOtp(Request $request)
     {
+        $request->validate([
+            'phone' => 'required|regex:/^\+?[0-9]{10,15}$/',
+        ]);
+
         $phone = $request->input('phone');
 
         $otp = rand(100000, 999999);
@@ -71,6 +75,10 @@ class SDTController extends Controller
 
     public function verifyOtp(Request $request)
     {
+        $request->validate([
+            'otp' => 'required|digits:6',
+        ]);
+
         $enteredOtp = $request->input('otp');
         $realOtp = Session::get('otp');
         $phone = Session::get('phone');

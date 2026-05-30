@@ -46,18 +46,18 @@
                     @csrf
                     <div class="fd-field">
                         <label for="login-email">Email</label>
-                        <input type="text" id="login-email" value="{{ session('email_user') }}" name="email"
+                        <input type="text" id="login-email" value="{{ session('email_user') }}" name="email" maxlength="255"
                             readonly>
                     </div>
 
                     <div class="fd-field">
                         <label for="login-pw">Mật khẩu mới</label>
-                        <input type="password" name="password" id="login-pw" placeholder="Nhập mật khẩu mới" required>
+                        <input type="password" name="password" id="login-pw" placeholder="Nhập mật khẩu mới" required minlength="8" maxlength="72">
                     </div>
 
                     <div class="fd-field">
                         <label for="login-pwc">Nhập lại mật khẩu</label>
-                        <input type="password" name="password_confirmed" id="login-pwc"
+                        <input type="password" name="password_confirmed" id="login-pwc" minlength="8" maxlength="72"
                             placeholder="Nhập lại mật khẩu" required>
                     </div>
 

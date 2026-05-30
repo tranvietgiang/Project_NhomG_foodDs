@@ -11,7 +11,7 @@
 
             <div class="fd-search">
                 <form id="form-search" action="{{ route('seach') }}" method="get">
-                    <input type="text" id="key-word" name="query" required
+                    <input type="text" id="key-word" name="query" required maxlength="100"
                         placeholder="Tìm món ngon, thức uống, đặc sản...">
                     <button class="fd-btn" type="submit">
                         <i class="fa-solid fa-magnifying-glass"></i>

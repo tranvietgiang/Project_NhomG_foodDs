@@ -74,7 +74,7 @@
                     <!-- Coupon -->
                     <div class="mt-4">
                         <div class="input-group">
-                            <input type="text" class="form-control" id="cart_discount" name="cart_discount"
+                            <input type="text" class="form-control" id="cart_discount" name="cart_discount" maxlength="50"
                                 placeholder="Nhập mã giảm giá">
                             <button class="btn btn-outline-primary" type="button" id="apply-coupon">Áp dụng</button>
                         </div>

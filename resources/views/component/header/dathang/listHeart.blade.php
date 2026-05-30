@@ -322,7 +322,7 @@
                     <form action="#" method="get">
                         @csrf
                         <div class="form-outline input-group mb-0 " data-mdb-input-init>
-                            <input type="text" id="key-word" value="" name="search" class="form-control"
+                            <input type="text" id="key-word" value="" name="search" class="form-control" maxlength="100"
                                 required>
                             <label class="form-label text-white" for="key-word">Nhập nội dung tìm kiếm</label>
                             <button class="btn btn-secondary" type="submit">

@@ -13,6 +13,11 @@ class HeartGController extends Controller
     /** Update số lượng sản phẩm yêu thích */
     public function updateAmount(Request $request)
     {
+        $request->validate([
+            'idHeart' => 'required|integer|exists:list_hearts,heart_id',
+            'change_amount' => 'required|integer|min:1|max:99',
+        ]);
+
         $heartId = $request->input('idHeart');
         $amount = $request->input('change_amount');
 
@@ -31,6 +36,10 @@ class HeartGController extends Controller
     /** xóa sản phẩm yêu thích */
     public function delete_heart(Request $req)
     {
+        $req->validate([
+            'idHeartDelete' => 'required|integer|exists:list_hearts,heart_id',
+        ]);
+
         listHeart::where('heart_id', $req->input('idHeartDelete'))->delete();
         return redirect()->back();
     }

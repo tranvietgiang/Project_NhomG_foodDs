@@ -62,13 +62,13 @@
                     @csrf
                     <div class="fd-field">
                         <label for="login-email">Email</label>
-                        <input type="text" id="login-email" value="{{ old('email') }}" name="email"
+                        <input type="text" id="login-email" value="{{ old('email') }}" name="email" maxlength="255"
                             placeholder="you@example.com">
                     </div>
 
                     <div class="fd-field">
                         <label for="login-pw">Mật khẩu</label>
-                        <input type="password" name="password" id="login-pw" placeholder="Nhập mật khẩu">
+                        <input type="password" name="password" id="login-pw" placeholder="Nhập mật khẩu" minlength="8" maxlength="72">
                     </div>
 
                     <div class="fd-auth-links">

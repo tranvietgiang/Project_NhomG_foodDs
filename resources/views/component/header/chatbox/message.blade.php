@@ -142,7 +142,7 @@
         <!-- Tin nhắn sẽ hiển thị ở đây -->
     </div>
     <div id="input-area">
-        <input type="text" id="messageInput" placeholder="Nhập câu hỏi về sản phẩm...">
+        <input type="text" id="messageInput" placeholder="Nhập câu hỏi về sản phẩm..." maxlength="500">
         <button id="sendBtn">Gửi</button>
     </div>
 </div>

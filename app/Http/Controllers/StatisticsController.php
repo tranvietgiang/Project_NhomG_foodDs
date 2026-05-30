@@ -197,6 +197,11 @@ class StatisticsController extends Controller
 
     public function qty(Request $request)
     {
+        $request->validate([
+            'qty_id' => 'required|integer|exists:products,product_id',
+            'qty_sl' => 'required|integer|min:0|max:99999',
+        ]);
+
         $qty_id = $request->input('qty_id');
         $qty_sl = $request->input('qty_sl');
 

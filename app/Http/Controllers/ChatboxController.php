@@ -12,6 +12,12 @@ class ChatboxController extends Controller
 
     public function chat(Request $request)
     {
+        $validated = $request->validate([
+            'inputClient' => 'required|string|max:500',
+        ], [
+            'inputClient.max' => 'Nội dung chat không được vượt quá 500 ký tự.',
+        ]);
+
         // Keyword gợi ý => tên danh mục
         $mapping = [
             'khát' => 'đồ uống',
@@ -25,7 +31,7 @@ class ChatboxController extends Controller
         ];
 
 
-        $keyword = strtolower(trim($request->input('inputClient')));
+        $keyword = strtolower(trim($validated['inputClient']));
 
 
         // Nếu không có từ khóa, trả về mặc định

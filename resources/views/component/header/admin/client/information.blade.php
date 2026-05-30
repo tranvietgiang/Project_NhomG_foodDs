@@ -249,7 +249,7 @@
                     <form action="#" method="get">
                         @csrf
                         <div class="form-outline input-group mb-0 " data-mdb-input-init>
-                            <input type="text" id="key-word" value="" name="search" class="form-control"
+                            <input type="text" id="key-word" value="" name="search" class="form-control" maxlength="100"
                                 required>
                             <label class="form-label text-white" for="key-word">Nhập nội dung tìm kiếm</label>
                             <button class="btn btn-secondary" type="submit">
@@ -340,7 +340,7 @@
                         <form action="{{ url('client-avatar-image-update') }}" method="post"
                             enctype="multipart/form-data">
                             @csrf
-                            <input class="d-none" id="avatar-client" type="file" name="avatar-client">
+                            <input class="d-none" id="avatar-client" type="file" name="avatar-client" accept="image/png,image/jpeg,image/webp">
                             <label class="position-relation " id="select-avatar"
                                 style='margin:-40px 0 0 10px; cursor: pointer; z-index: 5;' for="avatar-client">
                                 <i style="display: inline-block; position: absolute; font-size: 18px"
@@ -416,7 +416,7 @@
                         @csrf
                         <!-- 2 column grid layout with text inputs for the first and last names -->
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <input type="text" id="form6Example2" name="client_name"
+                            <input type="text" id="form6Example2" name="client_name" maxlength="50"
                                 value="{{ Auth::user()->name }}" class="form-control" required />
                             <label class="form-label" for="form6Example2"> name</label>
                         </div>
@@ -465,14 +465,14 @@
 
                         <!-- Email input -->
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <input type="email" value="{{ Auth::user()->email }}" id="form6Example5"
+                            <input type="email" value="{{ Auth::user()->email }}" id="form6Example5" maxlength="255"
                                 class="form-control"readonly />
                             <label class="form-label" for="form6Example5">Email</label>
                         </div>
 
                         <!-- Number input -->
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <input type="text" id="form6Example6" name="client_phone" class="form-control"
+                            <input type="text" id="form6Example6" name="client_phone" class="form-control" maxlength="11" pattern="[0-9]{10,11}"
                                 pattern="[0-9]{10}" inputmode="numeric" maxlength="10" required
                                 value="{{ optional(Auth::user()->client)->client_phone ?? '' }}" />
                             <label class="form-label" for="form6Example6">Số điện thoại *</label>
@@ -480,7 +480,7 @@
 
                         <!-- address detail -->
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <input style="height: 100px" name="client_address_detail" type="text"
+                            <input style="height: 100px" name="client_address_detail" type="text" maxlength="255"
                                 id="form6Example6"
                                 value="{{ optional(Auth::user()->client)->client_address_detail ?? '' }}"
                                 class="form-control" />

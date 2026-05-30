@@ -138,7 +138,7 @@
                 <div>
                     <form action="{{ route('promotions.search') }}" method="get">
                         <div class="input-group">
-                            <input type="search" class="form-control rounded" name="search" placeholder="Search"
+                            <input type="search" class="form-control rounded" name="search" placeholder="Search" maxlength="100"
                                 required />
                             <button type="submit" class="btn btn-primary"> tìm</button>
                         </div>
@@ -246,11 +246,11 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-outline mb-4">
-                            <input type="text" id="code" name="code" class="form-control" required />
+                            <input type="text" id="code" name="code" class="form-control" required maxlength="50" />
                             <label class="form-label" for="code">Mã giảm giá</label>
                         </div>
                         <div class="form-outline mb-4">
-                            <input type="text" id="name" name="name" class="form-control" required />
+                            <input type="text" id="name" name="name" class="form-control" required maxlength="100" />
                             <label class="form-label" for="name">Tên chương trình</label>
                         </div>
                         <div class="mb-4">
@@ -260,11 +260,11 @@
                             </select>
                         </div>
                         <div class="form-outline mb-4">
-                            <input type="number" id="value" name="value" class="form-control" required />
+                            <input type="number" id="value" name="value" class="form-control" required min="0" max="999999999" />
                             <label class="form-label" for="value">Giá trị</label>
                         </div>
                         <div class="form-outline mb-4">
-                            <input type="number" id="usage_limit" name="usage_limit" class="form-control" />
+                            <input type="number" id="usage_limit" name="usage_limit" class="form-control" min="1" max="999999" />
                             <label class="form-label" for="usage_limit">Giới hạn sử dụng</label>
                         </div>
                         <div class="mb-4">
@@ -300,7 +300,7 @@
                         <div class="modal-body">
                             <!-- Các trường giống form thêm mới -->
                             <div class="form-outline mb-4">
-                                <input type="text" id="code{{ $promotion->id }}" name="code"
+                                <input type="text" id="code{{ $promotion->id }}" name="code" maxlength="50"
                                     class="form-control" value="{{ $promotion->code }}" required />
                                 <label class="form-label" for="code{{ $promotion->id }}">Mã giảm giá</label>
                             </div>

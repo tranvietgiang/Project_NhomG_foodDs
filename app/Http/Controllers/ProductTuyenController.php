@@ -44,7 +44,13 @@ class ProductTuyenController extends Controller
 
     public function search_client_product(Request $request)
     {
-        $name = $request->input('search');
+        $validated = $request->validate([
+            'search' => 'nullable|string|max:100',
+        ], [
+            'search.max' => 'Từ khóa tìm kiếm không được vượt quá 100 ký tự.',
+        ]);
+
+        $name = trim($validated['search'] ?? '');
         $show_product_admin = Product::where('product_name', 'like', "%$name%")->paginate(5)->appends(['search' => $name]);
 
         return view('component.footer.admin.view', compact('show_product_admin'));
@@ -70,6 +76,18 @@ class ProductTuyenController extends Controller
 
     public function add_product(Request $request)
     {
+        $request->validate([
+            'product-name' => 'required|string|max:100',
+            'product-price' => 'required|numeric|min:0|max:999999999',
+            'product-amount' => 'required|integer|min:0|max:99999',
+            'categories_name' => 'required|integer|exists:categories,categories_id',
+            'product-image' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'product-description' => 'nullable|string|max:255',
+        ], [
+            'product-name.max' => 'Tên sản phẩm không được vượt quá 100 ký tự.',
+            'product-image.max' => 'Ảnh sản phẩm không được vượt quá 2MB.',
+            'product-description.max' => 'Mô tả sản phẩm không được vượt quá 255 ký tự.',
+        ]);
 
         if ($request->hasFile('product-image')) {
             $image = $request->file('product-image'); // <-- Sửa chỗ này
@@ -91,6 +109,10 @@ class ProductTuyenController extends Controller
     }
     public function edit_view_product(Request $request)
     {
+        $request->validate([
+            'product_id' => 'required|integer|exists:products,product_id',
+        ]);
+
         $idProduct = $request->get('product_id');
         $getCateAll = Categorie::all();
 
@@ -99,6 +121,20 @@ class ProductTuyenController extends Controller
     }
     public function edit_product(Request $request)
     {
+        $request->validate([
+            'product_id' => 'required|integer|exists:products,product_id',
+            'product-name' => 'required|string|max:100',
+            'product-price' => 'required|numeric|min:0|max:999999999',
+            'product-amount' => 'required|integer|min:0|max:99999',
+            'categories_name' => 'required|integer|exists:categories,categories_id',
+            'product-image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'product-description' => 'nullable|string|max:255',
+        ], [
+            'product-name.max' => 'Tên sản phẩm không được vượt quá 100 ký tự.',
+            'product-image.max' => 'Ảnh sản phẩm không được vượt quá 2MB.',
+            'product-description.max' => 'Mô tả sản phẩm không được vượt quá 255 ký tự.',
+        ]);
+
         $idProduct = $request->input('product_id');
         // dd($idProduct);  
         $getEdit = Product::with('categories')->where('product_id', $idProduct)->first();
@@ -137,6 +173,10 @@ class ProductTuyenController extends Controller
 
     public function remove_product(Request $request)
     {
+        $request->validate([
+            'product_id' => 'required|integer|exists:products,product_id',
+        ]);
+
         $idProduct = $request->get('product_id');
         Product::where('product_id', $idProduct)->delete();
         return redirect()->route('admin.view.product')->with('success', 'Xóa thành công');

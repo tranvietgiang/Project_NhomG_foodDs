@@ -23,7 +23,7 @@
 
                 <div class="fd-search">
                     <form action="{{ route('seach') }}" method="GET">
-                        <input type="text" name="query" value="{{ request('query') }}"
+                        <input type="text" name="query" value="{{ request('query') }}" maxlength="100"
                             placeholder="Tìm kiếm sản phẩm..." required>
                         <button class="fd-btn" type="submit">
                             <i class="fa-solid fa-magnifying-glass"></i>

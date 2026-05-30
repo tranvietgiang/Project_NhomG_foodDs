@@ -65,7 +65,13 @@ class CategoryController extends Controller
 
     public function search(Request $request)
     {
-        $search = $request->input('search');
+        $validated = $request->validate([
+            'search' => 'nullable|string|max:100',
+        ], [
+            'search.max' => 'Từ khóa tìm kiếm không được vượt quá 100 ký tự.',
+        ]);
+
+        $search = trim($validated['search'] ?? '');
 
         $categories = Categorie::where('categories_name', 'like', '%' . $search . '%')
             ->latest()

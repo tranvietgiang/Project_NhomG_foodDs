@@ -22,11 +22,11 @@ class PromotionController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'code' => 'required|unique:promotions',
-            'name' => 'required',
+            'code' => 'required|string|max:50|unique:promotions',
+            'name' => 'required|string|max:100',
             'type' => 'required|in:percentage,fixed',
-            'value' => 'required|numeric|min:0',
-            'usage_limit' => 'nullable|integer|min:1',
+            'value' => 'required|numeric|min:0|max:999999999',
+            'usage_limit' => 'nullable|integer|min:1|max:999999',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
         ]);
@@ -44,7 +44,7 @@ class PromotionController extends Controller
     public function update(Request $request, Promotion $promotion)
     {
         $validated = $request->validate([
-            'code' => 'required|unique:promotions,code,' . $promotion->id,
+            'code' => 'required|string|max:50|unique:promotions,code,' . $promotion->id,
         ]);
 
         $promotion->update($validated);
@@ -61,7 +61,13 @@ class PromotionController extends Controller
 
     public function search(Request $request)
     {
-        $search = $request->input('search');
+        $validated = $request->validate([
+            'search' => 'nullable|string|max:100',
+        ], [
+            'search.max' => 'Từ khóa tìm kiếm không được vượt quá 100 ký tự.',
+        ]);
+
+        $search = trim($validated['search'] ?? '');
 
         $promotions = Promotion::when($search, function ($query) use ($search) {
             $query->where('name', 'LIKE', "%{$search}%")

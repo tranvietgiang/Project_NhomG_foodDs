@@ -61,7 +61,7 @@
                         <label style="font-weight:800;margin-bottom:8px;display:block">Số lượng</label>
                         <div class="fd-qty">
                             <button type="button" class="minus">-</button>
-                            <input name="cart_quantity" type="number" value="1" min="1" class="input-qty">
+                            <input name="cart_quantity" type="number" value="1" min="1" max="99" class="input-qty">
                             <button type="button" class="plus" style="background:#16a34a;color:#fff">+</button>
                         </div>
 

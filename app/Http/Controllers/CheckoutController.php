@@ -18,6 +18,15 @@ class CheckoutController extends Controller
 {
     public function momo_payment(Request $request)
     {
+        $request->validate([
+            'totalAmount' => 'nullable|numeric|min:1000|max:999999999',
+            'total_price_payment' => 'nullable|numeric|min:1000|max:999999999',
+            'arrShow' => 'nullable|json|max:20000',
+            'cart_id_payment' => 'nullable|integer',
+            'product_id' => 'nullable|integer|exists:products,product_id',
+            'user_id_payment' => 'nullable|integer',
+        ]);
+
         $amount = (int) ($request->input('totalAmount') ?: $request->input('total_price_payment'));
 
         if ($amount < 1000) {
